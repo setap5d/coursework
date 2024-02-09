@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 191, 222, 255), brightness: Brightness.light),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -57,16 +58,154 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  int popUpSemaphore = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+ void showAccountDetails(BuildContext context) {
+    late OverlayEntry overlay;
+
+    if (popUpSemaphore == 1) {
+      return;
+    }
+    popUpSemaphore ++;
+
+    overlay = OverlayEntry(
+      builder: (BuildContext context) => Positioned(
+        top: 0, // adjust the top position as needed
+        left: 80, // adjust the left position as needed
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.tertiary,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'User Details',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onTertiary,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text('Username: Jimothy', 
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.normal,
+                    color: Theme.of(context).colorScheme.onTertiary,
+                  ),
+                  ),
+                const SizedBox(height: 8),
+                Text('Email: jimothy.doe@example.com',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.normal,
+                    color: Theme.of(context).colorScheme.onTertiary,
+                  ),
+                  ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    overlay.remove();
+                    popUpSemaphore --;
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+                  ),
+                  child: Text('Close',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.normal,
+                    color: Theme.of(context).colorScheme.onTertiaryContainer,
+                  ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(overlay);
+  }
+
+  void showNotificationDetails(BuildContext context) {
+    late OverlayEntry overlay;
+
+    if (popUpSemaphore == 1) {
+      return;
+    }
+    popUpSemaphore ++;
+
+    overlay = OverlayEntry(
+      builder: (BuildContext context) => Positioned(
+        top: 0, // adjust the top position as needed
+        left: 80, // adjust the left position as needed
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.tertiary,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'User Details',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onTertiary,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text('Username: Jimothy', 
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.normal,
+                    color: Theme.of(context).colorScheme.onTertiary,
+                  ),
+                  ),
+                const SizedBox(height: 8),
+                Text('Email: jimothy.doe@example.com',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.normal,
+                    color: Theme.of(context).colorScheme.onTertiary,
+                  ),
+                  ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    overlay.remove();
+                    popUpSemaphore --;
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+                  ),
+                  child: Text('Close',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.normal,
+                    color: Theme.of(context).colorScheme.onTertiaryContainer,
+                  ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(overlay);
   }
 
   @override
@@ -77,6 +216,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    int s = 0;
     return Scaffold(
       body: Row(
         children: [
@@ -84,18 +224,28 @@ class _MyHomePageState extends State<MyHomePage> {
             child: NavigationRail(
               backgroundColor: Theme.of(context).colorScheme.inversePrimary,
               extended: false,
+              groupAlignment: 1.0,
+              leading: FloatingActionButton(onPressed: () {showAccountDetails(context);}, child: const Icon(Icons.account_circle),),
               destinations: const [
                 NavigationRailDestination(
                   icon: Icon(Icons.home),
                   label: Text('Home'),
                 ),
                 NavigationRailDestination(
-                  icon: Icon(Icons.favorite),
-                  label: Text('Favorites'),
+                  icon: Icon(Icons.notifications),
+                  label: Text('Notifications'),
                 ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.settings),
+                  label: Text('Settings'),
+                ),
+
               ],
               selectedIndex: 0,
               onDestinationSelected: (value) {
+                if (value == 1) {
+                  showNotificationDetails(context);
+                }
                 print('selected: $value');
               },
             ),
@@ -116,7 +266,7 @@ class ProjectsInterface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: Row(
         children: [
           Text("PROJECTS_INTERFACE",
