@@ -57,7 +57,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   int popUpSemaphore = 0;
 
  void showAccountDetails(BuildContext context) {
@@ -108,6 +107,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   ),
                 const SizedBox(height: 16),
+                Row(
+                  children: 
+                  [
                 ElevatedButton(
                   onPressed: () {
                     overlay.remove();
@@ -123,6 +125,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: Theme.of(context).colorScheme.onTertiaryContainer,
                   ),
                   ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    overlay.remove();
+                    popUpSemaphore --;
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+                  ),
+                  child: Text('Logout',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.normal,
+                    color: Theme.of(context).colorScheme.onTertiaryContainer,
+                  ),
+                  ),
+                ),
+              ],
                 ),
               ],
             ),
@@ -142,9 +162,22 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     popUpSemaphore ++;
 
+    final List<String> notifications = [
+    'Notification 1',
+    'Notification 2',
+    'Notification 3',
+    'Notification 4',
+    'Notification 5',
+    'Notification 6',
+    'Notification 7',
+    'Notification 8',
+    'Notification 9',
+    'Notification 10',
+  ];
+
     overlay = OverlayEntry(
       builder: (BuildContext context) => Positioned(
-        top: 0, // adjust the top position as needed
+        top: 700, // adjust the top position as needed
         left: 80, // adjust the left position as needed
         child: Material(
           color: Colors.transparent,
@@ -166,7 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text('Username: Jimothy', 
+                Text('Notifications', 
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.normal,
@@ -174,11 +207,24 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   ),
                 const SizedBox(height: 8),
-                Text('Email: jimothy.doe@example.com',
+                Text('NOTIFICATIONS_GO_HERE',
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.normal,
                     color: Theme.of(context).colorScheme.onTertiary,
+                  ),
+                  ),
+                  Container(
+                    height: 100,
+                    width: 100,
+                    child:
+                  ListView.builder(
+          itemCount: notifications.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(notifications[index]),
+            );
+          },
                   ),
                   ),
                 const SizedBox(height: 16),
@@ -216,7 +262,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    int s = 0;
     return Scaffold(
       body: Row(
         children: [
