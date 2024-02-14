@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ProjectCards.dart';
+import 'project_cards.dart';
 
 void main() {
   runApp(const MyApp());
@@ -80,29 +80,29 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       body: GridView.builder(
-        padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+        padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
         shrinkWrap: false,
         scrollDirection: Axis.vertical,
-        physics: ScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        physics: const ScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
+          crossAxisSpacing: 20,
+          mainAxisSpacing: 15,
           childAspectRatio: 1.2,
         ),
-        itemCount: 5, //item count
+        itemCount: _counter, //item count
         itemBuilder: (conext, index) {
           //builds the page dynamically
-          ;
           return InkWell(
               onTap: () {
                 //opens project
+                print(index + 1);
               },
-              child: Container(
-                  child: ProjectCard(
-                      projectName: 'project ${index + 1}',
-                      deadline: '24/08/20',
-                      projectLeader: 'jermey')));
+              borderRadius: BorderRadius.circular(30),
+              child: ProjectCard(
+                  projectName: 'project ${index + 1}',
+                  deadline: '24/08/20',
+                  projectLeader: 'jermey'));
         },
       ),
       floatingActionButton: FloatingActionButton(
