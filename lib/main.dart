@@ -57,6 +57,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _counter = 1;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,8 +75,11 @@ class _MyHomePageState extends State<MyHomePage> {
       body: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
+            crossAxisSpacing: 1,
+            mainAxisSpacing: 1,
+            childAspectRatio: 2,
           ),
-          itemCount: 12,
+          itemCount: _counter,
           itemBuilder: (BuildContext context, int index) {
             return buildProject(
               context: context,
@@ -76,11 +87,14 @@ class _MyHomePageState extends State<MyHomePage> {
               projectTitle: 'Project ${index + 1}',
               deadline: DateTime.now().add(Duration(days: index)),
               leaderName: 'John Smith',
-              top: 0,
-              left: 0,
               primaryColor: Colors.red,
             );
           }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'New Project',
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }

@@ -6,16 +6,14 @@ Widget buildProject({
   required String projectTitle,
   required DateTime deadline,
   required String leaderName,
-  required double top,
-  required double left,
   required Color primaryColor,
   required BuildContext context,
 }) {
   return Stack(
     children: [
       Positioned(
-        top: top,
-        left: left,
+        top: 20,
+        right: 50,
         child: ElevatedButton(
           onPressed: () {
             // Open specific project page
@@ -27,7 +25,7 @@ Widget buildProject({
             backgroundColor: Colors.white,
           ),
           child: Padding(
-            padding: const EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -63,23 +61,26 @@ Widget buildProject({
                   ],
                 ),
                 const SizedBox(height: 5.0),
-                PopupMenuButton<String>(
-                  onSelected: (value) {
-                    // Handle menu item selection
-                    print("Selected: $value");
-                  },
-                  itemBuilder: (BuildContext context) => [
-                    const PopupMenuItem<String>(
-                      value: 'Option 1',
-                      child: Text('Option 1'),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'Option 2',
-                      child: Text('Option 2'),
-                    ),
-                    // Add more PopupMenuItems as needed
-                  ],
-                  child: const Icon(Icons.settings),
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: PopupMenuButton<String>(
+                    onSelected: (value) {
+                      // Handle menu item selection
+                      print("Selected: $value");
+                    },
+                    itemBuilder: (BuildContext context) => [
+                      const PopupMenuItem<String>(
+                        value: 'Option 1',
+                        child: Text('Option 1'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'Option 2',
+                        child: Text('Option 2'),
+                      ),
+                      // Add more PopupMenuItems as needed
+                    ],
+                    child: const Icon(Icons.more_vert),
+                  ),
                 ),
               ],
             ),
