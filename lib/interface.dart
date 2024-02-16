@@ -12,8 +12,8 @@ Widget buildProject({
   return Stack(
     children: [
       Positioned(
-        top: 20,
-        right: 50,
+        top: 15,
+        right: 15,
         child: ElevatedButton(
           onPressed: () {
             // Open specific project page
@@ -23,16 +23,14 @@ Widget buildProject({
               borderRadius: BorderRadius.circular(10.0),
             ),
             backgroundColor: Colors.white,
+            fixedSize: Size(300, 110),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            padding: const EdgeInsets.all(10.0),
+            child: Stack(
               children: [
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 5.0),
                     Text(
                       projectTitle,
                       style: const TextStyle(
@@ -58,11 +56,12 @@ Widget buildProject({
                         color: Colors.black,
                       ),
                     ),
+                    const SizedBox(height: 15.0),
                   ],
                 ),
-                const SizedBox(height: 5.0),
-                Container(
-                  alignment: Alignment.centerRight,
+                Positioned(
+                  bottom: 0,
+                  right: 0,
                   child: PopupMenuButton<String>(
                     onSelected: (value) {
                       // Handle menu item selection
