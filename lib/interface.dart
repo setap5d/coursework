@@ -68,13 +68,39 @@ Widget buildProject({
                       print("Selected: $value");
                     },
                     itemBuilder: (BuildContext context) => [
-                      const PopupMenuItem<String>(
-                        value: 'Option 1',
-                        child: Text('Option 1'),
+                      PopupMenuItem<String>(
+                        value: 'Edit',
+                        child: Text('Edit...'),
                       ),
-                      const PopupMenuItem<String>(
-                        value: 'Option 2',
-                        child: Text('Option 2'),
+                      PopupMenuItem<String>(
+                        value: 'Delete',
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Delete'),
+                                content: const Text(
+                                    'Would you like to delete this project?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      // Delete the project
+                                    },
+                                    child: const Text('YES'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('NO'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: Text('Delete'),
                       ),
                       // Add more PopupMenuItems as needed
                     ],
@@ -89,3 +115,11 @@ Widget buildProject({
     ],
   );
 }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///
+///
+///
+///
+///
