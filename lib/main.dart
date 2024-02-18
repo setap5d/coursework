@@ -33,6 +33,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  final _formKey = GlobalKey<FormState>();
+  List<dynamic> projectNames = [];
+  List<dynamic> projectLeaders = [];
+  TextEditingController projectNameController = TextEditingController();
+  TextEditingController projectLeaderController = TextEditingController();
 
   void _incrementCounter() {
     setState(() {
@@ -64,13 +69,71 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               borderRadius: BorderRadius.circular(30),
               child: ProjectCard(
-                  projectName: 'project ${index + 1}',
+                  projectName: '${projectNames[index]}',
                   deadline: '24/08/20',
-                  projectLeader: 'jermey'));
+                  projectLeader: '${projectLeaders[index]}'));
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () async {
+          await showDialog<void>(
+              context: context,
+              builder: (context) => AlertDialog(
+                    content: Stack(
+                      clipBehavior: Clip.none,
+                      children: <Widget>[
+                        Positioned(
+                          right: -40,
+                          top: -40,
+                          child: InkResponse(
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const CircleAvatar(
+                              backgroundColor: Colors.red,
+                              child: Icon(Icons.close),
+                            ),
+                          ),
+                        ),
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: TextFormField(
+                                    controller: projectNameController),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: TextFormField(
+                                    controller: projectLeaderController),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: ElevatedButton(
+                                  child: const Text('Submit'),
+                                  onPressed: () {
+                                    if (_formKey.currentState!.validate()) {
+                                      _formKey.currentState!.save();
+                                      projectNames
+                                          .add(projectNameController.text);
+                                      projectLeaders
+                                          .add(projectLeaderController.text);
+                                      _incrementCounter();
+                                      Navigator.of(context).pop();
+                                    }
+                                  },
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ));
+        },
         tooltip: 'New Project',
         child: const Icon(Icons.add),
       ),
