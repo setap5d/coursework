@@ -34,10 +34,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   final _formKey = GlobalKey<FormState>();
-  List<dynamic> projectNames = [];
-  List<dynamic> projectLeaders = [];
-  TextEditingController projectNameController = TextEditingController();
-  TextEditingController projectLeaderController = TextEditingController();
+  List<dynamic> taskNames = [];
+  List<dynamic> taskAssignees = [];
+  TextEditingController taskNameController = TextEditingController();
+  TextEditingController taskAssigneesController = TextEditingController();
   DateTime? selectedDeadline;
 
   Future<void> _selectDate(BuildContext context) async {
@@ -80,15 +80,14 @@ Widget build(BuildContext context) {
                 ListTile(
                   title: const Text('Item 1'),
                   onTap: () {
-                    // ...
+                    // 
                     Navigator.pop(context);
                   },
                 ),
                 ListTile(
                   title: const Text('Item 2'),
                   onTap: () {
-                    // Update the state of the app
-                    // ...
+                    //
                     Navigator.pop(context);
                   },
                 ),
@@ -105,7 +104,7 @@ Widget build(BuildContext context) {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0), 
                 border: Border.all(
-                  color: Color.fromARGB(255, 170, 170, 170),
+                  color: const Color.fromARGB(255, 170, 170, 170),
                   width: 0.5,
                 ),
               ),
@@ -116,7 +115,9 @@ Widget build(BuildContext context) {
                 physics: const ScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 1,
-                  childAspectRatio: 10,
+                  mainAxisSpacing: 10.0,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 11.0,
                 ),
                 itemCount: _counter,
                 itemBuilder: (context, index) {
@@ -126,11 +127,11 @@ Widget build(BuildContext context) {
                     },
                     borderRadius: BorderRadius.circular(30),
                     child: ProjectCard(
-                      projectName: '${projectNames[index]}',
+                      taskName: '${taskNames[index]}',
                       deadline: selectedDeadline != null
                           ? '${selectedDeadline!.day}/${selectedDeadline!.month}/${selectedDeadline!.year}'
                           : 'No Deadline Set',
-                      projectLeader: '${projectLeaders[index]}',
+                      taskAssignees: '${taskAssignees[index]}',
                       width: 300,
                       height: 100,
                     ),
@@ -171,13 +172,13 @@ Widget build(BuildContext context) {
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: TextFormField(
-                            controller: projectNameController,
+                            controller: taskNameController,
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: TextFormField(
-                            controller: projectLeaderController,
+                            controller: taskAssigneesController,
                           ),
                         ),
                         Padding(
@@ -196,8 +197,8 @@ Widget build(BuildContext context) {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
-                                projectNames.add(projectNameController.text);
-                                projectLeaders.add(projectLeaderController.text);
+                                taskNames.add(taskNameController.text);
+                                taskAssignees.add(taskAssigneesController.text);
                                 _incrementCounter();
                                 Navigator.of(context).pop();
                               }
@@ -212,7 +213,7 @@ Widget build(BuildContext context) {
             ),
           );
         },
-        tooltip: 'New Project',
+        tooltip: 'New Task',
         child: const Icon(Icons.add),
       ),
     );
