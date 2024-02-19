@@ -6,7 +6,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key); // Move the key parameter to the end
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({Key? key, required this.title}) : super(key: key); // Move the key parameter to the end
 
   final String title;
 
@@ -38,6 +38,21 @@ class _MyHomePageState extends State<MyHomePage> {
   List<dynamic> projectLeaders = [];
   TextEditingController projectNameController = TextEditingController();
   TextEditingController projectLeaderController = TextEditingController();
+  DateTime? selectedDeadline;
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != selectedDeadline) {
+      setState(() {
+        selectedDeadline = picked;
+      });
+    }
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -47,56 +62,89 @@ class _MyHomePageState extends State<MyHomePage> {
 
 @override
 Widget build(BuildContext context) {
-  final screenHeight = MediaQuery.of(context).size.height;
   final screenWidth = MediaQuery.of(context).size.width;
-  final containerHeight = screenWidth * 0.5; // Adjust the percentage as needed
-  final containerWidth = screenWidth * 0.5;
+  final containerWidth = screenWidth * 0.7;
 
   return Scaffold(
-    body: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    appBar: AppBar(
+      title: const Text('Project Title'),
+    ),
+    body: Row(
       children: [
-        Container(
-          height: containerHeight,
-          width: containerHeight,
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: const Color.fromARGB(255, 0, 0, 0),
-              width: 1.0,
+        SizedBox(
+          width: 200,
+          child: Drawer(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                ListTile(
+                  title: const Text('Item 1'),
+                  onTap: () {
+                    // ...
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Item 2'),
+                  onTap: () {
+                    // Update the state of the app
+                    // ...
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
             ),
           ),
-          child: GridView.builder(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              physics: const ScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                childAspectRatio: 6,
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              height: 700,
+              width: containerWidth,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0), 
+                border: Border.all(
+                  color: Color.fromARGB(255, 170, 170, 170),
+                  width: 0.5,
+                ),
               ),
-              itemCount: _counter,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    // expand functionality
-                  },
-                  borderRadius: BorderRadius.circular(30),
-                  child: ProjectCard(
-                    projectName: '${projectNames[index]}',
-                    deadline: '24/08/20',
-                    projectLeader: '${projectLeaders[index]}',
-                    width: MediaQuery.of(context).size.width - 20, 
-                    height: 100, // Adjust the height as needed
-                  ),
-                );
-              },
+              child: GridView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                physics: const ScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 1,
+                  childAspectRatio: 10,
+                ),
+                itemCount: _counter,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () {
+                      // expand functionality
+                    },
+                    borderRadius: BorderRadius.circular(30),
+                    child: ProjectCard(
+                      projectName: '${projectNames[index]}',
+                      deadline: selectedDeadline != null
+                          ? '${selectedDeadline!.day}/${selectedDeadline!.month}/${selectedDeadline!.year}'
+                          : 'No Deadline Set',
+                      projectLeader: '${projectLeaders[index]}',
+                      width: 300,
+                      height: 100,
+                    ),
+                  );
+                },
+              ),
             ),
+          ],
         ),
       ],
     ),
-    floatingActionButton: FloatingActionButton(
-      onPressed: () async {
-        await showDialog<void>(
+          floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await showDialog<void>(
             context: context,
             builder: (context) => AlertDialog(
               content: Stack(
@@ -123,12 +171,23 @@ Widget build(BuildContext context) {
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: TextFormField(
-                              controller: projectNameController),
+                            controller: projectNameController,
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: TextFormField(
-                              controller: projectLeaderController),
+                            controller: projectLeaderController,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: ElevatedButton(
+                            child: const Text('Set Deadline'),
+                            onPressed: () {
+                              _selectDate(context);
+                            },
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8),
@@ -137,35 +196,25 @@ Widget build(BuildContext context) {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
-                                projectNames
-                                    .add(projectNameController.text);
-                                projectLeaders
-                                    .add(projectLeaderController.text);
+                                projectNames.add(projectNameController.text);
+                                projectLeaders.add(projectLeaderController.text);
                                 _incrementCounter();
                                 Navigator.of(context).pop();
                               }
                             },
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
                 ],
               ),
-            ));
-      },
-      tooltip: 'New Project',
-      child: const Icon(Icons.add),
-    ),
-  );
+            ),
+          );
+        },
+        tooltip: 'New Project',
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
 }
-
-
-}
-
-/* add:
-3 buttons on bottom with options
-shadows on boxes
-space for sidebar
-popup for adding a new project
-*/
