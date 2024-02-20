@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'interface.dart';
+import 'profile.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +33,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'PROJECTS'),
+      home:
+          ProfilePage(), // Normally MyHomePage, but for this example, it's ProfilePage
       debugShowCheckedModeBanner: false,
     );
   }
@@ -71,7 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
-        centerTitle: true,
       ),
       body: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
