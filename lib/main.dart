@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:setup_application/settings.dart';
 
 void main() {
   runApp(const MyApp());
@@ -58,6 +58,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int popUpSemaphore = 0;
+  int selectedPageIndex = 0;
 
  void showAccountDetails(BuildContext context) {
     late OverlayEntry overlay;
@@ -288,6 +289,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
               selectedIndex: 0,
               onDestinationSelected: (value) {
+                setState(() {
+                  selectedPageIndex = value;
+                });
                 if (value == 1) {
                   showNotificationDetails(context);
                 }
@@ -298,12 +302,26 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: Container(
               color: Theme.of(context).colorScheme.primaryContainer,
-              child: ProjectsInterface(),
+              child: _buildPage(selectedPageIndex),
             ),
           ),
         ],
       ),
     );
+  }
+   Widget _buildPage(int index) {
+    // Return the appropriate widget based on the selectedPageIndex
+    print("_buildPage triggered");
+    switch (index) {
+      case 0:
+        print("case 0 triggered");
+        return ProjectsInterface();
+      case 2:
+        print("case 2 triggered");
+        return SettingsInterface();
+      default:
+        return Container(); // Default to an empty container or handle the case appropriately
+    }
   }
 }
 
