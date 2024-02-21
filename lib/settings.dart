@@ -162,17 +162,13 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
               selectedIndex: 0,
               onDestinationSelected: (value) {
-                // if (value == 1) {
-                //   showNotificationDetails(context);
-                // }
-                print('selected: $value');
               },
             ),
           ),
           Expanded(
             child: Container(
               color: Theme.of(context).colorScheme.primaryContainer,
-              child: SettingsInterface(),
+              child: const SettingsInterface(),
             ),
           ),
         ],
@@ -195,9 +191,11 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
   @override
   Widget build(BuildContext context) {
     return const Column(children: <Widget>[
-      SwitchSetting(settingName: "Setting 1",),
+      SwitchSetting(settingName: "Setting 1", settingDescription: "This is the first setting description in the app",),
       SettingDivider(),
-      SwitchSetting(settingName: "Setting 2",),
+      SwitchSetting(settingName: "Setting 2", settingDescription: "This is the second setting description in the app",),
+      SettingDivider(),
+      RadioSetting(optionsList: ["Option 1", "Option 2", "Option 3"],)
     ]);
   }
 }
