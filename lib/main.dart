@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     isCardExpanded = [];
-    deadlines = List.generate(100, (index) => null); // Initialize deadlines list
+    deadlines = List.generate(100, (index) => null); 
   }
 
   Future<void> _selectDate(BuildContext context, int index) async {
@@ -57,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     if (picked != null && picked != deadlines[index]) {
       setState(() {
-        deadlines[index] = picked; // Update the deadline for the specific task
+        deadlines[index] = picked;
       });
     }
   }
