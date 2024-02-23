@@ -165,11 +165,15 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
           ),
-          Expanded(
-            child: Container(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              child: const SettingsInterface(),
-            ),
+          Column(
+            children: [
+              Expanded(
+                child: Container(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  child: const SettingsInterface(),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -185,15 +189,23 @@ class SettingsInterface extends StatefulWidget {
 }
 
 class _SettingsInterfaceState extends State<SettingsInterface> {
-  bool switchOneActive = true;
-  bool switchTwoActive = true;
+  // Settings map should be initalised from database NOT hardwired initialistion
+  // On changed value for SwitchSetting should change the value stored in database NOT locally. (Confirm changed button should also be implemented.)
+  Map<String, dynamic> settings = {
+    'Dark Mode' : false,
+    'Setting 2' : false,
+    'Setting 3' : false
+  };
+  
 
   @override
   Widget build(BuildContext context) {
-    return const Column(children: <Widget>[
-      SwitchSetting(settingName: "Setting 1", settingDescription: "This is the first setting description in the app",),
+    print(settings);
+    return Column(children: <Widget>[
+      Text("Settings", style: TextStyle(fontSize: 36),),
+      SwitchSetting(settingName: "Dark Mode", settingDescription: "This is the first setting description in the app", settingsValue: settings['Dark Mode'], onChanged: (value) {setState((){settings['Dark Mode'] = value;});}),
       SettingDivider(),
-      SwitchSetting(settingName: "Setting 2", settingDescription: "This is the second setting description in the app",),
+      SwitchSetting(settingName: "Setting 2", settingDescription: "This is the second setting description in the app", settingsValue: settings['Setting 2'], onChanged: (value) {setState((){settings['Setting 2'] = value;});}),
       SettingDivider(),
       RadioSetting(optionsList: ["Option 1", "Option 2", "Option 3"],)
     ]);

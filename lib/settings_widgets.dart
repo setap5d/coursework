@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 class SwitchSetting extends StatefulWidget {
   final String settingName;
   final String settingDescription;
+  bool settingsValue;
+  final ValueChanged<bool>? onChanged;
 
-  const SwitchSetting({super.key, required this.settingName, this.settingDescription = ""});
+  SwitchSetting({super.key, required this.settingName, this.settingDescription = "", required this.settingsValue, this.onChanged});
   @override
   _SwitchSettingState createState() => _SwitchSettingState();
 }
 
 class _SwitchSettingState extends State<SwitchSetting> {
-  bool switchActive = true;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -29,12 +30,13 @@ class _SwitchSettingState extends State<SwitchSetting> {
             padding: const EdgeInsets.all(16.0),
             child: Switch(
               // This bool value toggles the switch.
-              value: switchActive,
+              value: widget.settingsValue,
               activeColor: Colors.green,
               onChanged: (bool value) {
                 // This is called when the user toggles the switch.
                 setState(() {
-                  switchActive = value;
+                  widget.settingsValue = value;
+                  widget.onChanged!(value);
                 });
               },
             ),
@@ -102,32 +104,6 @@ class _RadioSettingState extends State<RadioSetting> {
           ),
         );
       }).toList(),
-      // children: <Widget>[
-      //   ListTile(
-      //     title: const Text('Lafayette'),
-      //     leading: Radio<SettingOptions>(
-      //       value: SettingOptions.lafayette,
-      //       groupValue: _character,
-      //       onChanged: (SettingOptions? value) {
-      //         setState(() {
-      //           _character = value;
-      //         });
-      //       },
-      //     ),
-      //   ),
-      //   ListTile(
-      //     title: const Text('Thomas Jefferson'),
-      //     leading: Radio<SettingOptions>(
-      //       value: SettingOptions.jefferson,
-      //       groupValue: _character,
-      //       onChanged: (SettingOptions? value) {
-      //         setState(() {
-      //           _character = value;
-      //         });
-      //       },
-      //     ),
-      //   ),
-      // ],
       );
   }
 }
