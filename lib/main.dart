@@ -6,7 +6,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key); // Move the key parameter to the end
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +17,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Flutter Demo Task Page'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key); // Move the key parameter to the end
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -39,6 +39,13 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController taskNameController = TextEditingController();
   TextEditingController taskAssigneesController = TextEditingController();
   DateTime? selectedDeadline;
+  List<bool> isCardExpanded = [];
+
+  @override
+  void initState() {
+    super.initState();
+    isCardExpanded = [];
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -57,93 +64,89 @@ class _MyHomePageState extends State<MyHomePage> {
   void _incrementCounter() {
     setState(() {
       _counter++;
+      isCardExpanded.add(false);
     });
   }
 
-@override
-Widget build(BuildContext context) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  final containerWidth = screenWidth * 0.7;
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final containerWidth = screenWidth * 0.7;
 
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text('Project Title'),
-    ),
-    body: Row(
-      children: [
-        SizedBox(
-          width: 200,
-          child: Drawer(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                ListTile(
-                  title: const Text('Item 1'),
-                  onTap: () {
-                    // 
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  title: const Text('Item 2'),
-                  onTap: () {
-                    //
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Project Title'),
+      ),
+      body: Row(
+        children: [
+          SizedBox(
+            width: 200,
+            child: Drawer(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  ListTile(
+                    title: const Text('Item 1'),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Item 2'),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              height: 700,
-              width: containerWidth,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0), 
-                border: Border.all(
-                  color: const Color.fromARGB(255, 170, 170, 170),
-                  width: 0.5,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                height: 700,
+                width: containerWidth,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  border: Border.all(
+                    color: const Color.fromARGB(255, 170, 170, 170),
+                    width: 0.5,
+                  ),
+                ),
+                child: ListView.builder(
+                  itemCount: _counter,
+                  itemBuilder: (context, index) {
+                    double cardHeight = isCardExpanded[index] ? 200.0 : 70.0;
+
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          isCardExpanded[index] = !isCardExpanded[index];
+                        });
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        height: cardHeight,
+                        child: ProjectCard(
+                          height: cardHeight,
+                          taskName: '${taskNames[index]}',
+                          deadline: selectedDeadline != null
+                              ? '${selectedDeadline!.day}/${selectedDeadline!.month}/${selectedDeadline!.year}'
+                              : 'No Deadline Set',
+                          taskAssignees: '${taskAssignees[index]}',
+                          width: 300,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
-              child: GridView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                physics: const ScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 1,
-                  mainAxisSpacing: 10.0,
-                  crossAxisSpacing: 10,
-                  childAspectRatio: 11.0,
-                ),
-                itemCount: _counter,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      // expand functionality
-                    },
-                    borderRadius: BorderRadius.circular(30),
-                    child: ProjectCard(
-                      taskName: '${taskNames[index]}',
-                      deadline: selectedDeadline != null
-                          ? '${selectedDeadline!.day}/${selectedDeadline!.month}/${selectedDeadline!.year}'
-                          : 'No Deadline Set',
-                      taskAssignees: '${taskAssignees[index]}',
-                      width: 300,
-                      height: 100,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ],
-    ),
-          floatingActionButton: FloatingActionButton(
+            ],
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await showDialog<void>(
             context: context,
