@@ -38,25 +38,26 @@ class _MyHomePageState extends State<MyHomePage> {
   List<dynamic> taskAssignees = [];
   TextEditingController taskNameController = TextEditingController();
   TextEditingController taskAssigneesController = TextEditingController();
-  DateTime? selectedDeadline;
   List<bool> isCardExpanded = [];
+  List<DateTime?> deadlines = [];
 
   @override
   void initState() {
     super.initState();
     isCardExpanded = [];
+    deadlines = List.generate(100, (index) => null); // Initialize deadlines list
   }
 
-  Future<void> _selectDate(BuildContext context) async {
+  Future<void> _selectDate(BuildContext context, int index) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2101),
     );
-    if (picked != null && picked != selectedDeadline) {
+    if (picked != null && picked != deadlines[index]) {
       setState(() {
-        selectedDeadline = picked;
+        deadlines[index] = picked; // Update the deadline for the specific task
       });
     }
   }
@@ -84,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
-                children: <Widget>[
+                children:  <Widget>[
                   ListTile(
                     title: const Text('Item 1'),
                     onTap: () {
@@ -131,8 +132,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: ProjectCard(
                           height: cardHeight,
                           taskName: '${taskNames[index]}',
-                          deadline: selectedDeadline != null
-                              ? '${selectedDeadline!.day}/${selectedDeadline!.month}/${selectedDeadline!.year}'
+                          deadline: deadlines[index] != null
+                              ? '${deadlines[index]!.day}/${deadlines[index]!.month}/${deadlines[index]!.year}'
                               : 'No Deadline Set',
                           taskAssignees: '${taskAssignees[index]}',
                           width: 300,
@@ -176,12 +177,20 @@ class _MyHomePageState extends State<MyHomePage> {
                           padding: const EdgeInsets.all(8),
                           child: TextFormField(
                             controller: taskNameController,
+                            decoration: const InputDecoration(
+                              labelText: 'Task Name',
+                              border: OutlineInputBorder(),
+                            ),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: TextFormField(
                             controller: taskAssigneesController,
+                            decoration: const InputDecoration(
+                              labelText: 'Task Assignees',
+                              border: OutlineInputBorder(),
+                            ),
                           ),
                         ),
                         Padding(
@@ -189,7 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: ElevatedButton(
                             child: const Text('Set Deadline'),
                             onPressed: () {
-                              _selectDate(context);
+                              _selectDate(context, _counter);
                             },
                           ),
                         ),
