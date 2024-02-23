@@ -11,7 +11,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   String name = '';
   String email = '';
-  int phoneNumber = 0;
+  String phoneNumber = '';
   String skills = '';
 
   @override
@@ -45,12 +45,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       labelText: 'Name',
                       border: OutlineInputBorder(),
                     ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.deny(
-                        RegExp(
-                            r"^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{70,}$"),
-                      ),
-                    ],
+                    // inputFormatters: [
+                    //   FilteringTextInputFormatter.deny(
+                    //     RegExp(
+                    //         r"^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{70,}$"),
+                    //   ),
+                    // ],
                     onChanged: (value) {
                       setState(() {
                         name = value;
@@ -67,13 +67,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       labelText: 'E-Mail Address',
                       border: OutlineInputBorder(),
                     ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.deny(
-                        RegExp(
-                            r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"),
-                        // NOT WORKING FIX THIS
-                      ),
-                    ],
+                    // inputFormatters: [
+                    //   FilteringTextInputFormatter.deny(
+                    //     RegExp(
+                    //         r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"),
+                    //     // NOT WORKING FIX THIS
+                    //   ),
+                    // ],
                     onChanged: (value) {
                       setState(() {
                         email = value;
@@ -91,14 +91,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r"^([0-9\(\)\/\+ \-]*)$"),
-                      ),
-                    ],
+                    // inputFormatters: [
+                    //   FilteringTextInputFormatter.allow(
+                    //     RegExp(r"^([0-9\(\)\/\+ \-]*)$"),
+                    //   ),
+                    // ],
                     onChanged: (value) {
                       setState(() {
-                        phoneNumber = int.parse(value);
+                        phoneNumber = value;
                         // Exception here when trying to type a non number or too many numbers
                       });
                     },
@@ -125,9 +125,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ElevatedButton(
                   child: Text('Save Changes'),
                   onPressed: () {
-                    setState(() {
-                      name = 'John Doe';
-                    });
+                    checkInputs(name, email, phoneNumber, skills);
                   },
                 ),
               ],
@@ -139,6 +137,46 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
+void checkInputs(String name, String email, String phoneNumber, String skills) {
+  checkName(name);
+  checkEmail(email);
+  checkPhoneNumber(phoneNumber);
+  checkSkills(skills);
+
+  // query db here if all checks pass. otherwise show user error message
+}
+
+void checkName(String name) {
+  if (name.length >= 5 && name.length <= 20) {
+    print('Success! Name is between 5 and 20 characters.');
+  } else {
+    print('Error! Name is not between 5 and 20 characters.');
+  }
+}
+
+void checkEmail(String email) {
+  if (email.contains('@') && email.contains('.')) {
+    print('Success! Email contains @ and .');
+  } else {
+    print('Error! Email does not contain @ and .');
+  }
+}
+
+void checkPhoneNumber(String phoneNumber) {
+  if (phoneNumber.length == 10) {
+    print('Success! Phone number is 10 digits long.');
+  } else {
+    print('Error! Phone number is not 10 digits long.');
+  }
+}
+
+void checkSkills(String skills) {
+  if (skills.length >= 10 && skills.length <= 100) {
+    print('Success! Skills are between 10 and 100 characters.');
+  } else {
+    print('Error! Skills are not between 10 and 100 characters.');
+  }
+}
 
 
 /*
@@ -147,5 +185,10 @@ NAME VALIDATION: https://stackoverflow.com/questions/2385701/regular-expression-
 
 EMAIL VALIDATION: https://stackoverflow.com/questions/16800540/how-should-i-check-if-the-input-is-an-email-address-in-flutter
 
+
+TO ASK: RegExp or function check?
+
+Look at regular expressions comments, can be removed if checking is done in 
+in backend or checkInput functions
 
 */
