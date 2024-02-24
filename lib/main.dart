@@ -314,10 +314,8 @@ class _MyHomePageState extends State<MyHomePage> {
     print("_buildPage triggered");
     switch (index) {
       case 0:
-        print("case 0 triggered");
         return ProjectsInterface();
       case 2:
-        print("case 2 triggered");
         return SettingsInterface();
       default:
         return Container(); // Default to an empty container or handle the case appropriately

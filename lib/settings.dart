@@ -161,8 +161,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ],
               selectedIndex: 0,
-              onDestinationSelected: (value) {
-              },
+              onDestinationSelected: (value) {},
             ),
           ),
           Column(
@@ -192,22 +191,58 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
   // Settings map should be initalised from database NOT hardwired initialistion
   // On changed value for SwitchSetting should change the value stored in database NOT locally. (Confirm changed button should also be implemented.)
   Map<String, dynamic> settings = {
-    'Dark Mode' : false,
-    'Setting 2' : false,
-    'Setting 3' : false
+    'Dark Mode': false,
+    'Setting 2': false,
+    'Setting 3': false
   };
-  
 
   @override
   Widget build(BuildContext context) {
     print(settings);
     return Column(children: <Widget>[
-      Text("Settings", style: TextStyle(fontSize: 36),),
-      SwitchSetting(settingName: "Dark Mode", settingDescription: "This is the first setting description in the app", settingsValue: settings['Dark Mode'], onChanged: (value) {setState((){settings['Dark Mode'] = value;});}),
-      SettingDivider(),
-      SwitchSetting(settingName: "Setting 2", settingDescription: "This is the second setting description in the app", settingsValue: settings['Setting 2'], onChanged: (value) {setState((){settings['Setting 2'] = value;});}),
-      SettingDivider(),
-      RadioSetting(optionsList: ["Option 1", "Option 2", "Option 3"],)
+      Text(
+        "Settings",
+        style: TextStyle(fontSize: 36),
+      ),
+      Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "Display",
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 26),
+                ),
+                SwitchSetting(
+                    settingName: "Dark Mode",
+                    settingDescription:
+                        "This is the first setting description in the app",
+                    settingsValue: settings['Dark Mode'],
+                    onChanged: (value) {
+                      setState(() {
+                        settings['Dark Mode'] = value;
+                      });
+                    }),
+                SettingDivider(),
+                Text(
+                  "Notifications",
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 26),
+                ),
+                SwitchSetting(
+                    settingName: "Setting 2",
+                    settingDescription:
+                        "This is the second setting description in the app",
+                    settingsValue: settings['Setting 2'],
+                    onChanged: (value) {
+                      setState(() {
+                        settings['Setting 2'] = value;
+                      });
+                    }),
+                SettingDivider(),
+                RadioSetting(
+                  optionsList: ["Option 1", "Option 2", "Option 3"],
+                )
+              ]))
     ]);
   }
 }

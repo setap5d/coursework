@@ -16,15 +16,13 @@ class _SwitchSettingState extends State<SwitchSetting> {
   Widget build(BuildContext context) {
     return Row(
         children: <Widget>[
-          Container(
-            padding: const EdgeInsets.all(16.0),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+         
+          Column(crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
                       Text(widget.settingName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),),
                       Text(widget.settingDescription, style: const TextStyle(fontSize: 18)),
                       ],
                       ),
-          ),
           Expanded(child: Container()),
           Container(
             padding: const EdgeInsets.all(16.0),
