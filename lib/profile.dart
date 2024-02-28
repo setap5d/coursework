@@ -29,141 +29,152 @@ class _ProfilePageState extends State<ProfilePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              // 16:9 resolution
-              width: MediaQuery.of(context).size.width * 0.075 * 0.9,
-              height: MediaQuery.of(context).size.height * 0.075 * 1.6,
-              child: Icon(Icons.person, size: 75, color: Colors.grey),
-            ),
             SizedBox(width: MediaQuery.of(context).size.width * 0.1 * 0.9),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      height: 64,
-                      width: MediaQuery.of(context).size.width * 0.3 * 0.9,
-                      padding: EdgeInsets.only(right: 16),
-                      child: TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'First Name',
-                          border: OutlineInputBorder(),
+            SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 32.0),
+                    child: Text(
+                      'Manage your profile settings here',
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[600]),
+                    ),
+                  ),
+                  Container(
+                    // 16:9 resolution
+                    width: MediaQuery.of(context).size.width * 0.075 * 0.9,
+                    height: MediaQuery.of(context).size.height * 0.075 * 1.6,
+                    child: Icon(Icons.person, size: 75, color: Colors.grey),
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        height: 64,
+                        width: MediaQuery.of(context).size.width * 0.4 * 0.9,
+                        padding: EdgeInsets.only(right: 16),
+                        child: TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'First Name',
+                            border: OutlineInputBorder(),
+                          ),
+                          // inputFormatters: [
+                          //   FilteringTextInputFormatter.deny(
+                          //     RegExp(
+                          //         r"^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{70,}$"),
+                          //   ),
+                          // ],
+                          onChanged: (value) {
+                            setState(() {
+                              fName = value;
+                            });
+                          },
                         ),
-                        // inputFormatters: [
-                        //   FilteringTextInputFormatter.deny(
-                        //     RegExp(
-                        //         r"^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{70,}$"),
-                        //   ),
-                        // ],
-                        onChanged: (value) {
-                          setState(() {
-                            fName = value;
-                          });
-                        },
                       ),
-                    ),
-                    Container(
-                      height: 64,
-                      width: MediaQuery.of(context).size.width * 0.3 * 0.9,
-                      child: TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Last Name',
-                          border: OutlineInputBorder(),
+                      Container(
+                        height: 64,
+                        width: MediaQuery.of(context).size.width * 0.4 * 0.9,
+                        child: TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Last Name',
+                            border: OutlineInputBorder(),
+                          ),
+                          // inputFormatters: [
+                          //   FilteringTextInputFormatter.deny(
+                          //     RegExp(
+                          //         r"^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{70,}$"),
+                          //   ),
+                          // ],
+                          onChanged: (value) {
+                            setState(() {
+                              lName = value;
+                            });
+                          },
                         ),
-                        // inputFormatters: [
-                        //   FilteringTextInputFormatter.deny(
-                        //     RegExp(
-                        //         r"^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{70,}$"),
-                        //   ),
-                        // ],
-                        onChanged: (value) {
-                          setState(() {
-                            lName = value;
-                          });
-                        },
                       ),
+                    ],
+                  ),
+                  SizedBox(height: 32),
+                  Container(
+                    height: 64,
+                    width: MediaQuery.of(context).size.width * 0.8 * 0.9,
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'E-Mail Address',
+                        border: OutlineInputBorder(),
+                      ),
+                      // inputFormatters: [
+                      //   FilteringTextInputFormatter.deny(
+                      //     RegExp(
+                      //         r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"),
+                      //     // NOT WORKING FIX THIS
+                      //   ),
+                      // ],
+                      onChanged: (value) {
+                        setState(() {
+                          email = value;
+                        });
+                      },
                     ),
-                  ],
-                ),
-                SizedBox(height: 16),
-                Container(
-                  height: 64,
-                  width: MediaQuery.of(context).size.width * 0.6 * 0.9,
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'E-Mail Address',
-                      border: OutlineInputBorder(),
+                  ),
+                  SizedBox(height: 32),
+                  Container(
+                    height: 64,
+                    width: MediaQuery.of(context).size.width * 0.8 * 0.9,
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Phone Number',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+                      // inputFormatters: [
+                      //   FilteringTextInputFormatter.allow(
+                      //     RegExp(r"^([0-9\(\)\/\+ \-]*)$"),
+                      //   ),
+                      // ],
+                      onChanged: (value) {
+                        setState(() {
+                          phoneNumber = value;
+                          // Exception here when trying to type a non number or too many numbers
+                        });
+                      },
                     ),
-                    // inputFormatters: [
-                    //   FilteringTextInputFormatter.deny(
-                    //     RegExp(
-                    //         r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"),
-                    //     // NOT WORKING FIX THIS
-                    //   ),
-                    // ],
-                    onChanged: (value) {
-                      setState(() {
-                        email = value;
-                      });
+                  ),
+                  SizedBox(height: 32),
+                  Container(
+                    height: 100,
+                    width: MediaQuery.of(context).size.width * 0.8 * 0.9,
+                    child: TextFormField(
+                      minLines: 1,
+                      maxLines: 6,
+                      decoration: const InputDecoration(
+                        labelText: 'Skills',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          skills = value;
+                        });
+                      },
+                    ),
+                  ),
+                  Text(
+                    errMessage,
+                    style: TextStyle(color: Colors.red, fontSize: 16),
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    child: Text('Save Changes'),
+                    onPressed: () {
+                      checkInputs(fName, lName, email, phoneNumber, skills);
                     },
                   ),
-                ),
-                SizedBox(height: 16),
-                Container(
-                  height: 64,
-                  width: MediaQuery.of(context).size.width * 0.6 * 0.9,
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Phone Number',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                    // inputFormatters: [
-                    //   FilteringTextInputFormatter.allow(
-                    //     RegExp(r"^([0-9\(\)\/\+ \-]*)$"),
-                    //   ),
-                    // ],
-                    onChanged: (value) {
-                      setState(() {
-                        phoneNumber = value;
-                        // Exception here when trying to type a non number or too many numbers
-                      });
-                    },
-                  ),
-                ),
-                SizedBox(height: 16),
-                Container(
-                  height: 100,
-                  width: MediaQuery.of(context).size.width * 0.6 * 0.9,
-                  child: TextFormField(
-                    minLines: 1,
-                    maxLines: 6,
-                    decoration: const InputDecoration(
-                      labelText: 'Skills',
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        skills = value;
-                      });
-                    },
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  errMessage,
-                  style: TextStyle(color: Colors.red, fontSize: 16),
-                ),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  child: Text('Save Changes'),
-                  onPressed: () {
-                    checkInputs(fName, lName, email, phoneNumber, skills);
-                  },
-                ),
-                SizedBox(height: 8),
-              ],
+                  SizedBox(height: 8),
+                ],
+              ),
             ),
           ],
         ),
@@ -174,14 +185,16 @@ class _ProfilePageState extends State<ProfilePage> {
   void checkInputs(String fName, String lName, String email, String phoneNumber,
       String skills) {
     print('#' * 40);
-    errMessage = '';
-    checkName(fName, lName);
-    checkEmail(email);
-    checkPhoneNumber(phoneNumber);
-    checkSkills(skills);
-
-    // query db here if all checks pass. otherwise show user error message
+    setState(() {
+      errMessage = '';
+      checkName(fName, lName);
+      checkEmail(email);
+      checkPhoneNumber(phoneNumber);
+      checkSkills(skills);
+    });
   }
+
+  // query db here if all checks pass. otherwise show user error message
 
   void checkName(String fName, String lName) {
     if ((fName.length >= 2 && fName.length <= 20) &&
@@ -229,5 +242,9 @@ TO ASK: RegExp or function check?
 
 Look at regular expressions comments, can be removed if checking is done in 
 in backend or checkInput functions
+
+Database integration - load and save user data
+
+Image stuff - image upload, network image, load and save image
 
 */
