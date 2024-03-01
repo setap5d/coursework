@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -35,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 32.0),
+                    padding: const EdgeInsets.only(bottom: 16.0),
                     child: Text(
                       'Manage your profile settings here',
                       style: TextStyle(
@@ -44,16 +46,19 @@ class _ProfilePageState extends State<ProfilePage> {
                           color: Colors.grey[600]),
                     ),
                   ),
-                  Container(
-                    // 16:9 resolution
-                    width: MediaQuery.of(context).size.width * 0.075 * 0.9,
-                    height: MediaQuery.of(context).size.height * 0.075 * 1.6,
-                    child: Icon(Icons.person, size: 75, color: Colors.grey),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Container(
+                      // 16:9 resolution
+                      width: MediaQuery.of(context).size.width * 0.075 * 0.9,
+                      height: MediaQuery.of(context).size.height * 0.075 * 1.6,
+                      child: Icon(Icons.person, size: 75, color: Colors.grey),
+                    ),
                   ),
                   Row(
                     children: [
                       Container(
-                        height: 64,
+                        height: 48,
                         width: MediaQuery.of(context).size.width * 0.4 * 0.9,
                         padding: EdgeInsets.only(right: 16),
                         child: TextFormField(
@@ -61,12 +66,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             labelText: 'First Name',
                             border: OutlineInputBorder(),
                           ),
-                          // inputFormatters: [
-                          //   FilteringTextInputFormatter.deny(
-                          //     RegExp(
-                          //         r"^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{70,}$"),
-                          //   ),
-                          // ],
                           onChanged: (value) {
                             setState(() {
                               fName = value;
@@ -75,19 +74,13 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       Container(
-                        height: 64,
+                        height: 48,
                         width: MediaQuery.of(context).size.width * 0.4 * 0.9,
                         child: TextFormField(
                           decoration: const InputDecoration(
                             labelText: 'Last Name',
                             border: OutlineInputBorder(),
                           ),
-                          // inputFormatters: [
-                          //   FilteringTextInputFormatter.deny(
-                          //     RegExp(
-                          //         r"^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{70,}$"),
-                          //   ),
-                          // ],
                           onChanged: (value) {
                             setState(() {
                               lName = value;
@@ -97,22 +90,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 32),
+                  SizedBox(height: 16),
                   Container(
-                    height: 64,
+                    height: 48,
                     width: MediaQuery.of(context).size.width * 0.8 * 0.9,
                     child: TextFormField(
                       decoration: const InputDecoration(
                         labelText: 'E-Mail Address',
                         border: OutlineInputBorder(),
                       ),
-                      // inputFormatters: [
-                      //   FilteringTextInputFormatter.deny(
-                      //     RegExp(
-                      //         r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"),
-                      //     // NOT WORKING FIX THIS
-                      //   ),
-                      // ],
                       onChanged: (value) {
                         setState(() {
                           email = value;
@@ -120,32 +106,26 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                     ),
                   ),
-                  SizedBox(height: 32),
+                  SizedBox(height: 16),
                   Container(
-                    height: 64,
+                    height: 48,
                     width: MediaQuery.of(context).size.width * 0.8 * 0.9,
                     child: TextFormField(
                       decoration: const InputDecoration(
-                        labelText: 'Phone Number',
+                        labelText: 'Phone Number (Optional)',
                         border: OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.number,
-                      // inputFormatters: [
-                      //   FilteringTextInputFormatter.allow(
-                      //     RegExp(r"^([0-9\(\)\/\+ \-]*)$"),
-                      //   ),
-                      // ],
                       onChanged: (value) {
                         setState(() {
                           phoneNumber = value;
-                          // Exception here when trying to type a non number or too many numbers
                         });
                       },
                     ),
                   ),
-                  SizedBox(height: 32),
+                  SizedBox(height: 16),
                   Container(
-                    height: 100,
+                    height: 96,
                     width: MediaQuery.of(context).size.width * 0.8 * 0.9,
                     child: TextFormField(
                       minLines: 1,
@@ -184,50 +164,91 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void checkInputs(String fName, String lName, String email, String phoneNumber,
       String skills) {
-    print('#' * 40);
     setState(() {
       errMessage = '';
-      checkName(fName, lName);
-      checkEmail(email);
-      checkPhoneNumber(phoneNumber);
-      checkSkills(skills);
+      if (isValidName(fName, lName) == true &&
+          isValidEmail(email) == true &&
+          isValidPhoneNumber(phoneNumber) == true &&
+          isValidSkills(skills) == true) {
+        print('All checks passed');
+        // Push to db here
+      } else {
+        print(errMessage);
+        // Remove later, done in check functions
+      }
     });
   }
 
-  // query db here if all checks pass. otherwise show user error message
+  bool isValidName(String fName, String lName) {
+    if (fName.isEmpty || lName.isEmpty) {
+      errMessage = 'Error: First and last name required';
+      return false;
+    }
 
-  void checkName(String fName, String lName) {
-    if ((fName.length >= 2 && fName.length <= 20) &&
-        (lName.length >= 2 && lName.length <= 20)) {
-      print("Success! First and last name is between 2 and 20 characters.");
-    } else {
+    if (!RegExp(r'^[a-zA-Z]+$').hasMatch(fName) ||
+        !RegExp(r'^[a-zA-Z]+$').hasMatch(lName)) {
+      errMessage = 'Error: First and last name may only contain letters (A-Z)';
+      return false;
+    }
+
+    if (!(fName.length >= 2 && fName.length <= 20) ||
+        !(lName.length >= 2 && lName.length <= 20)) {
       errMessage =
-          'Error! First or last name is not between 2 and 20 characters.';
+          'Error: First or last name must be between 2 and 20 characters';
+      return false;
     }
+
+    return true;
   }
 
-  void checkEmail(String email) {
-    if (email.contains('@') && email.contains('.')) {
-      print('Success! Email contains @ and .');
-    } else {
-      errMessage = 'Error! Email does not contain @ and .';
+  bool isValidEmail(String email) {
+    if (email.isEmpty) {
+      errMessage = 'Error: Email required';
+      return false;
     }
+
+    // Check for the presence of '@' and '.'
+    if (!email.contains('@') || !email.contains('.')) {
+      errMessage = 'Error: Email must contain @ and .';
+      return false;
+    }
+
+    // Check that '@' comes before '.'
+    if (email.indexOf('@') > email.lastIndexOf('.')) {
+      errMessage = 'Error: Email is invalid';
+      return false;
+    }
+
+    // Check that there's at least one character before and after '@'
+    if (email.indexOf('@') == 0 || email.indexOf('@') == email.length - 1) {
+      errMessage = 'Error: Email is invalid';
+      return false;
+    }
+
+    return true;
   }
 
-  void checkPhoneNumber(String phoneNumber) {
-    if (phoneNumber.length == 10) {
-      print('Success! Phone number is 10 digits long.');
-    } else {
-      errMessage = 'Error! Phone number is not 10 digits long.';
+  bool isValidPhoneNumber(String phoneNumber) {
+    // Check if the numeric phone number has at least 10 digits (adjust as needed)
+    if (phoneNumber.isNotEmpty) {
+      if (!phoneNumber.contains(RegExp(r'^[0-9]+$'))) {
+        errMessage = 'Error: Phone number may only contain numbers';
+        return false;
+      }
+      if (phoneNumber.length < 10) {
+        errMessage = 'Error: Phone number must be at least 10 digits';
+        return false;
+      }
     }
+    return true;
   }
 
-  void checkSkills(String skills) {
-    if (skills.length >= 10 && skills.length <= 100) {
-      print('Success! Skills are between 10 and 100 characters.');
-    } else {
-      errMessage = 'Error! Skills are not between 10 and 100 characters.';
+  bool isValidSkills(String skills) {
+    if (!(skills.length >= 10 && skills.length <= 100)) {
+      errMessage = 'Error: Skills are not between 10 and 100 characters';
+      return false;
     }
+    return true;
   }
 }
 
@@ -236,12 +257,6 @@ class _ProfilePageState extends State<ProfilePage> {
 NAME VALIDATION: https://stackoverflow.com/questions/2385701/regular-expression-for-first-and-last-name
 
 EMAIL VALIDATION: https://stackoverflow.com/questions/16800540/how-should-i-check-if-the-input-is-an-email-address-in-flutter
-
-
-TO ASK: RegExp or function check?
-
-Look at regular expressions comments, can be removed if checking is done in 
-in backend or checkInput functions
 
 Database integration - load and save user data
 
