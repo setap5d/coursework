@@ -30,7 +30,9 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 191, 222, 255), brightness: Brightness.light),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Color.fromARGB(255, 191, 222, 255),
+            brightness: Brightness.light),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -60,13 +62,13 @@ class _MyHomePageState extends State<MyHomePage> {
   int popUpSemaphore = 0;
   int selectedPageIndex = 0;
 
- void showAccountDetails(BuildContext context) {
+  void showAccountDetails(BuildContext context) {
     late OverlayEntry overlay;
 
     if (popUpSemaphore == 1) {
       return;
     }
-    popUpSemaphore ++;
+    popUpSemaphore++;
 
     overlay = OverlayEntry(
       builder: (BuildContext context) => Positioned(
@@ -92,58 +94,65 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text('Username: Jimothy', 
-                style: TextStyle(
+                Text(
+                  'Username: Jimothy',
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.normal,
                     color: Theme.of(context).colorScheme.onTertiary,
                   ),
-                  ),
+                ),
                 const SizedBox(height: 8),
-                Text('Email: jimothy.doe@example.com',
-                style: TextStyle(
+                Text(
+                  'Email: jimothy.doe@example.com',
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.normal,
                     color: Theme.of(context).colorScheme.onTertiary,
                   ),
-                  ),
+                ),
                 const SizedBox(height: 16),
                 Row(
-                  children: 
-                  [
-                ElevatedButton(
-                  onPressed: () {
-                    overlay.remove();
-                    popUpSemaphore --;
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-                  ),
-                  child: Text('Close',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.normal,
-                    color: Theme.of(context).colorScheme.onTertiaryContainer,
-                  ),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    overlay.remove();
-                    popUpSemaphore --;
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-                  ),
-                  child: Text('Logout',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.normal,
-                    color: Theme.of(context).colorScheme.onTertiaryContainer,
-                  ),
-                  ),
-                ),
-              ],
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        overlay.remove();
+                        popUpSemaphore--;
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.tertiaryContainer,
+                      ),
+                      child: Text(
+                        'Close',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal,
+                          color:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        overlay.remove();
+                        popUpSemaphore--;
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.tertiaryContainer,
+                      ),
+                      child: Text(
+                        'Logout',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal,
+                          color:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -161,20 +170,20 @@ class _MyHomePageState extends State<MyHomePage> {
     if (popUpSemaphore == 1) {
       return;
     }
-    popUpSemaphore ++;
+    popUpSemaphore++;
 
     final List<String> notifications = [
-    'Notification 1',
-    'Notification 2',
-    'Notification 3',
-    'Notification 4',
-    'Notification 5',
-    'Notification 6',
-    'Notification 7',
-    'Notification 8',
-    'Notification 9',
-    'Notification 10',
-  ];
+      'Notification 1',
+      'Notification 2',
+      'Notification 3',
+      'Notification 4',
+      'Notification 5',
+      'Notification 6',
+      'Notification 7',
+      'Notification 8',
+      'Notification 9',
+      'Notification 10',
+    ];
 
     overlay = OverlayEntry(
       builder: (BuildContext context) => Positioned(
@@ -200,49 +209,52 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text('Notifications', 
-                style: TextStyle(
+                Text(
+                  'Notifications',
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.normal,
                     color: Theme.of(context).colorScheme.onTertiary,
                   ),
-                  ),
+                ),
                 const SizedBox(height: 8),
-                Text('NOTIFICATIONS_GO_HERE',
-                style: TextStyle(
+                Text(
+                  'NOTIFICATIONS_GO_HERE',
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.normal,
                     color: Theme.of(context).colorScheme.onTertiary,
                   ),
+                ),
+                Container(
+                  height: 100,
+                  width: 100,
+                  child: ListView.builder(
+                    itemCount: notifications.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        title: Text(notifications[index]),
+                      );
+                    },
                   ),
-                  Container(
-                    height: 100,
-                    width: 100,
-                    child:
-                  ListView.builder(
-          itemCount: notifications.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(notifications[index]),
-            );
-          },
-                  ),
-                  ),
+                ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
                     overlay.remove();
-                    popUpSemaphore --;
+                    popUpSemaphore--;
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.tertiaryContainer,
                   ),
-                  child: Text('Close',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.normal,
-                    color: Theme.of(context).colorScheme.onTertiaryContainer,
-                  ),
+                  child: Text(
+                    'Close',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.normal,
+                      color: Theme.of(context).colorScheme.onTertiaryContainer,
+                    ),
                   ),
                 ),
               ],
@@ -271,7 +283,12 @@ class _MyHomePageState extends State<MyHomePage> {
               backgroundColor: Theme.of(context).colorScheme.inversePrimary,
               extended: false,
               groupAlignment: 1.0,
-              leading: FloatingActionButton(onPressed: () {showAccountDetails(context);}, child: const Icon(Icons.account_circle),),
+              leading: FloatingActionButton(
+                onPressed: () {
+                  showAccountDetails(context);
+                },
+                child: const Icon(Icons.account_circle),
+              ),
               destinations: const [
                 NavigationRailDestination(
                   icon: Icon(Icons.home),
@@ -285,7 +302,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   icon: Icon(Icons.settings),
                   label: Text('Settings'),
                 ),
-
               ],
               selectedIndex: 0,
               onDestinationSelected: (value) {
@@ -309,7 +325,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-   Widget _buildPage(int index) {
+
+  Widget _buildPage(int index) {
     // Return the appropriate widget based on the selectedPageIndex
     print("_buildPage triggered");
     switch (index) {
@@ -327,14 +344,10 @@ class ProjectsInterface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      body: Row(
-        children: [
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        body: Row(children: [
           Text("PROJECTS_INTERFACE",
-          style: Theme.of(context).textTheme.headlineMedium
-          )
-        ]
-      )
-    );
+              style: Theme.of(context).textTheme.headlineMedium)
+        ]));
   }
 }

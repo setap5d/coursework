@@ -32,8 +32,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
     overlay = OverlayEntry(
       builder: (BuildContext context) => Positioned(
-        top: 0, // adjust the top position as needed
-        left: 80, // adjust the left position as needed
+        top: 0,
+        left: 80,
         child: Material(
           color: Colors.transparent,
           child: Container(
@@ -188,61 +188,140 @@ class SettingsInterface extends StatefulWidget {
 }
 
 class _SettingsInterfaceState extends State<SettingsInterface> {
-  // Settings map should be initalised from database NOT hardwired initialistion
-  // On changed value for SwitchSetting should change the value stored in database NOT locally. (Confirm changed button should also be implemented.)
+
+  // FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE
+
+  // Settings map should be initalised from database NOT hardwired initialistion, Widgets are currently configured to work with Map datatype and therefore 
+  // will require reworking if datatype must change for firebase integration
+  // The saveSettingsToFireBase() will be called when the 'Save Changes' elevated button is pressed. The function must be confiured to communicate with Firebase
+
   Map<String, dynamic> settings = {
-    'Dark Mode': false,
-    'Setting 2': false,
-    'Setting 3': false
+    'Display Mode': 'Light Mode',
+    'Notification Badge': false,
+    'Notification Sound': false,
+    'Project Deadline Notifications': true,
+    'Task Deadline Notifications': true,
+    'Ticket Notifications': true
   };
+
+
+  void saveSettingsToFireBase() {}
+
+  // FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE
 
   @override
   Widget build(BuildContext context) {
     print(settings);
-    return Column(children: <Widget>[
-      Text(
-        "Settings",
-        style: TextStyle(fontSize: 36),
-      ),
-      Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  "Display",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 26),
-                ),
-                SwitchSetting(
-                    settingName: "Dark Mode",
-                    settingDescription:
-                        "This is the first setting description in the app",
-                    settingsValue: settings['Dark Mode'],
-                    onChanged: (value) {
-                      setState(() {
-                        settings['Dark Mode'] = value;
-                      });
-                    }),
-                SettingDivider(),
-                Text(
-                  "Notifications",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 26),
-                ),
-                SwitchSetting(
-                    settingName: "Setting 2",
-                    settingDescription:
-                        "This is the second setting description in the app",
-                    settingsValue: settings['Setting 2'],
-                    onChanged: (value) {
-                      setState(() {
-                        settings['Setting 2'] = value;
-                      });
-                    }),
-                SettingDivider(),
-                RadioSetting(
-                  optionsList: ["Option 1", "Option 2", "Option 3"],
-                )
-              ]))
-    ]);
+    return Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+              child: Column(children: <Widget>[
+            const Text(
+              "Settings",
+              style: TextStyle(fontSize: 36),
+            ),
+            Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      const Text(
+                        "Display",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 26),
+                      ),
+                      RadioSetting(
+                        settingName: "Display Mode",
+                        optionsList: [
+                          "Light Mode",
+                          "Dark Mode",
+                          "High Contrast Mode"
+                        ],
+                        onChanged: (selectedOption) {
+                          setState(() {
+                            settings['Display Mode'] = selectedOption;
+                          });
+                          print(selectedOption);
+                        },
+                      ),
+                      const SettingDivider(),
+                      const Text(
+                        "Notifications",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 26),
+                      ),
+                      SwitchSetting(
+                          settingName: "Notification Sound",
+                          settingDescription:
+                              "This is the second setting description in the app",
+                          settingsValue: settings['Notification Sound'],
+                          onChanged: (value) {
+                            setState(() {
+                              settings['Notification Sound'] = value;
+                            });
+                          }),
+                      const SettingDivider(),
+                      SwitchSetting(
+                          settingName: "Notification Badge",
+                          settingDescription:
+                              "This is the second setting description in the app",
+                          settingsValue: settings['Notification Badge'],
+                          onChanged: (value) {
+                            setState(() {
+                              settings['Notification Badge'] = value;
+                            });
+                          }),
+                      const SettingDivider(),
+                      SwitchSetting(
+                          settingName: "Project Deadline Notifications",
+                          settingDescription:
+                              "Enables notifcations for approaching project deadlines",
+                          settingsValue:
+                              settings['Project Deadline Notifications'],
+                          onChanged: (value) {
+                            setState(() {
+                              settings['Project Deadline Notifications'] =
+                                  value;
+                            });
+                          }),
+                      const SettingDivider(),
+                      SwitchSetting(
+                          settingName: "Task Deadline Notifications",
+                          settingDescription:
+                              "Enables notifcations for approaching task deadlines",
+                          settingsValue:
+                              settings['Task Deadline Notifications'],
+                          onChanged: (value) {
+                            setState(() {
+                              settings['Task Deadline Notifications'] = value;
+                            });
+                          }),
+                      const SettingDivider(),
+                      SwitchSetting(
+                          settingName: "Ticket Notifications",
+                          settingDescription:
+                              "Enables notifcations for changes to tickets",
+                          settingsValue: settings['Ticket Notifications'],
+                          onChanged: (value) {
+                            setState(() {
+                              settings['Ticket Notifications'] = value;
+                            });
+                          }),
+                    ]))
+          ])),
+        ),
+        ElevatedButton(
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+            Theme.of(context).colorScheme.inversePrimary,
+          )),
+          onPressed: () {
+            saveSettingsToFireBase();
+          },
+          child: const Text('Save Changes'),
+        ),
+      ],
+    );
   }
 }
