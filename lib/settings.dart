@@ -197,8 +197,6 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
 
   Map<String, dynamic> settings = {
     'Display Mode': 'Light Mode',
-    'Notification Badge': false,
-    'Notification Sound': false,
     'Project Deadline Notifications': true,
     'Task Deadline Notifications': true,
     'Ticket Notifications': true
@@ -233,10 +231,11 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
                       ),
                       RadioSetting(
                         settingName: "Display Mode",
-                        optionsList: [
+                        optionsList: const [
                           "Light Mode",
                           "Dark Mode",
-                          "High Contrast Mode"
+                          "High Contrast Mode",
+                          "Colour Blind Mode"
                         ],
                         onChanged: (selectedOption) {
                           setState(() {
@@ -251,28 +250,6 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
                         style: TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 26),
                       ),
-                      SwitchSetting(
-                          settingName: "Notification Sound",
-                          settingDescription:
-                              "This is the second setting description in the app",
-                          settingsValue: settings['Notification Sound'],
-                          onChanged: (value) {
-                            setState(() {
-                              settings['Notification Sound'] = value;
-                            });
-                          }),
-                      const SettingDivider(),
-                      SwitchSetting(
-                          settingName: "Notification Badge",
-                          settingDescription:
-                              "This is the second setting description in the app",
-                          settingsValue: settings['Notification Badge'],
-                          onChanged: (value) {
-                            setState(() {
-                              settings['Notification Badge'] = value;
-                            });
-                          }),
-                      const SettingDivider(),
                       SwitchSetting(
                           settingName: "Project Deadline Notifications",
                           settingDescription:
