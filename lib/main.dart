@@ -227,6 +227,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       : 'No Deadline Set',
                                   taskAssignees: '${taskAssignees[index]}',
                                   taskDescription: '${taskDescriptions[index]}',
+                                  ticketNames: ticketNamesList[index],
                                   width: 300,
                                   isCardExpanded: isCardExpanded[index],
                                   addTicket: _addTicket,

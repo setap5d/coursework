@@ -5,6 +5,7 @@ class ProjectCard extends StatelessWidget {
   final String deadline;
   final String taskAssignees;
   final String taskDescription;
+  final List<String> ticketNames; // List of ticket names
   final double width;
   final double height;
   final bool isCardExpanded;
@@ -17,6 +18,7 @@ class ProjectCard extends StatelessWidget {
     required this.deadline,
     required this.taskAssignees,
     required this.taskDescription,
+    required this.ticketNames, // Required ticket names parameter
     required this.width,
     required this.height,
     required this.isCardExpanded,
@@ -80,11 +82,27 @@ class ProjectCard extends StatelessWidget {
                           ),
                           Visibility(
                             visible: isCardExpanded,
-                            child: Text(
-                              'Task Description: $taskDescription',
-                              style: const TextStyle(
-                                fontSize: 15,
-                              ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Task Description: $taskDescription',
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                // Display ticket names here
+                                if (ticketNames.isNotEmpty)
+                                  ...ticketNames.map((ticketName) =>
+                                      Text(
+                                        'Ticket: $ticketName',
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )),
+                              ],
                             ),
                           ),
                           if (isCardExpanded) const Spacer(), // Add this line
