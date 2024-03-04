@@ -36,8 +36,10 @@ class _MyHomePageState extends State<MyHomePage> {
   final _formKey = GlobalKey<FormState>();
   List<dynamic> taskNames = [];
   List<dynamic> taskAssignees = [];
+  List<dynamic> taskDescriptions = [];
   TextEditingController taskNameController = TextEditingController();
   TextEditingController taskAssigneesController = TextEditingController();
+  TextEditingController taskDescriptionController = TextEditingController();
   List<bool> isCardExpanded = [];
   List<DateTime?> deadlines = [];
 
@@ -46,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     isCardExpanded = [];
     deadlines = List.generate(100, (index) => null); 
+    taskDescriptions = List.generate(100, (index) => '');
   }
 
   Future<void> _selectDate(BuildContext context, int index) async {
@@ -63,11 +66,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _incrementCounter() {
-    setState(() {
-      _counter++;
-      isCardExpanded.add(false);
-    });
-  }
+  setState(() {
+    _counter++;
+    isCardExpanded.add(false);
+    taskNames.add(taskNameController.text);
+    taskAssignees.add(taskAssigneesController.text);
+    taskDescriptions.add(taskDescriptionController.text); // Initialize description with the entered value
+    deadlines.add(null); // Initialize deadline with null
+  });
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -105,42 +114,52 @@ class _MyHomePageState extends State<MyHomePage> {
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Container(
-                height: 700,
-                width: containerWidth,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  border: Border.all(
-                    color: const Color.fromARGB(255, 170, 170, 170),
-                    width: 0.5,
+              Expanded(
+                child: Container(
+                  height: 700,
+                  width: containerWidth,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    border: Border.all(
+                      color: const Color.fromARGB(255, 170, 170, 170),
+                      width: 0.5,
+                    ),
                   ),
-                ),
-                child: ListView.builder(
-                  itemCount: _counter,
-                  itemBuilder: (context, index) {
-                    double cardHeight = isCardExpanded[index] ? 200.0 : 70.0;
-
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          isCardExpanded[index] = !isCardExpanded[index];
-                        });
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        height: cardHeight,
-                        child: ProjectCard(
-                          height: cardHeight,
-                          taskName: '${taskNames[index]}',
-                          deadline: deadlines[index] != null
-                              ? '${deadlines[index]!.day}/${deadlines[index]!.month}/${deadlines[index]!.year}'
-                              : 'No Deadline Set',
-                          taskAssignees: '${taskAssignees[index]}',
-                          width: 300,
+                    child: ListView.builder(
+                    itemCount: _counter,
+                    itemBuilder: (context, index) {
+                      double cardHeight = isCardExpanded[index] ? 300.0 : 70.0;
+                      return Container(
+                        constraints: BoxConstraints(maxHeight: cardHeight), 
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              isCardExpanded[index] = !isCardExpanded[index];
+                            });
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 0),
+                            height: cardHeight,
+                            child: Column(
+                              children: [
+                                ProjectCard(
+                                  height: cardHeight,
+                                  taskName: '${taskNames[index]}',
+                                  deadline: deadlines[index] != null
+                                      ? '${deadlines[index]!.day}/${deadlines[index]!.month}/${deadlines[index]!.year}'
+                                      : 'No Deadline Set',
+                                  taskAssignees: '${taskAssignees[index]}',
+                                  taskDescription: '${taskDescriptions[index]}',
+                                  width: 300,
+                                  isCardExpanded: isCardExpanded[index],
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
@@ -195,6 +214,16 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8),
+                          child: TextFormField(
+                            controller: taskDescriptionController,
+                            decoration: const InputDecoration(
+                              labelText: 'Task Description',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8),
                           child: ElevatedButton(
                             child: const Text('Set Deadline'),
                             onPressed: () {
@@ -209,8 +238,13 @@ class _MyHomePageState extends State<MyHomePage> {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
-                                taskNames.add(taskNameController.text);
-                                taskAssignees.add(taskAssigneesController.text);
+                                if (_counter < taskDescriptions.length) {
+                                  // Update an existing task description
+                                  taskDescriptions[_counter] = taskDescriptionController.text;
+                                } else {
+                                  // Add a new task description
+                                  taskDescriptions.add(taskDescriptionController.text);
+                                }
                                 _incrementCounter();
                                 Navigator.of(context).pop();
                               }
