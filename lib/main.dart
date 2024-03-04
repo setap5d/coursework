@@ -42,6 +42,82 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController taskDescriptionController = TextEditingController();
   List<bool> isCardExpanded = [];
   List<DateTime?> deadlines = [];
+  List<List<String>> ticketNamesList = [];
+  List<List<String>> ticketDescriptionsList = [];
+
+  void _addTicket(BuildContext context, int index) async {
+  TextEditingController ticketNameController = TextEditingController();
+  TextEditingController ticketDescriptionController = TextEditingController();
+
+  await showDialog<void>(
+    context: context,
+    builder: (context) => AlertDialog(
+      content: Stack(
+        clipBehavior: Clip.none,
+        children: <Widget>[
+          Positioned(
+            right: -40,
+            top: -40,
+            child: InkResponse(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: const CircleAvatar(
+                backgroundColor: Colors.red,
+                child: Icon(Icons.close),
+              ),
+            ),
+          ),
+          Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: TextFormField(
+                    controller: ticketNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Ticket Name',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: TextFormField(
+                    controller: ticketDescriptionController,
+                    decoration: const InputDecoration(
+                      labelText: 'Ticket Description',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: ElevatedButton(
+                    child: const Text('Submit'),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        setState(() {
+                          ticketNamesList[index].add(ticketNameController.text);
+                          ticketDescriptionsList[index].add(ticketDescriptionController.text);
+                        });
+                        Navigator.of(context).pop();
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 
   @override
   void initState() {
@@ -49,6 +125,8 @@ class _MyHomePageState extends State<MyHomePage> {
     isCardExpanded = [];
     deadlines = List.generate(100, (index) => null);
     taskDescriptions = List.generate(100, (index) => '');
+    ticketNamesList = List.generate(100, (index) => []);
+    ticketDescriptionsList = List.generate(100, (index) => []);
   }
 
   Future<void> _selectDate(BuildContext context, int index) async {
@@ -151,6 +229,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   taskDescription: '${taskDescriptions[index]}',
                                   width: 300,
                                   isCardExpanded: isCardExpanded[index],
+                                  addTicket: _addTicket,
+                                  index: index,
                                 ),
                               ],
                             ),

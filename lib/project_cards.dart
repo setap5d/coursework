@@ -8,6 +8,8 @@ class ProjectCard extends StatelessWidget {
   final double width;
   final double height;
   final bool isCardExpanded;
+  final Function(BuildContext context, int index) addTicket;
+  final int index;
 
   const ProjectCard({
     Key? key,
@@ -18,6 +20,8 @@ class ProjectCard extends StatelessWidget {
     required this.width,
     required this.height,
     required this.isCardExpanded,
+    required this.addTicket,
+    required this.index,
   }) : super(key: key);
 
   void _handleMenuSelection(String value) {
@@ -87,7 +91,7 @@ class ProjectCard extends StatelessWidget {
                           if (isCardExpanded)
                             ElevatedButton(
                               onPressed: () {
-                                // Add ticket action
+                                addTicket(context, index);
                               },
                               child: const Text('Add Ticket'),
                             ),
