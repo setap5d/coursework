@@ -47,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     isCardExpanded = [];
-    deadlines = List.generate(100, (index) => null); 
+    deadlines = List.generate(100, (index) => null);
     taskDescriptions = List.generate(100, (index) => '');
   }
 
@@ -66,17 +66,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _incrementCounter() {
-  setState(() {
-    _counter++;
-    isCardExpanded.add(false);
-    taskNames.add(taskNameController.text);
-    taskAssignees.add(taskAssigneesController.text);
-    taskDescriptions.add(taskDescriptionController.text); // Initialize description with the entered value
-    deadlines.add(null); // Initialize deadline with null
-  });
-}
-
-
+    setState(() {
+      _counter++;
+      isCardExpanded.add(false);
+      taskNames.add(taskNameController.text);
+      taskAssignees.add(taskAssigneesController.text);
+      taskDescriptions.add(taskDescriptionController
+          .text); // Initialize description with the entered value
+      deadlines.add(null); // Initialize deadline with null
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
-                children:  <Widget>[
+                children: <Widget>[
                   ListTile(
                     title: const Text('Item 1'),
                     onTap: () {
@@ -125,12 +124,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       width: 0.5,
                     ),
                   ),
-                    child: ListView.builder(
+                  child: ListView.builder(
                     itemCount: _counter,
                     itemBuilder: (context, index) {
                       double cardHeight = isCardExpanded[index] ? 300.0 : 70.0;
                       return Container(
-                        constraints: BoxConstraints(maxHeight: cardHeight), 
+                        constraints: BoxConstraints(maxHeight: cardHeight),
                         child: InkWell(
                           onTap: () {
                             setState(() {
@@ -239,11 +238,11 @@ class _MyHomePageState extends State<MyHomePage> {
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
                                 if (_counter < taskDescriptions.length) {
-                                  // Update an existing task description
-                                  taskDescriptions[_counter] = taskDescriptionController.text;
+                                  taskDescriptions[_counter] =
+                                      taskDescriptionController.text;
                                 } else {
-                                  // Add a new task description
-                                  taskDescriptions.add(taskDescriptionController.text);
+                                  taskDescriptions
+                                      .add(taskDescriptionController.text);
                                 }
                                 _incrementCounter();
                                 Navigator.of(context).pop();
