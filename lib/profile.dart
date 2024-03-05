@@ -2,7 +2,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -21,14 +22,29 @@ class _ProfilePageState extends State<ProfilePage> {
   String skills = '';
   String errMessage = '';
   PlatformFile? selectedImage;
+  UploadTask? uploadTask;
+  late String urlDownload = "";
+  bool newImage = false;
 
   Future uploadImage() async {
     final path = 'files/${selectedImage!.name}'; // Change this to firebase path
     final file = File(selectedImage!.path!);
 
     // Add firebase upload here
-    // final ref = FirebaseStorage.instance.ref().child(path);
-    // ref.putFile(file);
+    final ref = FirebaseStorage.instance.ref().child(path);
+    setState(() {
+      uploadTask = ref.putFile(file);
+    });
+
+    final snapshot = await uploadTask!.whenComplete(() {});
+
+    urlDownload = await snapshot.ref.getDownloadURL();
+    print("upload complete $urlDownload");
+
+    setState(() {
+      uploadTask = null;
+      newImage = true;
+    });
   }
 
   Future selectImage() async {
@@ -217,6 +233,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void checkInputs(String fName, String lName, String email, String phoneNumber,
       String skills) {
+    FirebaseFirestore db = FirebaseFirestore.instance;
     setState(() {
       errMessage = '';
       if (isValidName(fName, lName) == true &&
@@ -224,7 +241,22 @@ class _ProfilePageState extends State<ProfilePage> {
           isValidPhoneNumber(phoneNumber) == true &&
           isValidSkills(skills) == true) {
         print('All checks passed');
-        // Push to db here
+        DocumentReference profileRef =
+            db.collection('Profiles').doc(email.toLowerCase());
+        profileRef.update({
+          "First Name": fName,
+          "Last Name": lName,
+          "Phone Number": phoneNumber,
+          "Skills": skills
+        });
+        if (newImage == true) {
+          DocumentReference pfpRef = db
+              .collection('Profiles')
+              .doc(email)
+              .collection('User')
+              .doc('ProfilePic');
+          pfpRef.set({"Download URL": urlDownload});
+        }
       } else {
         print(errMessage);
         // Remove later, done in check functions
