@@ -207,8 +207,8 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
     // FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE
 
     FirebaseFirestore db = FirebaseFirestore.instance;
-    DocumentReference profileRef = db.collection('Profiles').doc('$email');
-    await profileRef.update(settings);
+    DocumentReference profileRef = db.collection('Profiles').doc('$email').collection('User').doc('Settings');
+    await profileRef.set(settings);
   }
 
   @override
