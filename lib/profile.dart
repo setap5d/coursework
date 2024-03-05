@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'dart:math';
 
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -17,6 +20,28 @@ class _ProfilePageState extends State<ProfilePage> {
   String phoneNumber = '';
   String skills = '';
   String errMessage = '';
+  PlatformFile? selectedImage;
+
+  Future uploadImage() async {
+    final path = 'files/${selectedImage!.name}'; // Change this to firebase path
+    final file = File(selectedImage!.path!);
+
+    // Add firebase upload here
+    // final ref = FirebaseStorage.instance.ref().child(path);
+    // ref.putFile(file);
+  }
+
+  Future selectImage() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+    );
+    if (result == null) return;
+
+    setState(() {
+      selectedImage = result.files.first;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +77,36 @@ class _ProfilePageState extends State<ProfilePage> {
                       // 16:9 resolution
                       width: MediaQuery.of(context).size.width * 0.075 * 0.9,
                       height: MediaQuery.of(context).size.height * 0.075 * 1.6,
-                      child: Icon(Icons.person, size: 75, color: Colors.grey),
+                      child: Expanded(
+                        child: Container(
+                          color: Colors.blue[50],
+                          child: Center(
+                            child: selectedImage != null
+                                ? Image.file(File(selectedImage!.path!))
+                                : Icon(Icons.person, size: 48),
+                          ),
+                        ),
+                      ),
                     ),
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(bottom: 16.0, right: 8.0),
+                        child: ElevatedButton(
+                          child: const Text('Select Image'),
+                          onPressed: selectImage,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: ElevatedButton(
+                          child: const Text('Upload Image'),
+                          onPressed: uploadImage,
+                        ),
+                      ),
+                    ],
                   ),
                   Row(
                     children: [
@@ -260,6 +313,6 @@ EMAIL VALIDATION: https://stackoverflow.com/questions/16800540/how-should-i-chec
 
 Database integration - load and save user data
 
-Image stuff - image upload, network image, load and save image
+Image stuff -  upload to firebase storage
 
 */
