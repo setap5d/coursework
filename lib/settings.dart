@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:setup_application/settings_widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key, required this.title});
@@ -188,10 +189,9 @@ class SettingsInterface extends StatefulWidget {
 }
 
 class _SettingsInterfaceState extends State<SettingsInterface> {
-
   // FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE
 
-  // Settings map should be initalised from database NOT hardwired initialistion, Widgets are currently configured to work with Map datatype and therefore 
+  // Settings map should be initalised from database NOT hardwired initialistion, Widgets are currently configured to work with Map datatype and therefore
   // will require reworking if datatype must change for firebase integration
   // The saveSettingsToFireBase() will be called when the 'Save Changes' elevated button is pressed. The function must be confiured to communicate with Firebase
 
@@ -202,10 +202,14 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
     'Ticket Notifications': true
   };
 
+  Future<void> saveSettingsToFireBase(email, settings) async {
+    //pretty sure parameters are unnecessary here, but email is not a variable yet
+    // FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE
 
-  void saveSettingsToFireBase() {}
-
-  // FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    DocumentReference profileRef = db.collection('Profiles').doc('$email');
+    await profileRef.update(settings);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -294,7 +298,7 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
             Theme.of(context).colorScheme.inversePrimary,
           )),
           onPressed: () {
-            saveSettingsToFireBase();
+            saveSettingsToFireBase('jimothy.doe@example.com', settings);
           },
           child: const Text('Save Changes'),
         ),
