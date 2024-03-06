@@ -252,7 +252,8 @@ class _ProfilePageState extends State<ProfilePage> {
         if (newImage == true) {
           DocumentReference pfpRef = db
               .collection('Profiles')
-              .doc(email)
+              .doc(
+                  email) // This is looking in the db for the input email that the user has entered, need to change to user id inherited from login
               .collection('User')
               .doc('ProfilePic');
           pfpRef.set({"Download URL": urlDownload});
