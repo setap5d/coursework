@@ -3,9 +3,22 @@ import 'package:flutter/material.dart';
 void showNotificationDetails(BuildContext context) {
   late OverlayEntry overlay;
 
+  final List<String> notifications = [
+    'Notification 1',
+    'Notification 2',
+    'Notification 3',
+    'Notification 4',
+    'Notification 5',
+    'Notification 6',
+    'Notification 7',
+    'Notification 8',
+    'Notification 9',
+    'Notification 10',
+  ];
+
   overlay = OverlayEntry(
     builder: (BuildContext context) => Positioned(
-      top: 0, // adjust the top position as needed
+      top: 700, // adjust the top position as needed
       left: 80, // adjust the left position as needed
       child: Material(
         color: Colors.transparent,
@@ -28,7 +41,7 @@ void showNotificationDetails(BuildContext context) {
               ),
               const SizedBox(height: 16),
               Text(
-                'Username: Jimothy',
+                'Notifications',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.normal,
@@ -37,11 +50,23 @@ void showNotificationDetails(BuildContext context) {
               ),
               const SizedBox(height: 8),
               Text(
-                'Email: jimothy.doe@example.com',
+                'NOTIFICATIONS_GO_HERE',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.normal,
                   color: Theme.of(context).colorScheme.onTertiary,
+                ),
+              ),
+              Container(
+                height: 100,
+                width: 100,
+                child: ListView.builder(
+                  itemCount: notifications.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      title: Text(notifications[index]),
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: 16),

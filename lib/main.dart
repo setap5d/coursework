@@ -1,5 +1,7 @@
 import 'package:collapsible_sidebar/collapsible_sidebar.dart';
 import 'package:flutter/material.dart';
+import 'notifications.dart';
+import 'profile.dart';
 
 void main() => runApp(const MyApp());
 
@@ -191,7 +193,7 @@ class _SidebarPageState extends State<SidebarPage> {
       CollapsibleItem(
         text: 'Account',
         icon: Icons.account_circle,
-        onPressed: () => setState(() => _headline = 'Account'),
+        onPressed: () => setState(() => showAccountDetails(context)),
       ),
       CollapsibleItem(
         text: 'Home',
@@ -202,7 +204,7 @@ class _SidebarPageState extends State<SidebarPage> {
       CollapsibleItem(
         text: 'Notifications',
         icon: Icons.notifications,
-        onPressed: () => setState(() => _headline = 'Notifications'),
+        onPressed: () => setState(() => showNotificationDetails(context)),
       ),
       CollapsibleItem(
         text: 'Setting',
