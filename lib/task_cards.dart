@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ProjectCard extends StatelessWidget {
+class TaskCard extends StatelessWidget {
   final String taskName;
   final String deadline;
   final String taskAssignees;
@@ -12,7 +12,7 @@ class ProjectCard extends StatelessWidget {
   final Function(BuildContext context, int index) addTicket;
   final int index;
 
-  const ProjectCard({
+  const TaskCard({
     Key? key,
     required this.taskName,
     required this.deadline,
@@ -91,7 +91,7 @@ class ProjectCard extends StatelessWidget {
                                     fontSize: 15,
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 // Display ticket names here
                                 if (ticketNames.isNotEmpty)
                                   ...ticketNames.map((ticketName) =>
@@ -118,32 +118,34 @@ class ProjectCard extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(255, 213, 213, 213),
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Deadline',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
+                    child: SizedBox(
+                      width: 200, // Set the desired width here
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Deadline',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4.0),
-                        Text(
-                          deadline,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
+                          const SizedBox(height: 4.0),
+                          Text(
+                            deadline,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ],

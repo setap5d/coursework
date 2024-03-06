@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'project_cards.dart';
+import 'task_cards.dart';
 
 void main() {
   runApp(const MyApp());
@@ -83,16 +83,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: TextFormField(
-                    controller: ticketDescriptionController,
-                    decoration: const InputDecoration(
-                      labelText: 'Ticket Description',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(8),
+                //   child: TextFormField(
+                //     controller: ticketDescriptionController,
+                //     decoration: const InputDecoration(
+                //       labelText: 'Ticket Description',
+                //       border: OutlineInputBorder(),
+                //     ),
+                //   ),
+                // ),
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: ElevatedButton(
@@ -219,7 +219,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             height: cardHeight,
                             child: Column(
                               children: [
-                                ProjectCard(
+                                TaskCard(
                                   height: cardHeight,
                                   taskName: '${taskNames[index]}',
                                   deadline: deadlines[index] != null
@@ -326,6 +326,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                       .add(taskDescriptionController.text);
                                 }
                                 _incrementCounter();
+
+                                taskNameController.clear();
+                                taskAssigneesController.clear();
+                                taskDescriptionController.clear();
                                 Navigator.of(context).pop();
                               }
                             },
