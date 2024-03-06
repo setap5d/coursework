@@ -5,7 +5,7 @@ class TaskCard extends StatelessWidget {
   final String deadline;
   final String taskAssignees;
   final String taskDescription;
-  final List<String> ticketNames; // List of ticket names
+  final List<String> ticketNames;
   final double width;
   final double height;
   final bool isCardExpanded;
@@ -18,7 +18,7 @@ class TaskCard extends StatelessWidget {
     required this.deadline,
     required this.taskAssignees,
     required this.taskDescription,
-    required this.ticketNames, // Required ticket names parameter
+    required this.ticketNames,
     required this.width,
     required this.height,
     required this.isCardExpanded,
@@ -94,8 +94,7 @@ class TaskCard extends StatelessWidget {
                                 const SizedBox(height: 8),
                                 // Display ticket names here
                                 if (ticketNames.isNotEmpty)
-                                  ...ticketNames.map((ticketName) =>
-                                      Text(
+                                  ...ticketNames.map((ticketName) => Text(
                                         'Ticket: $ticketName',
                                         style: const TextStyle(
                                           fontSize: 15,
@@ -105,7 +104,7 @@ class TaskCard extends StatelessWidget {
                               ],
                             ),
                           ),
-                          if (isCardExpanded) const Spacer(), // Add this line
+                          if (isCardExpanded) const Spacer(),
                           if (isCardExpanded)
                             ElevatedButton(
                               onPressed: () {
@@ -118,13 +117,14 @@ class TaskCard extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(255, 213, 213, 213),
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: SizedBox(
-                      width: 200, // Set the desired width here
+                      width: 200,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
