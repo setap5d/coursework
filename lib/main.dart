@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:setaplogin/myHomePage.dart';
+import 'package:setaplogin/profile.dart';
+import 'package:setaplogin/task_page.dart';
 import 'firebase_options.dart';
+import 'projectFormat.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -123,9 +127,15 @@ class LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
+    List<dynamic> projectIDs = [];
+    List<Project> projects = [];
+
     return Column(
       children: [
         TextFormField(
+          controller: emailController,
           decoration: InputDecoration(
             labelText: 'Email',
             prefixIcon: Icon(Icons.email),
@@ -135,6 +145,7 @@ class LoginForm extends StatelessWidget {
           height: 15,
         ),
         TextFormField(
+          controller: passwordController,
           decoration: InputDecoration(
             labelText: 'Password',
             prefixIcon: Icon(Icons.lock),
@@ -177,7 +188,68 @@ class LoginForm extends StatelessWidget {
           width: double.infinity,
           height: 50,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () async {
+              final profileSnapshot = await FirebaseFirestore.instance
+                  .collection('Profiles')
+                  .doc(emailController.text)
+                  .get();
+              if (profileSnapshot.exists) {
+                if (profileSnapshot.get('Password') ==
+                    passwordController.text) {
+                    projectIDs = profileSnapshot.get('Project IDs');
+                    for(int i = 0; i < projectIDs.length; i++){
+                      Project newProject = Project();
+                      final projectSnapshot = await FirebaseFirestore.instance.collection('Projects').doc(projectIDs[i]).get();
+                      newProject.projectName = projectSnapshot.get('Title');
+                      newProject.deadline = projectSnapshot.get('Deadline');
+                      newProject.leader = projectSnapshot.get('Project Leader');
+                      projects.add(newProject);
+                    }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            projectsPage(title: 'My Projects', email: emailController.text, projectIDs: projectIDs, projects: projects,)),
+                  );
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('Error'),
+                        content: Text('Password Incorrect.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('Error'),
+                      content: Text('Email does not exist.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('OK'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+            },
             child: Text(
               'Login',
               style: TextStyle(
@@ -200,6 +272,7 @@ class RegisterScreen extends StatelessWidget {
     final TextEditingController usernameController = TextEditingController();
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
+    final List<String> placeholder = [];
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -268,10 +341,16 @@ class RegisterScreen extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () async {
                       try {
-                        final usernameSnapshot = await FirebaseFirestore
+                        /* final usernameSnapshot = await FirebaseFirestore
                             .instance
                             .collection('users')
                             .where('username',
+                                isEqualTo: usernameController.text)
+                            .get(); */
+                        final usernameSnapshot = await FirebaseFirestore
+                            .instance
+                            .collection('Profiles')
+                            .where('Username',
                                 isEqualTo: usernameController.text)
                             .get();
 
@@ -296,12 +375,17 @@ class RegisterScreen extends StatelessWidget {
                           return;
                         }
 
-                        final emailSnapshot = await FirebaseFirestore.instance
+                        /* final emailSnapshot = await FirebaseFirestore.instance
                             .collection('users')
                             .where('email', isEqualTo: emailController.text)
+                            .get(); */
+                        final emailSnapshot = await FirebaseFirestore.instance
+                            .collection('Profiles')
+                            .doc(emailController.text)
                             .get();
 
-                        if (emailSnapshot.docs.isNotEmpty) {
+                        if (emailSnapshot.exists) {
+                          //emailSnapshot.docs.isNotEmpty
                           showDialog(
                             context: context,
                             builder: (context) {
@@ -322,22 +406,29 @@ class RegisterScreen extends StatelessWidget {
                           return;
                         }
 
-                        UserCredential userCredential = await FirebaseAuth
-                            .instance
+                        //UserCredential userCredential =
+                        await FirebaseAuth.instance
                             .createUserWithEmailAndPassword(
                           email: emailController.text,
                           password: passwordController.text,
                         );
 
-                        String userId = userCredential.user!.uid;
+                        /* String userId = userCredential.user!.uid;
 
-                        await FirebaseFirestore.instance
+                         await FirebaseFirestore.instance
                             .collection('users')
                             .doc(userId)
                             .set({
                           'username': usernameController.text,
                           'email': emailController.text,
-                          'password': passwordController.text,
+                          'password': passwordController.text, */
+                        await FirebaseFirestore.instance
+                            .collection('Profiles')
+                            .doc(emailController.text)
+                            .set({
+                          'Username': usernameController.text,
+                          'Password': passwordController.text,
+                          'Project IDs': placeholder
                         });
 
                         Navigator.push(
@@ -395,6 +486,10 @@ class PasswordResetPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController emailController = TextEditingController();
+    String dialogText = '';
+    String titleMessage = '';
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Reset Password'),
@@ -414,6 +509,7 @@ class PasswordResetPage extends StatelessWidget {
               width: 400,
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextFormField(
+                controller: emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',
                   prefixIcon: Icon(Icons.email),
@@ -422,8 +518,36 @@ class PasswordResetPage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 // password reset functionality goes here
+                final emailSnapshot = await FirebaseFirestore.instance
+                    .collection('Profiles')
+                    .doc(emailController.text)
+                    .get();
+                if (emailSnapshot.exists) {
+                  dialogText = 'Password reset email sent';
+                  titleMessage = 'Success!';
+                } else{ 
+                  dialogText = 'Email does not exist';
+                  titleMessage = 'Error!';
+                }
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(titleMessage),
+                      content: Text(dialogText),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('OK'),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               child: Text('Reset Password'),
             ),

@@ -2,18 +2,23 @@ import 'package:flutter/material.dart';
 import 'projectFormat.dart';
 import 'projectTiles.dart';
 import 'shared.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+class projectsPage extends StatefulWidget {
+  const projectsPage({Key? key, required this.title, required this.email, required this.projectIDs, required this.projects}) : super(key: key);
 
   final String title;
+  final String email;
+  final List<dynamic> projectIDs;
+  final List<Project> projects;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<projectsPage> createState() => _projectsPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  List<Project> projects = [];
+class _projectsPageState extends State<projectsPage> {
+  //List<Project> projects = [];
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +55,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisSpacing: 16.0,
                 childAspectRatio: 2,
                 children: [
-                  ...projects.map((project) {
+                  ...widget.projects.map((project) {
                     return ProjectTile(
                       project: project,
                       onDelete: () {
                         setState(() {
-                          projects.remove(project);
+                          widget.projects.remove(project);
                         });
                       },
                     );
@@ -132,10 +137,22 @@ class _MyHomePageState extends State<MyHomePage> {
           actions: <Widget>[
             TextButton(
               child: Text('Save'),
-              onPressed: () {
+              onPressed: () async {
                 setState(() {
-                  projects.add(newProject);
+                  widget.projects.add(newProject);
                 });
+                final projID = FirebaseFirestore.instance.collection('Projects').doc();
+                projID.set({
+                  "Title": newProject.projectName,
+                  "Deadline": newProject.deadline,
+                  "Project Leader": newProject.leader
+                });
+                widget.projectIDs.add(projID.id);
+                print(widget.projectIDs);
+                await FirebaseFirestore.instance.collection('Profiles')
+                  .doc(widget.email).update({
+                    "Project IDs": widget.projectIDs
+                  });
                 Navigator.of(context).pop();
               },
             ),
