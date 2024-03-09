@@ -7,6 +7,7 @@ import 'package:setaplogin/profile.dart';
 import 'package:setaplogin/task_page.dart';
 import 'firebase_options.dart';
 import 'projectFormat.dart';
+import 'settings.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -196,20 +197,23 @@ class LoginForm extends StatelessWidget {
               if (profileSnapshot.exists) {
                 if (profileSnapshot.get('Password') ==
                     passwordController.text) {
-                    projectIDs = profileSnapshot.get('Project IDs');
-                    for(int i = 0; i < projectIDs.length; i++){
-                      Project newProject = Project();
-                      final projectSnapshot = await FirebaseFirestore.instance.collection('Projects').doc(projectIDs[i]).get();
-                      newProject.projectName = projectSnapshot.get('Title');
-                      newProject.deadline = projectSnapshot.get('Deadline');
-                      newProject.leader = projectSnapshot.get('Project Leader');
-                      projects.add(newProject);
-                    }
+                  projectIDs = profileSnapshot.get('Project IDs');
+                  for (int i = 0; i < projectIDs.length; i++) {
+                    Project newProject = Project();
+                    final projectSnapshot = await FirebaseFirestore.instance
+                        .collection('Projects')
+                        .doc(projectIDs[i])
+                        .get();
+                    newProject.projectName = projectSnapshot.get('Title');
+                    newProject.deadline = projectSnapshot.get('Deadline');
+                    newProject.leader = projectSnapshot.get('Project Leader');
+                    projects.add(newProject);
+                  }
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            projectsPage(title: 'My Projects', email: emailController.text, projectIDs: projectIDs, projects: projects,)),
+                      builder: (context) => SettingsPage(title: 'My Projects', email: emailController.text, projectIDs: projectIDs, projects: projects,),
+                    ),
                   );
                 } else {
                   showDialog(
@@ -527,7 +531,7 @@ class PasswordResetPage extends StatelessWidget {
                 if (emailSnapshot.exists) {
                   dialogText = 'Password reset email sent';
                   titleMessage = 'Success!';
-                } else{ 
+                } else {
                   dialogText = 'Email does not exist';
                   titleMessage = 'Error!';
                 }

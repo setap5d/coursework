@@ -66,167 +66,164 @@ class _ProfilePageState extends State<ProfilePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Profile'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(width: MediaQuery.of(context).size.width * 0.1 * 0.9),
-            SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: Text(
-                      'Manage your profile settings here',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[600]),
-                    ),
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(width: MediaQuery.of(context).size.width * 0.1 * 0.9),
+          SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: Text(
+                    'Manage your profile settings here',
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[600]),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: Container(
-                      // 16:9 resolution
-                      width: MediaQuery.of(context).size.width * 0.075 * 0.9,
-                      height: MediaQuery.of(context).size.height * 0.075 * 1.6,
-                      child: Expanded(
-                        child: Container(
-                          color: Colors.blue[50],
-                          child: Center(
-                            child: selectedImage != null
-                                ? Image.file(File(selectedImage!.path!))
-                                : Icon(Icons.person, size: 48),
-                          ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: Container(
+                    // 16:9 resolution
+                    width: MediaQuery.of(context).size.width * 0.075 * 0.9,
+                    height: MediaQuery.of(context).size.height * 0.075 * 1.6,
+                    child: Expanded(
+                      child: Container(
+                        color: Colors.blue[50],
+                        child: Center(
+                          child: selectedImage != null
+                              ? Image.file(File(selectedImage!.path!))
+                              : Icon(Icons.person, size: 48),
                         ),
                       ),
                     ),
                   ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(bottom: 16.0, right: 8.0),
-                        child: ElevatedButton(
-                          child: const Text('Select Image'),
-                          onPressed: selectImage,
-                        ),
+                ),
+                Row(
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(bottom: 16.0, right: 8.0),
+                      child: ElevatedButton(
+                        child: const Text('Select Image'),
+                        onPressed: selectImage,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: ElevatedButton(
-                          child: const Text('Upload Image'),
-                          onPressed: uploadImage,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        height: 48,
-                        width: MediaQuery.of(context).size.width * 0.4 * 0.9,
-                        padding: EdgeInsets.only(right: 16),
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                            labelText: 'First Name',
-                            border: OutlineInputBorder(),
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              fName = value;
-                            });
-                          },
-                        ),
-                      ),
-                      Container(
-                        height: 48,
-                        width: MediaQuery.of(context).size.width * 0.4 * 0.9,
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                            labelText: 'Last Name',
-                            border: OutlineInputBorder(),
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              lName = value;
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16),
-                  Container(
-                    height: 48,
-                    width: MediaQuery.of(context).size.width * 0.8 * 0.9,
-                    child: TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'E-Mail Address',
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          email = value;
-                        });
-                      },
                     ),
-                  ),
-                  SizedBox(height: 16),
-                  Container(
-                    height: 48,
-                    width: MediaQuery.of(context).size.width * 0.8 * 0.9,
-                    child: TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Phone Number (Optional)',
-                        border: OutlineInputBorder(),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: ElevatedButton(
+                        child: const Text('Upload Image'),
+                        onPressed: uploadImage,
                       ),
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        setState(() {
-                          phoneNumber = value;
-                        });
-                      },
                     ),
-                  ),
-                  SizedBox(height: 16),
-                  Container(
-                    height: 96,
-                    width: MediaQuery.of(context).size.width * 0.8 * 0.9,
-                    child: TextFormField(
-                      minLines: 1,
-                      maxLines: 6,
-                      decoration: const InputDecoration(
-                        labelText: 'Skills',
-                        border: OutlineInputBorder(),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Container(
+                      height: 48,
+                      width: MediaQuery.of(context).size.width * 0.4 * 0.9,
+                      padding: EdgeInsets.only(right: 16),
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'First Name',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            fName = value;
+                          });
+                        },
                       ),
-                      onChanged: (value) {
-                        setState(() {
-                          skills = value;
-                        });
-                      },
                     ),
-                  ),
-                  Text(
-                    errMessage,
-                    style: TextStyle(color: Colors.red, fontSize: 16),
-                  ),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    child: Text('Save Changes'),
-                    onPressed: () {
-                      checkInputs(fName, lName, email, phoneNumber, skills);
+                    Container(
+                      height: 48,
+                      width: MediaQuery.of(context).size.width * 0.4 * 0.9,
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Last Name',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            lName = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16),
+                Container(
+                  height: 48,
+                  width: MediaQuery.of(context).size.width * 0.8 * 0.9,
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'E-Mail Address',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        email = value;
+                      });
                     },
                   ),
-                  SizedBox(height: 8),
-                ],
-              ),
+                ),
+                SizedBox(height: 16),
+                Container(
+                  height: 48,
+                  width: MediaQuery.of(context).size.width * 0.8 * 0.9,
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Phone Number (Optional)',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      setState(() {
+                        phoneNumber = value;
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(height: 16),
+                Container(
+                  height: 96,
+                  width: MediaQuery.of(context).size.width * 0.8 * 0.9,
+                  child: TextFormField(
+                    minLines: 1,
+                    maxLines: 6,
+                    decoration: const InputDecoration(
+                      labelText: 'Skills',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        skills = value;
+                      });
+                    },
+                  ),
+                ),
+                Text(
+                  errMessage,
+                  style: TextStyle(color: Colors.red, fontSize: 16),
+                ),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  child: Text('Save Changes'),
+                  onPressed: () {
+                    checkInputs(fName, lName, email, phoneNumber, skills);
+                  },
+                ),
+                SizedBox(height: 8),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
