@@ -40,107 +40,107 @@ class _SettingsPageState extends State<SettingsPage> {
   int popUpSemaphore = 0;
   int _selectedIndex = 1;
 
-  void showAccountDetails(BuildContext context) {
-    late OverlayEntry overlay;
+  // void showAccountDetails(BuildContext context) {
+  //   late OverlayEntry overlay;
 
-    if (popUpSemaphore == 1) {
-      return;
-    }
-    popUpSemaphore++;
+  //   if (popUpSemaphore == 1) {
+  //     return;
+  //   }
+  //   popUpSemaphore++;
 
-    overlay = OverlayEntry(
-      builder: (BuildContext context) => Positioned(
-        top: 0,
-        left: 80,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.tertiary,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'User Details',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onTertiary,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Username: Jimothy',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.normal,
-                    color: Theme.of(context).colorScheme.onTertiary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Email: jimothy.doe@example.com',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.normal,
-                    color: Theme.of(context).colorScheme.onTertiary,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        overlay.remove();
-                        popUpSemaphore--;
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.tertiaryContainer,
-                      ),
-                      child: Text(
-                        'Close',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal,
-                          color:
-                              Theme.of(context).colorScheme.onTertiaryContainer,
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        overlay.remove();
-                        popUpSemaphore--;
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.tertiaryContainer,
-                      ),
-                      child: Text(
-                        'Logout',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal,
-                          color:
-                              Theme.of(context).colorScheme.onTertiaryContainer,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+  //   overlay = OverlayEntry(
+  //     builder: (BuildContext context) => Positioned(
+  //       top: 0,
+  //       left: 80,
+  //       child: Material(
+  //         color: Colors.transparent,
+  //         child: Container(
+  //           padding: const EdgeInsets.all(16),
+  //           decoration: BoxDecoration(
+  //             color: Theme.of(context).colorScheme.tertiary,
+  //             borderRadius: BorderRadius.circular(16),
+  //           ),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               Text(
+  //                 'User Details',
+  //                 style: TextStyle(
+  //                   fontSize: 20,
+  //                   fontWeight: FontWeight.bold,
+  //                   color: Theme.of(context).colorScheme.onTertiary,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 16),
+  //               Text(
+  //                 'Username: Jimothy',
+  //                 style: TextStyle(
+  //                   fontSize: 20,
+  //                   fontWeight: FontWeight.normal,
+  //                   color: Theme.of(context).colorScheme.onTertiary,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 8),
+  //               Text(
+  //                 'Email: jimothy.doe@example.com',
+  //                 style: TextStyle(
+  //                   fontSize: 20,
+  //                   fontWeight: FontWeight.normal,
+  //                   color: Theme.of(context).colorScheme.onTertiary,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 16),
+  //               Row(
+  //                 children: [
+  //                   ElevatedButton(
+  //                     onPressed: () {
+  //                       overlay.remove();
+  //                       popUpSemaphore--;
+  //                     },
+  //                     style: ElevatedButton.styleFrom(
+  //                       backgroundColor:
+  //                           Theme.of(context).colorScheme.tertiaryContainer,
+  //                     ),
+  //                     child: Text(
+  //                       'Close',
+  //                       style: TextStyle(
+  //                         fontSize: 20,
+  //                         fontWeight: FontWeight.normal,
+  //                         color:
+  //                             Theme.of(context).colorScheme.onTertiaryContainer,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   ElevatedButton(
+  //                     onPressed: () {
+  //                       overlay.remove();
+  //                       popUpSemaphore--;
+  //                     },
+  //                     style: ElevatedButton.styleFrom(
+  //                       backgroundColor:
+  //                           Theme.of(context).colorScheme.tertiaryContainer,
+  //                     ),
+  //                     child: Text(
+  //                       'Logout',
+  //                       style: TextStyle(
+  //                         fontSize: 20,
+  //                         fontWeight: FontWeight.normal,
+  //                         color:
+  //                             Theme.of(context).colorScheme.onTertiaryContainer,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
 
-    Overlay.of(context).insert(overlay);
-  }
+  //   Overlay.of(context).insert(overlay);
+  // }
 
 
 
@@ -177,8 +177,12 @@ class _SettingsPageState extends State<SettingsPage> {
               extended: isExtended(),
               groupAlignment: -1.0,
               // leading: FloatingActionButton(
-              //   onPressed: (int index) {
-              //     showAccountDetails(context);
+              //   onPressed: () {
+              //     ProfilePage();
+              //   setState(() {
+              //     _selectedIndex = 2;
+              //   });
+                  
               //   },
               //   child: const Icon(Icons.account_circle),
               // ),

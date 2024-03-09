@@ -126,7 +126,7 @@ class _NotificationsDetailsToolState extends State<NotificationsDetailsTool> {
         children: [
           Positioned(
             top: 0, // adjust the top position as needed
-            left: MediaQuery.of(context).size.width*0.0005, // adjust the left position as needed
+            left: MediaQuery.of(context).size.width*0.005, // adjust the left position as needed
             child: Material(
               color: Colors.transparent,
               child: Container(

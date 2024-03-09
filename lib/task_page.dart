@@ -17,21 +17,25 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Task Page'),
+      home: const MyProjectPage(title: 'Flutter Demo Task Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+class MyProjectPage extends StatefulWidget {
+  const MyProjectPage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyProjectPage> createState() => _MyProjectPageState(projectName: title);
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyProjectPageState extends State<MyProjectPage> {
+  _MyProjectPageState({Key? key, required this.projectName});
+
+  final String projectName;
+
   int _counter = 0;
   final _formKey = GlobalKey<FormState>();
   List<dynamic> taskNames = [];
@@ -152,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Project Title'),
+        title: Text(projectName),
       ),
       body: Row(
         children: [

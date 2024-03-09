@@ -4,9 +4,16 @@ import 'projectTiles.dart';
 import 'shared.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'task_page.dart';
 
 class projectsPage extends StatefulWidget {
-  const projectsPage({Key? key, required this.title, required this.email, required this.projectIDs, required this.projects}) : super(key: key);
+  const projectsPage(
+      {Key? key,
+      required this.title,
+      required this.email,
+      required this.projectIDs,
+      required this.projects})
+      : super(key: key);
 
   final String title;
   final String email;
@@ -32,6 +39,7 @@ class _projectsPageState extends State<projectsPage> {
             textAlign: TextAlign.center,
           ),
         ),
+        automaticallyImplyLeading: false,
         centerTitle: true,
       ),
       body: Row(
@@ -56,13 +64,22 @@ class _projectsPageState extends State<projectsPage> {
                 childAspectRatio: 2,
                 children: [
                   ...widget.projects.map((project) {
-                    return ProjectTile(
-                      project: project,
-                      onDelete: () {
-                        setState(() {
-                          widget.projects.remove(project);
-                        });
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MyProjectPage(title: project.projectName)),
+                        );
                       },
+                      child: ProjectTile(
+                        project: project,
+                        onDelete: () {
+                          setState(() {
+                            widget.projects.remove(project);
+                          });
+                        },
+                      ),
                     );
                   }).toList(),
                 ],
@@ -141,7 +158,8 @@ class _projectsPageState extends State<projectsPage> {
                 setState(() {
                   widget.projects.add(newProject);
                 });
-                final projID = FirebaseFirestore.instance.collection('Projects').doc();
+                final projID =
+                    FirebaseFirestore.instance.collection('Projects').doc();
                 projID.set({
                   "Title": newProject.projectName,
                   "Deadline": newProject.deadline,
@@ -149,10 +167,10 @@ class _projectsPageState extends State<projectsPage> {
                 });
                 widget.projectIDs.add(projID.id);
                 print(widget.projectIDs);
-                await FirebaseFirestore.instance.collection('Profiles')
-                  .doc(widget.email).update({
-                    "Project IDs": widget.projectIDs
-                  });
+                await FirebaseFirestore.instance
+                    .collection('Profiles')
+                    .doc(widget.email)
+                    .update({"Project IDs": widget.projectIDs});
                 Navigator.of(context).pop();
               },
             ),

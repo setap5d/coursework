@@ -64,6 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        automaticallyImplyLeading: false,
         title: const Text('Profile'),
       ),
       body: Row(
@@ -126,7 +127,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     Container(
                       height: 48,
-                      width: MediaQuery.of(context).size.width * 0.4 * 0.9,
+                      width: MediaQuery.of(context).size.width * 0.30,
                       padding: EdgeInsets.only(right: 16),
                       child: TextFormField(
                         decoration: const InputDecoration(
@@ -142,7 +143,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     Container(
                       height: 48,
-                      width: MediaQuery.of(context).size.width * 0.4 * 0.9,
+                      width: MediaQuery.of(context).size.width * 0.30,
                       child: TextFormField(
                         decoration: const InputDecoration(
                           labelText: 'Last Name',
@@ -160,7 +161,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(height: 16),
                 Container(
                   height: 48,
-                  width: MediaQuery.of(context).size.width * 0.8 * 0.9,
+                  width: MediaQuery.of(context).size.width * 0.60,
                   child: TextFormField(
                     decoration: const InputDecoration(
                       labelText: 'E-Mail Address',
@@ -176,7 +177,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(height: 16),
                 Container(
                   height: 48,
-                  width: MediaQuery.of(context).size.width * 0.8 * 0.9,
+                  width: MediaQuery.of(context).size.width * 0.60,
                   child: TextFormField(
                     decoration: const InputDecoration(
                       labelText: 'Phone Number (Optional)',
@@ -193,7 +194,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(height: 16),
                 Container(
                   height: 96,
-                  width: MediaQuery.of(context).size.width * 0.8 * 0.9,
+                  width: MediaQuery.of(context).size.width * 0.60,
                   child: TextFormField(
                     minLines: 1,
                     maxLines: 6,
