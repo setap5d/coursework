@@ -27,7 +27,7 @@ class _AccountDetailsToolState extends State<AccountDetailsTool> {
     _overlayEntry = OverlayEntry(
       builder: (BuildContext context) => Positioned(
         top: 0, // adjust the top position as needed
-        left: 200, // adjust the left position as needed
+        left: MediaQuery.of(context).size.width*0.4, // adjust the left position as needed
         child: Material(
           color: Colors.transparent,
           child: Container(

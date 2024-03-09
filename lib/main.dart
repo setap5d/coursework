@@ -29,6 +29,7 @@ class DeploymentPage extends StatelessWidget {
 }
 
 final itemsFirst = [
+  DrawerItem(title: 'Profile', icon: Icons.account_circle_outlined),
   DrawerItem(title: 'Home', icon: Icons.home),
   DrawerItem(title: 'Notifications', icon: Icons.notifications),
   DrawerItem(title: 'Setting', icon: Icons.settings),
@@ -247,8 +248,8 @@ class NavigationDrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final safeArea =
-        EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top);
+    // final safeArea =
+    //     EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top);
 
     bool isCollapsed = true;
 
@@ -264,9 +265,9 @@ class NavigationDrawerWidget extends StatelessWidget {
     double checkScreenHeight() {
       if (MediaQuery.of(context).size.height <= 400) {
         isCollapsed = false;
-        return MediaQuery.of(context).size.width * 0;
+        return 0;
       } else {
-        return MediaQuery.of(context).size.width;
+        return 850;
       }
     }
 
@@ -278,12 +279,12 @@ class NavigationDrawerWidget extends StatelessWidget {
           color: Color(0xFF1a2f45),
           child: Column(
             children: [
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 24).add(safeArea),
-                width: double.infinity,
-                color: Colors.white12,
-                child: buildHeader(isCollapsed),
-              ),
+              // Container(
+              //   padding: EdgeInsets.symmetric(vertical: 24).add(EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top)),
+              //   width: double.infinity,
+              //   color: Colors.white12,
+              //   child: buildHeader(isCollapsed),
+              // ),
               const SizedBox(height: 24),
               buildList(items: itemsFirst, isCollapsed: isCollapsed),
               const SizedBox(height: 24),
