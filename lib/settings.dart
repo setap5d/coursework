@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'settings_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'myHomePage.dart';
+import 'profile.dart';
+import 'notifications.dart';
+import 'projectTiles.dart';
+import 'projectFormat.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key, required this.title});
+  const SettingsPage({Key? key, required this.title, required this.email, required this.projectIDs, required this.projects}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -15,118 +20,142 @@ class SettingsPage extends StatefulWidget {
   // always marked "final".
 
   final String title;
+  final String email;
+  final List<dynamic> projectIDs;
+  final List<Project> projects;
 
   @override
-  State<SettingsPage> createState() => _SettingsPageState();
+  State<SettingsPage> createState() => _SettingsPageState(title: title, user: email, projectIDs: projectIDs,projects: projects);
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+
+  _SettingsPageState({Key? key, required this.title, required this.user, required this.projectIDs, required this.projects});
+
+  final String title;
+  final String user;
+  final List<dynamic> projectIDs;
+  final List<Project> projects;
+
   int popUpSemaphore = 0;
+  int _selectedIndex = 1;
 
-  void showAccountDetails(BuildContext context) {
-    late OverlayEntry overlay;
+  // void showAccountDetails(BuildContext context) {
+  //   late OverlayEntry overlay;
 
-    if (popUpSemaphore == 1) {
-      return;
-    }
-    popUpSemaphore++;
+  //   if (popUpSemaphore == 1) {
+  //     return;
+  //   }
+  //   popUpSemaphore++;
 
-    overlay = OverlayEntry(
-      builder: (BuildContext context) => Positioned(
-        top: 0,
-        left: 80,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.tertiary,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'User Details',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onTertiary,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Username: Jimothy',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.normal,
-                    color: Theme.of(context).colorScheme.onTertiary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Email: jimothy.doe@example.com',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.normal,
-                    color: Theme.of(context).colorScheme.onTertiary,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        overlay.remove();
-                        popUpSemaphore--;
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.tertiaryContainer,
-                      ),
-                      child: Text(
-                        'Close',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal,
-                          color:
-                              Theme.of(context).colorScheme.onTertiaryContainer,
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        overlay.remove();
-                        popUpSemaphore--;
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.tertiaryContainer,
-                      ),
-                      child: Text(
-                        'Logout',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal,
-                          color:
-                              Theme.of(context).colorScheme.onTertiaryContainer,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+  //   overlay = OverlayEntry(
+  //     builder: (BuildContext context) => Positioned(
+  //       top: 0,
+  //       left: 80,
+  //       child: Material(
+  //         color: Colors.transparent,
+  //         child: Container(
+  //           padding: const EdgeInsets.all(16),
+  //           decoration: BoxDecoration(
+  //             color: Theme.of(context).colorScheme.tertiary,
+  //             borderRadius: BorderRadius.circular(16),
+  //           ),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               Text(
+  //                 'User Details',
+  //                 style: TextStyle(
+  //                   fontSize: 20,
+  //                   fontWeight: FontWeight.bold,
+  //                   color: Theme.of(context).colorScheme.onTertiary,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 16),
+  //               Text(
+  //                 'Username: Jimothy',
+  //                 style: TextStyle(
+  //                   fontSize: 20,
+  //                   fontWeight: FontWeight.normal,
+  //                   color: Theme.of(context).colorScheme.onTertiary,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 8),
+  //               Text(
+  //                 'Email: jimothy.doe@example.com',
+  //                 style: TextStyle(
+  //                   fontSize: 20,
+  //                   fontWeight: FontWeight.normal,
+  //                   color: Theme.of(context).colorScheme.onTertiary,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 16),
+  //               Row(
+  //                 children: [
+  //                   ElevatedButton(
+  //                     onPressed: () {
+  //                       overlay.remove();
+  //                       popUpSemaphore--;
+  //                     },
+  //                     style: ElevatedButton.styleFrom(
+  //                       backgroundColor:
+  //                           Theme.of(context).colorScheme.tertiaryContainer,
+  //                     ),
+  //                     child: Text(
+  //                       'Close',
+  //                       style: TextStyle(
+  //                         fontSize: 20,
+  //                         fontWeight: FontWeight.normal,
+  //                         color:
+  //                             Theme.of(context).colorScheme.onTertiaryContainer,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   ElevatedButton(
+  //                     onPressed: () {
+  //                       overlay.remove();
+  //                       popUpSemaphore--;
+  //                     },
+  //                     style: ElevatedButton.styleFrom(
+  //                       backgroundColor:
+  //                           Theme.of(context).colorScheme.tertiaryContainer,
+  //                     ),
+  //                     child: Text(
+  //                       'Logout',
+  //                       style: TextStyle(
+  //                         fontSize: 20,
+  //                         fontWeight: FontWeight.normal,
+  //                         color:
+  //                             Theme.of(context).colorScheme.onTertiaryContainer,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
 
-    Overlay.of(context).insert(overlay);
-  }
+  //   Overlay.of(context).insert(overlay);
+  // }
+
+
 
   @override
   Widget build(BuildContext context) {
+    
+    final List<Widget> _screens = [ProfilePage(),projectsPage(title: 'My Projects', email: user, projectIDs: projectIDs, projects: projects,),NotificationsDetailsTool(),SettingsInterface(),];
+
+    bool isExtended() {
+      if (MediaQuery.of(context).size.width >= 800) {
+        return true;
+      } else {
+        return false;
+      }
+    }
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -138,16 +167,30 @@ class _SettingsPageState extends State<SettingsPage> {
         children: [
           SafeArea(
             child: NavigationRail(
+              selectedIndex: _selectedIndex,
+              onDestinationSelected: (int index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
               backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-              extended: false,
-              groupAlignment: 1.0,
-              leading: FloatingActionButton(
-                onPressed: () {
-                  showAccountDetails(context);
-                },
-                child: const Icon(Icons.account_circle),
-              ),
+              extended: isExtended(),
+              groupAlignment: -1.0,
+              // leading: FloatingActionButton(
+              //   onPressed: () {
+              //     ProfilePage();
+              //   setState(() {
+              //     _selectedIndex = 2;
+              //   });
+                  
+              //   },
+              //   child: const Icon(Icons.account_circle),
+              // ),
               destinations: const [
+                NavigationRailDestination(
+                  icon: Icon(Icons.account_circle),
+                  label: Text('Profile'),
+                ),
                 NavigationRailDestination(
                   icon: Icon(Icons.home),
                   label: Text('Home'),
@@ -161,19 +204,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   label: Text('Settings'),
                 ),
               ],
-              selectedIndex: 0,
-              onDestinationSelected: (value) {},
             ),
           ),
-          Column(
-            children: [
-              Expanded(
-                child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  child: const SettingsInterface(),
-                ),
-              ),
-            ],
+          Expanded(
+            child:  _screens[_selectedIndex]
           ),
         ],
       ),
