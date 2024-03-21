@@ -9,7 +9,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.web,
   );
-  runApp(MainApp());
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {
@@ -17,7 +17,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: LoginRegisterScreen(),
       debugShowCheckedModeBanner: false,
     );
@@ -32,20 +32,20 @@ class LoginRegisterScreen extends StatefulWidget {
 }
 
 class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
-  bool _showLogin = true;
+  final bool _showLogin = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Container(
-          constraints: BoxConstraints(maxWidth: 400),
+          constraints: const BoxConstraints(maxWidth: 400),
           padding: const EdgeInsets.all(20.0),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10.0),
           ),
-          child: _showLogin ? LoginScreen() : RegisterScreen(),
+          child: _showLogin ? const LoginScreen() : const RegisterScreen(),
         ),
       ),
       floatingActionButton: null,
@@ -69,8 +69,8 @@ class LoginScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 50),
-                Text(
+                const SizedBox(height: 50),
+                const Text(
                   'The App',
                   style: TextStyle(
                     fontSize: 35,
@@ -81,7 +81,7 @@ class LoginScreen extends StatelessWidget {
                 const SizedBox(
                   height: 25,
                 ),
-                LoginForm(),
+                const LoginForm(),
                 const SizedBox(
                   height: 15,
                 ),
@@ -99,10 +99,10 @@ class LoginScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => RegisterScreen()),
+                              builder: (context) => const RegisterScreen()),
                         );
                       },
-                      child: Text(
+                      child: const Text(
                         'Register Here',
                         style: TextStyle(fontSize: 20, color: Colors.blue),
                       ),
@@ -126,7 +126,12 @@ class LoginForm extends StatelessWidget {
     return Column(
       children: [
         TextFormField(
+<<<<<<< Updated upstream
           decoration: InputDecoration(
+=======
+          controller: emailController,
+          decoration: const InputDecoration(
+>>>>>>> Stashed changes
             labelText: 'Email',
             prefixIcon: Icon(Icons.email),
           ),
@@ -135,7 +140,12 @@ class LoginForm extends StatelessWidget {
           height: 15,
         ),
         TextFormField(
+<<<<<<< Updated upstream
           decoration: InputDecoration(
+=======
+          controller: passwordController,
+          decoration: const InputDecoration(
+>>>>>>> Stashed changes
             labelText: 'Password',
             prefixIcon: Icon(Icons.lock),
           ),
@@ -157,10 +167,10 @@ class LoginForm extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PasswordResetPage()),
+                  MaterialPageRoute(builder: (context) => const PasswordResetPage()),
                 );
               },
-              child: Text(
+              child: const Text(
                 'Reset it here',
                 style: TextStyle(
                   fontSize: 16,
@@ -177,8 +187,77 @@ class LoginForm extends StatelessWidget {
           width: double.infinity,
           height: 50,
           child: ElevatedButton(
+<<<<<<< Updated upstream
             onPressed: () {},
             child: Text(
+=======
+            onPressed: () async {
+              final profileSnapshot = await FirebaseFirestore.instance
+                  .collection('Profiles')
+                  .doc(emailController.text)
+                  .get();
+              if (profileSnapshot.exists) {
+                if (profileSnapshot.get('Password') ==
+                    passwordController.text) {
+                  projectIDs = profileSnapshot.get('Project IDs');
+                  for (int i = 0; i < projectIDs.length; i++) {
+                    Project newProject = Project();
+                    final projectSnapshot = await FirebaseFirestore.instance
+                        .collection('Projects')
+                        .doc(projectIDs[i])
+                        .get();
+                    newProject.projectName = projectSnapshot.get('Title');
+                    newProject.deadline = projectSnapshot.get('Deadline');
+                    newProject.leader = projectSnapshot.get('Project Leader');
+                    projects.add(newProject);
+                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SettingsPage(title: 'My Projects', email: emailController.text, projectIDs: projectIDs, projects: projects,),
+                    ),
+                  );
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Error'),
+                        content: const Text('Password Incorrect.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('Error'),
+                      content: const Text('Email does not exist.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+            },
+            child: const Text(
+>>>>>>> Stashed changes
               'Login',
               style: TextStyle(
                 fontSize: 20,
@@ -204,13 +283,13 @@ class RegisterScreen extends StatelessWidget {
     return Scaffold(
       body: SingleChildScrollView(
         child: Center(
-          child: Container(
+          child: SizedBox(
             width: 400,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'The App',
                   style: TextStyle(
                     fontSize: 35,
@@ -223,7 +302,7 @@ class RegisterScreen extends StatelessWidget {
                 ),
                 TextFormField(
                   controller: usernameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Username',
                     prefixIcon: Icon(Icons.person),
                   ),
@@ -233,7 +312,7 @@ class RegisterScreen extends StatelessWidget {
                 ),
                 TextFormField(
                   controller: emailController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Email',
                     prefixIcon: Icon(Icons.email),
                   ),
@@ -243,7 +322,7 @@ class RegisterScreen extends StatelessWidget {
                 ),
                 TextFormField(
                   controller: passwordController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Password',
                     prefixIcon: Icon(Icons.lock),
                   ),
@@ -253,7 +332,7 @@ class RegisterScreen extends StatelessWidget {
                   height: 15,
                 ),
                 TextFormField(
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Confirm Password',
                     prefixIcon: Icon(Icons.lock),
                   ),
@@ -280,14 +359,14 @@ class RegisterScreen extends StatelessWidget {
                             context: context,
                             builder: (context) {
                               return AlertDialog(
-                                title: Text('Error'),
-                                content: Text('Username is already in use.'),
+                                title: const Text('Error'),
+                                content: const Text('Username is already in use.'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
-                                    child: Text('OK'),
+                                    child: const Text('OK'),
                                   ),
                                 ],
                               );
@@ -306,14 +385,14 @@ class RegisterScreen extends StatelessWidget {
                             context: context,
                             builder: (context) {
                               return AlertDialog(
-                                title: Text('Error'),
-                                content: Text('Email is already in use.'),
+                                title: const Text('Error'),
+                                content: const Text('Email is already in use.'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
-                                    child: Text('OK'),
+                                    child: const Text('OK'),
                                   ),
                                 ],
                               );
@@ -343,13 +422,13 @@ class RegisterScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => LoginScreen()),
+                              builder: (context) => const LoginScreen()),
                         );
                       } catch (e) {
                         print(e.toString());
                       }
                     },
-                    child: Text(
+                    child: const Text(
                       'Register',
                       style: TextStyle(
                         fontSize: 20,
@@ -374,7 +453,7 @@ class RegisterScreen extends StatelessWidget {
                       onTap: () {
                         Navigator.pop(context);
                       },
-                      child: Text(
+                      child: const Text(
                         'Login Here',
                         style: TextStyle(fontSize: 20, color: Colors.blue),
                       ),
@@ -397,35 +476,71 @@ class PasswordResetPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reset Password'),
+        title: const Text('Reset Password'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               'Enter your email to reset your password',
               style: TextStyle(
                 fontSize: 20,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container(
               width: 400,
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextFormField(
+<<<<<<< Updated upstream
                 decoration: InputDecoration(
+=======
+                controller: emailController,
+                decoration: const InputDecoration(
+>>>>>>> Stashed changes
                   labelText: 'Email',
                   prefixIcon: Icon(Icons.email),
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 // password reset functionality goes here
+<<<<<<< Updated upstream
+=======
+                final emailSnapshot = await FirebaseFirestore.instance
+                    .collection('Profiles')
+                    .doc(emailController.text)
+                    .get();
+                if (emailSnapshot.exists) {
+                  dialogText = 'Password reset email sent';
+                  titleMessage = 'Success!';
+                } else {
+                  dialogText = 'Email does not exist';
+                  titleMessage = 'Error!';
+                }
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(titleMessage),
+                      content: Text(dialogText),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+>>>>>>> Stashed changes
               },
-              child: Text('Reset Password'),
+              child: const Text('Reset Password'),
             ),
           ],
         ),
