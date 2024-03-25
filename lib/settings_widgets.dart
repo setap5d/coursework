@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 class SwitchSetting extends StatefulWidget {
   final String settingName;
   final String settingDescription;
@@ -26,10 +27,10 @@ class _SwitchSettingState extends State<SwitchSetting> {
           children: <Widget>[
             Text(
               widget.settingName,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20, color: Theme.of(context).colorScheme.onBackground),
             ),
             Text(widget.settingDescription,
-                style: const TextStyle(fontSize: 18)),
+                style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.onBackground)),
           ],
         ),
         Expanded(child: Container()),
@@ -68,10 +69,6 @@ class SettingDivider extends StatelessWidget {
   }
 }
 
-// enum SettingOptions { lafayette, jefferson }
-
-// List<String> optionsList = ["Option 1", "Option 2", "Option 3"];
-
 class RadioSetting extends StatefulWidget {
   final String settingName;
   final List<String> optionsList;
@@ -106,12 +103,12 @@ class _RadioSettingState extends State<RadioSetting> {
       children: <Widget>[
         Text(
           widget.settingName,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20, color: Theme.of(context).colorScheme.onBackground),
         ),
         Column(
           children: optionsList.map((option) {
             return ListTile(
-              title: Text(option, style: const TextStyle(fontSize: 18)),
+              title: Text(option, style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.onBackground)),
               leading: Radio<String>(
                 value: option,
                 groupValue: selectedOption,

@@ -25,6 +25,10 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       home: LoginRegisterScreen(),
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 255, 255)),
+        useMaterial3: true,
+      ),
     );
   }
 }
@@ -47,7 +51,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
           constraints: BoxConstraints(maxWidth: 400),
           padding: const EdgeInsets.all(20.0),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.background,
             borderRadius: BorderRadius.circular(10.0),
           ),
           child: _showLogin ? LoginScreen() : RegisterScreen(),
@@ -64,7 +68,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
         child: Center(
           child: Container(
@@ -79,7 +83,7 @@ class LoginScreen extends StatelessWidget {
                   'The App',
                   style: TextStyle(
                     fontSize: 35,
-                    color: Colors.black,
+                    color: Theme.of(context).colorScheme.onBackground,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -176,7 +180,7 @@ class LoginForm extends StatelessWidget {
                 'Reset it here',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.blue,
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
               ),
             ),
@@ -259,6 +263,7 @@ class LoginForm extends StatelessWidget {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
+                color: Theme.of(context).colorScheme.onBackground
               ),
             ),
           ),
@@ -291,7 +296,7 @@ class RegisterScreen extends StatelessWidget {
                   'The App',
                   style: TextStyle(
                     fontSize: 35,
-                    color: Colors.black,
+                    color: Theme.of(context).colorScheme.onBackground,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -449,6 +454,7 @@ class RegisterScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
+                        color: Theme.of(context).colorScheme.onBackground
                       ),
                     ),
                   ),

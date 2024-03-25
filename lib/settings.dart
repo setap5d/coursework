@@ -9,15 +9,7 @@ import 'projectFormat.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key, required this.title, required this.email, required this.projectIDs, required this.projects}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+  
 
   final String title;
   final String email;
@@ -219,10 +211,10 @@ class SettingsInterface extends StatefulWidget {
   const SettingsInterface({super.key});
 
   @override
-  State<SettingsInterface> createState() => _SettingsInterfaceState();
+  State<SettingsInterface> createState() => SettingsInterfaceState();
 }
 
-class _SettingsInterfaceState extends State<SettingsInterface> {
+class SettingsInterfaceState extends State<SettingsInterface> {
   // FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE
 
   // Settings map should be initalised from database NOT hardwired initialistion, Widgets are currently configured to work with Map datatype and therefore
@@ -248,95 +240,101 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
   @override
   Widget build(BuildContext context) {
     print(settings);
-    return Column(
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-              child: Column(children: <Widget>[
-            const Text(
-              "Settings",
-              style: TextStyle(fontSize: 36),
-            ),
-            Container(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      const Text(
-                        "Display",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 26),
-                      ),
-                      RadioSetting(
-                        settingName: "Display Mode",
-                        optionsList: const [
-                          "Light Mode",
-                          "Dark Mode",
-                          "High Contrast Mode",
-                          "Colour Blind Mode"
-                        ],
-                        onChanged: (selectedOption) {
-                          setState(() {
-                            settings['Display Mode'] = selectedOption;
-                          });
-                          print(selectedOption);
-                        },
-                      ),
-                      const SettingDivider(),
-                      const Text(
-                        "Notifications",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 26),
-                      ),
-                      SwitchSetting(
-                          settingName: "Project Deadline Notifications",
-                          settingDescription:
-                              "Enables notifcations for approaching project deadlines",
-                          settingsValue:
-                              settings['Project Deadline Notifications'],
-                          onChanged: (value) {
+    return Container(
+      color: Theme.of(context).colorScheme.background,
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+                child: Column(children: <Widget>[
+              Text(
+                "Settings",
+                style: TextStyle(fontSize: 36, color: Theme.of(context).colorScheme.onBackground),
+              ),
+              Container(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                         Text(
+                          "Display",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 26,
+                              color: Theme.of(context).colorScheme.onBackground),
+                        ),
+                        RadioSetting(
+                          settingName: "Display Mode",
+                          optionsList: const [
+                            "Light Mode",
+                            "Dark Mode",
+                            "High Contrast Mode",
+                            "Colour Blind Mode"
+                          ],
+                          onChanged: (selectedOption) {
                             setState(() {
-                              settings['Project Deadline Notifications'] =
-                                  value;
+                              settings['Display Mode'] = selectedOption;
                             });
-                          }),
-                      const SettingDivider(),
-                      SwitchSetting(
-                          settingName: "Task Deadline Notifications",
-                          settingDescription:
-                              "Enables notifcations for approaching task deadlines",
-                          settingsValue:
-                              settings['Task Deadline Notifications'],
-                          onChanged: (value) {
-                            setState(() {
-                              settings['Task Deadline Notifications'] = value;
-                            });
-                          }),
-                      const SettingDivider(),
-                      SwitchSetting(
-                          settingName: "Ticket Notifications",
-                          settingDescription:
-                              "Enables notifcations for changes to tickets",
-                          settingsValue: settings['Ticket Notifications'],
-                          onChanged: (value) {
-                            setState(() {
-                              settings['Ticket Notifications'] = value;
-                            });
-                          }),
-                    ]))
-          ])),
-        ),
-        ElevatedButton(
-          style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(
-            Theme.of(context).colorScheme.inversePrimary,
-          )),
-          onPressed: () {
-            saveSettingsToFireBase('jimothy.doe@example.com', settings);
-          },
-          child: const Text('Save Changes'),
-        ),
-      ],
+                            print(selectedOption);
+                          },
+                        ),
+                        const SettingDivider(),
+                        Text(
+                          "Notifications",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 26
+                              ,color: Theme.of(context).colorScheme.onBackground),
+                        ),
+                        SwitchSetting(
+                            settingName: "Project Deadline Notifications",
+                            settingDescription:
+                                "Enables notifcations for approaching project deadlines",
+                            settingsValue:
+                                settings['Project Deadline Notifications'],
+                            onChanged: (value) {
+                              setState(() {
+                                settings['Project Deadline Notifications'] =
+                                    value;
+                              });
+                            }),
+                        const SettingDivider(),
+                        SwitchSetting(
+                            settingName: "Task Deadline Notifications",
+                            settingDescription:
+                                "Enables notifcations for approaching task deadlines",
+                            settingsValue:
+                                settings['Task Deadline Notifications'],
+                            onChanged: (value) {
+                              setState(() {
+                                settings['Task Deadline Notifications'] = value;
+                              });
+                            }),
+                        const SettingDivider(),
+                        SwitchSetting(
+                            settingName: "Ticket Notifications",
+                            settingDescription:
+                                "Enables notifcations for changes to tickets",
+                            settingsValue: settings['Ticket Notifications'],
+                            onChanged: (value) {
+                              setState(() {
+                                settings['Ticket Notifications'] = value;
+                              });
+                            }),
+                      ]))
+            ])),
+          ),
+          ElevatedButton(
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+              Theme.of(context).colorScheme.primary,
+            )),
+            onPressed: () {
+              saveSettingsToFireBase('jimothy.doe@example.com', settings);
+            },
+            child:  Text('Save Changes',
+            style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.onPrimary),),
+          ),
+        ],
+      ),
     );
   }
 }
