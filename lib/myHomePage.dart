@@ -39,7 +39,7 @@ class _projectsPageState extends State<projectsPage> {
             textAlign: TextAlign.center,
           ),
         ),
-        // automaticallyImplyLeading: false,
+        automaticallyImplyLeading: false,
         centerTitle: true,
       ),
       body: Row(

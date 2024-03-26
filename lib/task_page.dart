@@ -157,6 +157,7 @@ class _MyProjectPageState extends State<MyProjectPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(projectName),
+        // automaticallyImplyLeading: false,
       ),
       body: Row(
         children: [
