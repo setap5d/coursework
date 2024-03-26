@@ -8,7 +8,13 @@ import 'projectTiles.dart';
 import 'projectFormat.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({Key? key, required this.title, required this.email, required this.projectIDs, required this.projects}) : super(key: key);
+  const SettingsPage(
+      {Key? key,
+      required this.title,
+      required this.email,
+      required this.projectIDs,
+      required this.projects})
+      : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -25,12 +31,17 @@ class SettingsPage extends StatefulWidget {
   final List<Project> projects;
 
   @override
-  State<SettingsPage> createState() => _SettingsPageState(title: title, user: email, projectIDs: projectIDs,projects: projects);
+  State<SettingsPage> createState() => _SettingsPageState(
+      title: title, user: email, projectIDs: projectIDs, projects: projects);
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-
-  _SettingsPageState({Key? key, required this.title, required this.user, required this.projectIDs, required this.projects});
+  _SettingsPageState(
+      {Key? key,
+      required this.title,
+      required this.user,
+      required this.projectIDs,
+      required this.projects});
 
   final String title;
   final String user;
@@ -40,114 +51,20 @@ class _SettingsPageState extends State<SettingsPage> {
   int popUpSemaphore = 0;
   int _selectedIndex = 1;
 
-  // void showAccountDetails(BuildContext context) {
-  //   late OverlayEntry overlay;
-
-  //   if (popUpSemaphore == 1) {
-  //     return;
-  //   }
-  //   popUpSemaphore++;
-
-  //   overlay = OverlayEntry(
-  //     builder: (BuildContext context) => Positioned(
-  //       top: 0,
-  //       left: 80,
-  //       child: Material(
-  //         color: Colors.transparent,
-  //         child: Container(
-  //           padding: const EdgeInsets.all(16),
-  //           decoration: BoxDecoration(
-  //             color: Theme.of(context).colorScheme.tertiary,
-  //             borderRadius: BorderRadius.circular(16),
-  //           ),
-  //           child: Column(
-  //             mainAxisSize: MainAxisSize.min,
-  //             children: [
-  //               Text(
-  //                 'User Details',
-  //                 style: TextStyle(
-  //                   fontSize: 20,
-  //                   fontWeight: FontWeight.bold,
-  //                   color: Theme.of(context).colorScheme.onTertiary,
-  //                 ),
-  //               ),
-  //               const SizedBox(height: 16),
-  //               Text(
-  //                 'Username: Jimothy',
-  //                 style: TextStyle(
-  //                   fontSize: 20,
-  //                   fontWeight: FontWeight.normal,
-  //                   color: Theme.of(context).colorScheme.onTertiary,
-  //                 ),
-  //               ),
-  //               const SizedBox(height: 8),
-  //               Text(
-  //                 'Email: jimothy.doe@example.com',
-  //                 style: TextStyle(
-  //                   fontSize: 20,
-  //                   fontWeight: FontWeight.normal,
-  //                   color: Theme.of(context).colorScheme.onTertiary,
-  //                 ),
-  //               ),
-  //               const SizedBox(height: 16),
-  //               Row(
-  //                 children: [
-  //                   ElevatedButton(
-  //                     onPressed: () {
-  //                       overlay.remove();
-  //                       popUpSemaphore--;
-  //                     },
-  //                     style: ElevatedButton.styleFrom(
-  //                       backgroundColor:
-  //                           Theme.of(context).colorScheme.tertiaryContainer,
-  //                     ),
-  //                     child: Text(
-  //                       'Close',
-  //                       style: TextStyle(
-  //                         fontSize: 20,
-  //                         fontWeight: FontWeight.normal,
-  //                         color:
-  //                             Theme.of(context).colorScheme.onTertiaryContainer,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   ElevatedButton(
-  //                     onPressed: () {
-  //                       overlay.remove();
-  //                       popUpSemaphore--;
-  //                     },
-  //                     style: ElevatedButton.styleFrom(
-  //                       backgroundColor:
-  //                           Theme.of(context).colorScheme.tertiaryContainer,
-  //                     ),
-  //                     child: Text(
-  //                       'Logout',
-  //                       style: TextStyle(
-  //                         fontSize: 20,
-  //                         fontWeight: FontWeight.normal,
-  //                         color:
-  //                             Theme.of(context).colorScheme.onTertiaryContainer,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-
-  //   Overlay.of(context).insert(overlay);
-  // }
-
-
-
   @override
   Widget build(BuildContext context) {
-    
-    final List<Widget> _screens = [ProfilePage(),projectsPage(title: 'My Projects', email: user, projectIDs: projectIDs, projects: projects,),NotificationsDetailsTool(),SettingsInterface(),];
+    final List<Widget> _screens = [
+      ProfilePage(),
+      projectsPage(
+        title: 'My Projects',
+        email: user,
+        projectIDs: projectIDs,
+        projects: projects,
+      ),
+      NotificationsDetailsTool(),
+      SettingsInterface(),
+      SettingsInterface(),
+    ];
 
     bool isExtended() {
       if (MediaQuery.of(context).size.width >= 800) {
@@ -156,6 +73,7 @@ class _SettingsPageState extends State<SettingsPage> {
         return false;
       }
     }
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -170,7 +88,11 @@ class _SettingsPageState extends State<SettingsPage> {
               selectedIndex: _selectedIndex,
               onDestinationSelected: (int index) {
                 setState(() {
-                  _selectedIndex = index;
+                  if (index == _screens.length - 1) {
+                    Navigator.of(context).pop();
+                  } else {
+                    _selectedIndex = index;
+                  }
                 });
               },
               backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -182,7 +104,7 @@ class _SettingsPageState extends State<SettingsPage> {
               //   setState(() {
               //     _selectedIndex = 2;
               //   });
-                  
+
               //   },
               //   child: const Icon(Icons.account_circle),
               // ),
@@ -203,12 +125,14 @@ class _SettingsPageState extends State<SettingsPage> {
                   icon: Icon(Icons.settings),
                   label: Text('Settings'),
                 ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.logout),
+                  label: Text('Logout'),
+                ),
               ],
             ),
           ),
-          Expanded(
-            child:  _screens[_selectedIndex]
-          ),
+          Expanded(child: _screens[_selectedIndex]),
         ],
       ),
     );
@@ -241,7 +165,11 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
     // FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE
 
     FirebaseFirestore db = FirebaseFirestore.instance;
-    DocumentReference profileRef = db.collection('Profiles').doc('$email').collection('User').doc('Settings');
+    DocumentReference profileRef = db
+        .collection('Profiles')
+        .doc('$email')
+        .collection('User')
+        .doc('Settings');
     await profileRef.set(settings);
   }
 
