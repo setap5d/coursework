@@ -198,6 +198,7 @@ class LoginForm extends StatelessWidget {
                 if (profileSnapshot.get('Password') ==
                     passwordController.text) {
                   projectIDs = profileSnapshot.get('Project IDs');
+                  projects = [];
                   for (int i = 0; i < projectIDs.length; i++) {
                     Project newProject = Project();
                     final projectSnapshot = await FirebaseFirestore.instance
