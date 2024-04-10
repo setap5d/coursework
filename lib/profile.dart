@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final String user;
+  const ProfilePage({required this.user, super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -26,6 +27,18 @@ class _ProfilePageState extends State<ProfilePage> {
   late String urlDownload = "";
   bool newImage = false;
 
+  /*Future getProfileInfo() async {
+    //Gets profile information for the profile page, needs to be initialised on build/before screen move
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    var profRef = await db.collection('Profiles').doc(widget.user).get();
+    email = widget.user;
+    fName = profRef.get('First Name');
+    lName = profRef.get('Last Name');
+    phoneNumber = profRef.get('Phone Number');
+    skills = profRef.get('Skills');
+  }*/
+
+  //Works on desktop but not web
   Future uploadImage() async {
     final path = 'files/${selectedImage!.name}'; // Change this to firebase path
     final file = File(selectedImage!.path!);
@@ -107,8 +120,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Row(
                   children: [
                     Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: 16.0, right: 8.0),
+                      padding: const EdgeInsets.only(bottom: 16.0, right: 8.0),
                       child: ElevatedButton(
                         child: const Text('Select Image'),
                         onPressed: selectImage,
@@ -254,7 +266,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   email) // This is looking in the db for the input email that the user has entered, need to change to user id inherited from login
               .collection('User')
               .doc('ProfilePic');
-          pfpRef.set({"Download URL": urlDownload});
+          pfpRef.update({"Download URL": urlDownload});
         }
       } else {
         print(errMessage);

@@ -213,7 +213,12 @@ class LoginForm extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SettingsPage(title: 'My Projects', email: emailController.text, projectIDs: projectIDs, projects: projects,),
+                      builder: (context) => SettingsPage(
+                        title: 'My Projects',
+                        email: emailController.text,
+                        projectIDs: projectIDs,
+                        projects: projects,
+                      ),
                     ),
                   );
                 } else {
@@ -431,10 +436,30 @@ class RegisterScreen extends StatelessWidget {
                             .collection('Profiles')
                             .doc(emailController.text)
                             .set({
-                          'Username': usernameController.text,
+                          'Username': usernameController
+                              .text, //Change to first name last name when fields updated
                           'Password': passwordController.text,
+                          'Phone Number': null,
+                          'Skills': null,
                           'Project IDs': placeholder
                         });
+                        await FirebaseFirestore.instance
+                            .collection('Profiles')
+                            .doc(emailController.text)
+                            .collection('User')
+                            .doc('Settings')
+                            .set({
+                          'Display Mode': 'Light Mode',
+                          'Project Deadline Notifications': true,
+                          'Task Deadline Notifications': true,
+                          'Ticket Notifications': true
+                        });
+                        await FirebaseFirestore.instance
+                            .collection('Profiles')
+                            .doc(emailController.text)
+                            .collection('User')
+                            .doc('ProfilePic')
+                            .set({"Download URL": null});
 
                         Navigator.push(
                           context,

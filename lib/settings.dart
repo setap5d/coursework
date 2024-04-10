@@ -54,7 +54,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> _screens = [
-      ProfilePage(),
+      ProfilePage(user: user), //Passes the user email
       projectsPage(
         title: 'My Projects',
         email: user,
@@ -160,6 +160,28 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
     'Ticket Notifications': true
   };
 
+  //Function for getting settings from database, needs to be initialised on build/before screen move
+  Future<void> getSettingsFromFireBase(email) async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    db
+        .collection('Profiles')
+        .doc('$email')
+        .collection('User')
+        .doc('Settings')
+        .snapshots()
+        .listen((snapshot) async {
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      settings = {
+        'Display Mode': data['Display Mode'],
+        'Project Deadline Notifications':
+            data['Project Deadline Notifications'],
+        'Task Deadline Notifications': data['Task Deadline Notifications'],
+        'Ticket Notifications': data['Ticket Notifications']
+      };
+    });
+    print(settings);
+  }
+
   Future<void> saveSettingsToFireBase(email, settings) async {
     //pretty sure parameters are unnecessary here, but email is not a variable yet
     // FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE
@@ -260,7 +282,7 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
             Theme.of(context).colorScheme.inversePrimary,
           )),
           onPressed: () {
-            saveSettingsToFireBase('jimothy.doe@example.com', settings);
+            saveSettingsToFireBase('jeremyzuck@gmail.com', settings);
           },
           child: const Text('Save Changes'),
         ),
