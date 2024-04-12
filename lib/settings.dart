@@ -62,8 +62,8 @@ class _SettingsPageState extends State<SettingsPage> {
         projects: projects,
       ),
       NotificationsDetailsTool(),
-      SettingsInterface(),
-      SettingsInterface(),
+      SettingsInterface(email: widget.email),
+      SettingsInterface(email: widget.email),
     ];
 
     bool isExtended() {
@@ -140,7 +140,9 @@ class _SettingsPageState extends State<SettingsPage> {
 }
 
 class SettingsInterface extends StatefulWidget {
-  const SettingsInterface({super.key});
+  const SettingsInterface({required this.email, super.key});
+
+  final String email;
 
   @override
   State<SettingsInterface> createState() => _SettingsInterfaceState();
@@ -183,7 +185,6 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
   }
 
   Future<void> saveSettingsToFireBase(email, settings) async {
-    //pretty sure parameters are unnecessary here, but email is not a variable yet
     // FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE
 
     FirebaseFirestore db = FirebaseFirestore.instance;
@@ -282,7 +283,7 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
             Theme.of(context).colorScheme.inversePrimary,
           )),
           onPressed: () {
-            saveSettingsToFireBase('jeremyzuck@gmail.com', settings);
+            saveSettingsToFireBase(widget.email, settings); //email is incorrect
           },
           child: const Text('Save Changes'),
         ),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'projectFormat.dart';
 import 'projectTiles.dart';
@@ -65,11 +67,47 @@ class _projectsPageState extends State<projectsPage> {
                 children: [
                   ...widget.projects.map((project) {
                     return GestureDetector(
-                      onTap: () {
+                      onTap: () async {
+                        List<dynamic> taskNames = [];
+                        List<dynamic> taskAssignees = [];
+                        List<dynamic> taskDescriptions =
+                            List.generate(100, (index) => '');
+                        List<DateTime?> deadlines =
+                            List.generate(100, (index) => null);
+                        int _counter = 0;
+                        List<bool> isCardExpanded = [];
+                        FirebaseFirestore db = FirebaseFirestore.instance;
+                        final QuerySnapshot<Map<String, dynamic>> tasksQuery =
+                            await db
+                                .collection('Profiles')
+                                .doc(widget.email)
+                                .collection('Tasks')
+                                .get();
+                        tasksQuery.docs.forEach((task) {
+                          taskNames.add(task);
+                          taskDescriptions[_counter] =
+                              task.get('Task Description');
+                          taskAssignees.add(task.get('Task Assignees'));
+                          isCardExpanded.add(false);
+                          if (task.get('Deadline') == null) {
+                            deadlines[_counter] = task.get('Deadline');
+                          } else {
+                            deadlines[_counter] = task.get('Deadline').toDate();
+                          }
+                          _counter++;
+                        });
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => MyProjectPage(title: project.projectName)),
+                              builder: (context) => MyProjectPage(
+                                  title: project.projectName,
+                                  email: widget.email,
+                                  taskNames: taskNames,
+                                  taskAssignees: taskAssignees,
+                                  taskDescriptions: taskDescriptions,
+                                  deadlines: deadlines,
+                                  counter: _counter,
+                                  isCardExpanded: isCardExpanded)),
                         );
                       },
                       child: ProjectTile(

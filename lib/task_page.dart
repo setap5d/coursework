@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'task_cards.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,15 +18,33 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyProjectPage(title: 'Flutter Demo Task Page'),
+      //home: const MyProjectPage(
+      //title: 'Flutter Demo Task Page'),
     );
   }
 }
 
 class MyProjectPage extends StatefulWidget {
-  const MyProjectPage({Key? key, required this.title}) : super(key: key);
+  const MyProjectPage(
+      {Key? key,
+      required this.title,
+      required this.email,
+      required this.taskNames,
+      required this.taskAssignees,
+      required this.taskDescriptions,
+      required this.deadlines,
+      required this.counter,
+      required this.isCardExpanded})
+      : super(key: key);
 
   final String title;
+  final String email;
+  final List<dynamic> taskNames;
+  final List<dynamic> taskAssignees;
+  final List<dynamic> taskDescriptions;
+  final List<DateTime?> deadlines;
+  final int counter;
+  final List<bool> isCardExpanded;
 
   @override
   State<MyProjectPage> createState() => _MyProjectPageState(projectName: title);
@@ -33,19 +52,17 @@ class MyProjectPage extends StatefulWidget {
 
 class _MyProjectPageState extends State<MyProjectPage> {
   _MyProjectPageState({Key? key, required this.projectName});
-
-  final String projectName;
-
   int _counter = 0;
+  final String projectName;
   final _formKey = GlobalKey<FormState>();
-  List<dynamic> taskNames = [];
-  List<dynamic> taskAssignees = [];
-  List<dynamic> taskDescriptions = [];
+  //List<dynamic> taskNames = [];
+  //List<dynamic> taskAssignees = [];
+  //List<dynamic> taskDescriptions = [];
   TextEditingController taskNameController = TextEditingController();
   TextEditingController taskAssigneesController = TextEditingController();
   TextEditingController taskDescriptionController = TextEditingController();
-  List<bool> isCardExpanded = [];
-  List<DateTime?> deadlines = [];
+  //List<bool> isCardExpanded = [];
+  //List<DateTime?> deadlines = [];
   List<List<String>> ticketNamesList = [];
   List<List<String>> ticketDescriptionsList = [];
 
@@ -116,10 +133,11 @@ class _MyProjectPageState extends State<MyProjectPage> {
 
   @override
   void initState() {
+    _counter = widget.counter;
     super.initState();
-    isCardExpanded = [];
-    deadlines = List.generate(100, (index) => null);
-    taskDescriptions = List.generate(100, (index) => '');
+    //isCardExpanded = [];
+    //deadlines = List.generate(100, (index) => null);
+    //taskDescriptions = List.generate(100, (index) => '');
     ticketNamesList = List.generate(100, (index) => []);
     ticketDescriptionsList = List.generate(100, (index) => []);
   }
@@ -131,9 +149,9 @@ class _MyProjectPageState extends State<MyProjectPage> {
       firstDate: DateTime.now(),
       lastDate: DateTime(2101),
     );
-    if (picked != null && picked != deadlines[index]) {
+    if (picked != null && picked != widget.deadlines[index]) {
       setState(() {
-        deadlines[index] = picked;
+        widget.deadlines[index] = picked;
       });
     }
   }
@@ -141,11 +159,11 @@ class _MyProjectPageState extends State<MyProjectPage> {
   void _incrementCounter() {
     setState(() {
       _counter++;
-      isCardExpanded.add(false);
-      taskNames.add(taskNameController.text);
-      taskAssignees.add(taskAssigneesController.text);
-      taskDescriptions.add(taskDescriptionController.text);
-      deadlines.add(null);
+      widget.isCardExpanded.add(false);
+      widget.taskNames.add(taskNameController.text);
+      widget.taskAssignees.add(taskAssigneesController.text);
+      widget.taskDescriptions.add(taskDescriptionController.text);
+      widget.deadlines.add(null);
     });
   }
 
@@ -200,13 +218,15 @@ class _MyProjectPageState extends State<MyProjectPage> {
                   child: ListView.builder(
                     itemCount: _counter,
                     itemBuilder: (context, index) {
-                      double cardHeight = isCardExpanded[index] ? 300.0 : 70.0;
+                      double cardHeight =
+                          widget.isCardExpanded[index] ? 300.0 : 70.0;
                       return Container(
                         constraints: BoxConstraints(maxHeight: cardHeight),
                         child: InkWell(
                           onTap: () {
                             setState(() {
-                              isCardExpanded[index] = !isCardExpanded[index];
+                              widget.isCardExpanded[index] =
+                                  !widget.isCardExpanded[index];
                             });
                           },
                           child: AnimatedContainer(
@@ -216,15 +236,17 @@ class _MyProjectPageState extends State<MyProjectPage> {
                               children: [
                                 TaskCard(
                                   height: cardHeight,
-                                  taskName: '${taskNames[index]}',
-                                  deadline: deadlines[index] != null
-                                      ? '${deadlines[index]!.day}/${deadlines[index]!.month}/${deadlines[index]!.year}'
+                                  taskName: '${widget.taskNames[index]}',
+                                  deadline: widget.deadlines[index] != null
+                                      ? '${widget.deadlines[index]!.day}/${widget.deadlines[index]!.month}/${widget.deadlines[index]!.year}'
                                       : 'No Deadline Set',
-                                  taskAssignees: '${taskAssignees[index]}',
-                                  taskDescription: '${taskDescriptions[index]}',
+                                  taskAssignees:
+                                      '${widget.taskAssignees[index]}',
+                                  taskDescription:
+                                      '${widget.taskDescriptions[index]}',
                                   ticketNames: ticketNamesList[index],
                                   width: 300,
-                                  isCardExpanded: isCardExpanded[index],
+                                  isCardExpanded: widget.isCardExpanded[index],
                                   addTicket: _addTicket,
                                   index: index,
                                 ),
@@ -313,14 +335,30 @@ class _MyProjectPageState extends State<MyProjectPage> {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
-                                if (_counter < taskDescriptions.length) {
-                                  taskDescriptions[_counter] =
+                                if (_counter < widget.taskDescriptions.length) {
+                                  widget.taskDescriptions[_counter] =
                                       taskDescriptionController.text;
                                 } else {
-                                  taskDescriptions
+                                  widget.taskDescriptions
                                       .add(taskDescriptionController.text);
                                 }
                                 _incrementCounter();
+
+                                FirebaseFirestore db =
+                                    FirebaseFirestore.instance;
+                                DocumentReference taskRef = db
+                                    .collection('Profiles')
+                                    .doc(widget.email)
+                                    .collection("Tasks")
+                                    .doc(taskNameController.text);
+                                taskRef.set({
+                                  "Task Assignees":
+                                      taskAssigneesController.text,
+                                  "Task Description":
+                                      taskDescriptionController.text,
+                                  "Deadline": widget.deadlines[_counter - 1]
+                                });
+                                //_incrementCounter();
 
                                 taskNameController.clear();
                                 taskAssigneesController.clear();
