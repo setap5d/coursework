@@ -59,13 +59,23 @@ class _projectsPageState extends State<projectsPage> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: GridView.count(
+              child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 16.0,
+                    mainAxisSpacing: 16.0,
+                    childAspectRatio: 2,
+                  ),
+                  itemCount: widget.projects.length, //item count
+                  itemBuilder: (conext, index) {
+                    var project = widget.projects[index];
+                    /* GridView.count(
                 crossAxisCount: 3,
                 crossAxisSpacing: 16.0,
                 mainAxisSpacing: 16.0,
                 childAspectRatio: 2,
                 children: [
-                  ...widget.projects.map((project) {
+                  ...widget.projects.map((project) { */
                     return GestureDetector(
                       onTap: () async {
                         List<dynamic> taskNames = [];
@@ -79,35 +89,40 @@ class _projectsPageState extends State<projectsPage> {
                         FirebaseFirestore db = FirebaseFirestore.instance;
                         final QuerySnapshot<Map<String, dynamic>> tasksQuery =
                             await db
-                                .collection('Profiles')
-                                .doc(widget.email)
+                                .collection('Projects')
+                                .doc(widget.projectIDs[index])
                                 .collection('Tasks')
                                 .get();
                         tasksQuery.docs.forEach((task) {
-                          taskNames.add(task);
-                          taskDescriptions[_counter] =
-                              task.get('Task Description');
-                          taskAssignees.add(task.get('Task Assignees'));
-                          isCardExpanded.add(false);
-                          if (task.get('Deadline') == null) {
-                            deadlines[_counter] = task.get('Deadline');
-                          } else {
-                            deadlines[_counter] = task.get('Deadline').toDate();
+                          if (task.id != "Placeholder Doc") {
+                            taskNames.add(task.id);
+                            taskDescriptions[_counter] =
+                                task.get('Task Description');
+                            taskAssignees.add(task.get('Task Assignees'));
+                            isCardExpanded.add(false);
+                            if (task.get('Deadline') == null) {
+                              deadlines[_counter] = task.get('Deadline');
+                            } else {
+                              deadlines[_counter] =
+                                  task.get('Deadline').toDate();
+                            }
+                            _counter++;
                           }
-                          _counter++;
                         });
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => MyProjectPage(
-                                  title: project.projectName,
-                                  email: widget.email,
-                                  taskNames: taskNames,
-                                  taskAssignees: taskAssignees,
-                                  taskDescriptions: taskDescriptions,
-                                  deadlines: deadlines,
-                                  counter: _counter,
-                                  isCardExpanded: isCardExpanded)),
+                                    title: project.projectName,
+                                    email: widget.email,
+                                    taskNames: taskNames,
+                                    taskAssignees: taskAssignees,
+                                    taskDescriptions: taskDescriptions,
+                                    deadlines: deadlines,
+                                    counter: _counter,
+                                    isCardExpanded: isCardExpanded,
+                                    projectID: widget.projectIDs[index],
+                                  )),
                         );
                       },
                       child: ProjectTile(
@@ -119,9 +134,9 @@ class _projectsPageState extends State<projectsPage> {
                         },
                       ),
                     );
-                  }).toList(),
-                ],
-              ),
+                  }), //.toList()
+              //],
+              //),
             ),
           ),
         ],
@@ -209,6 +224,10 @@ class _projectsPageState extends State<projectsPage> {
                     .collection('Profiles')
                     .doc(widget.email)
                     .update({"Project IDs": widget.projectIDs});
+                projID
+                    .collection('Tasks')
+                    .doc("Placeholder Doc")
+                    .set({"Title": "Placeholder"});
                 Navigator.of(context).pop();
               },
             ),

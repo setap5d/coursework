@@ -34,7 +34,8 @@ class MyProjectPage extends StatefulWidget {
       required this.taskDescriptions,
       required this.deadlines,
       required this.counter,
-      required this.isCardExpanded})
+      required this.isCardExpanded,
+      required this.projectID})
       : super(key: key);
 
   final String title;
@@ -45,6 +46,7 @@ class MyProjectPage extends StatefulWidget {
   final List<DateTime?> deadlines;
   final int counter;
   final List<bool> isCardExpanded;
+  final String projectID;
 
   @override
   State<MyProjectPage> createState() => _MyProjectPageState(projectName: title);
@@ -347,8 +349,8 @@ class _MyProjectPageState extends State<MyProjectPage> {
                                 FirebaseFirestore db =
                                     FirebaseFirestore.instance;
                                 DocumentReference taskRef = db
-                                    .collection('Profiles')
-                                    .doc(widget.email)
+                                    .collection('Projects')
+                                    .doc(widget.projectID)
                                     .collection("Tasks")
                                     .doc(taskNameController.text);
                                 taskRef.set({
