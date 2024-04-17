@@ -9,7 +9,8 @@ import 'package:flutter/services.dart';
 
 class ProfilePage extends StatefulWidget {
   final String user;
-  const ProfilePage({required this.user, super.key});
+  final List<dynamic> profDetails;
+  const ProfilePage({required this.user, required this.profDetails, super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -70,6 +71,16 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       selectedImage = result.files.first;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fName = widget.profDetails[0];
+    lName = widget.profDetails[1];
+    email = widget.profDetails[2];
+    phoneNumber = widget.profDetails[3];
+    skills = widget.profDetails[4];
   }
 
   @override
@@ -142,6 +153,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: MediaQuery.of(context).size.width * 0.30,
                       padding: EdgeInsets.only(right: 16),
                       child: TextFormField(
+                        initialValue: fName,
                         decoration: const InputDecoration(
                           labelText: 'First Name',
                           border: OutlineInputBorder(),
@@ -157,6 +169,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       height: 48,
                       width: MediaQuery.of(context).size.width * 0.30,
                       child: TextFormField(
+                        initialValue: lName,
                         decoration: const InputDecoration(
                           labelText: 'Last Name',
                           border: OutlineInputBorder(),
@@ -175,6 +188,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   height: 48,
                   width: MediaQuery.of(context).size.width * 0.60,
                   child: TextFormField(
+                    initialValue: email,
                     decoration: const InputDecoration(
                       labelText: 'E-Mail Address',
                       border: OutlineInputBorder(),
@@ -191,6 +205,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   height: 48,
                   width: MediaQuery.of(context).size.width * 0.60,
                   child: TextFormField(
+                    initialValue: phoneNumber,
                     decoration: const InputDecoration(
                       labelText: 'Phone Number (Optional)',
                       border: OutlineInputBorder(),
@@ -208,6 +223,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   height: 96,
                   width: MediaQuery.of(context).size.width * 0.60,
                   child: TextFormField(
+                    initialValue: skills,
                     minLines: 1,
                     maxLines: 6,
                     decoration: const InputDecoration(

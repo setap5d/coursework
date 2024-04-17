@@ -126,12 +126,51 @@ class LoginScreen extends StatelessWidget {
 class LoginForm extends StatelessWidget {
   const LoginForm({Key? key}) : super(key: key);
 
+  Future getProfileInfo(email) async {
+    //Gets profile information for the profile page, needs to be initialised on build/before screen move
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    List<dynamic> profDetails = [];
+    var profRef = await db.collection('Profiles').doc(email).get();
+    profDetails.add(profRef.get('First Name'));
+    profDetails.add(profRef.get('Last Name'));
+    profDetails.add(email);
+    profDetails.add(profRef.get('Phone Number'));
+    profDetails.add(profRef.get('Skills'));
+    return profDetails;
+  }
+
+  Future getSettingsFromFireBase(email) async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    //Map<String, dynamic> settings = {};
+    Map<String, dynamic> data = {};
+    await db
+        .collection('Profiles')
+        .doc('$email')
+        .collection('User')
+        .doc('Settings')
+        .snapshots()
+        .listen((snapshot) async {
+      data = snapshot.data() as Map<String, dynamic>;
+      /* settings = {
+        'Display Mode': data['Display Mode'],
+        'Project Deadline Notifications':
+            data['Project Deadline Notifications'],
+        'Task Deadline Notifications': data['Task Deadline Notifications'],
+        'Ticket Notifications': data['Ticket Notifications']
+      }; */
+    });
+    await Future.delayed(const Duration(milliseconds: 100));
+    return Future.value(data);
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
     List<dynamic> projectIDs = [];
     List<Project> projects = [];
+    List<dynamic> profDetails = [];
+    Map<String, dynamic> settings = {};
 
     return Column(
       children: [
@@ -210,6 +249,9 @@ class LoginForm extends StatelessWidget {
                     newProject.leader = projectSnapshot.get('Project Leader');
                     projects.add(newProject);
                   }
+                  profDetails = await getProfileInfo(emailController.text);
+                  settings =
+                      await getSettingsFromFireBase(emailController.text);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -218,6 +260,8 @@ class LoginForm extends StatelessWidget {
                         email: emailController.text,
                         projectIDs: projectIDs,
                         projects: projects,
+                        profDetails: profDetails,
+                        settings: settings,
                       ),
                     ),
                   );
@@ -436,11 +480,12 @@ class RegisterScreen extends StatelessWidget {
                             .collection('Profiles')
                             .doc(emailController.text)
                             .set({
-                          'Username': usernameController
+                          'First Name': usernameController
                               .text, //Change to first name last name when fields updated
+                          'Last Name': '',
                           'Password': passwordController.text,
-                          'Phone Number': null,
-                          'Skills': null,
+                          'Phone Number': '',
+                          'Skills': '',
                           'Project IDs': placeholder
                         });
                         await FirebaseFirestore.instance

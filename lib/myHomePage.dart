@@ -219,7 +219,6 @@ class _projectsPageState extends State<projectsPage> {
                   "Project Leader": newProject.leader
                 });
                 widget.projectIDs.add(projID.id);
-                print(widget.projectIDs);
                 await FirebaseFirestore.instance
                     .collection('Profiles')
                     .doc(widget.email)

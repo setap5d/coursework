@@ -13,7 +13,9 @@ class SettingsPage extends StatefulWidget {
       required this.title,
       required this.email,
       required this.projectIDs,
-      required this.projects})
+      required this.projects,
+      required this.profDetails,
+      required this.settings})
       : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -29,6 +31,8 @@ class SettingsPage extends StatefulWidget {
   final String email;
   final List<dynamic> projectIDs;
   final List<Project> projects;
+  final List<dynamic> profDetails;
+  final Map<String, dynamic> settings;
 
   @override
   State<SettingsPage> createState() => _SettingsPageState(
@@ -54,7 +58,8 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> _screens = [
-      ProfilePage(user: user), //Passes the user email
+      ProfilePage(
+          user: user, profDetails: widget.profDetails), //Passes the user email
       projectsPage(
         title: 'My Projects',
         email: user,
@@ -62,8 +67,8 @@ class _SettingsPageState extends State<SettingsPage> {
         projects: projects,
       ),
       NotificationsDetailsTool(),
-      SettingsInterface(email: widget.email),
-      SettingsInterface(email: widget.email),
+      SettingsInterface(email: widget.email, settings: widget.settings),
+      SettingsInterface(email: widget.email, settings: widget.settings),
     ];
 
     bool isExtended() {
@@ -140,9 +145,11 @@ class _SettingsPageState extends State<SettingsPage> {
 }
 
 class SettingsInterface extends StatefulWidget {
-  const SettingsInterface({required this.email, super.key});
+  const SettingsInterface(
+      {required this.email, required this.settings, super.key});
 
   final String email;
+  final Map<String, dynamic> settings;
 
   @override
   State<SettingsInterface> createState() => _SettingsInterfaceState();
@@ -155,15 +162,15 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
   // will require reworking if datatype must change for firebase integration
   // The saveSettingsToFireBase() will be called when the 'Save Changes' elevated button is pressed. The function must be confiured to communicate with Firebase
 
-  Map<String, dynamic> settings = {
+/*   Map<String, dynamic> settings = {
     'Display Mode': 'Light Mode',
     'Project Deadline Notifications': true,
     'Task Deadline Notifications': true,
     'Ticket Notifications': true
-  };
+  }; */
 
   //Function for getting settings from database, needs to be initialised on build/before screen move
-  Future<void> getSettingsFromFireBase(email) async {
+/*   Future<void> getSettingsFromFireBase(email) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
     db
         .collection('Profiles')
@@ -182,7 +189,7 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
       };
     });
     print(settings);
-  }
+  } */
 
   Future<void> saveSettingsToFireBase(email, settings) async {
     // FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE
@@ -198,7 +205,7 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
 
   @override
   Widget build(BuildContext context) {
-    print(settings);
+    print(widget.settings);
     return Column(
       children: [
         Expanded(
@@ -226,9 +233,10 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
                           "High Contrast Mode",
                           "Colour Blind Mode"
                         ],
+                        defaultOption: widget.settings['Display Mode'],
                         onChanged: (selectedOption) {
                           setState(() {
-                            settings['Display Mode'] = selectedOption;
+                            widget.settings['Display Mode'] = selectedOption;
                           });
                           print(selectedOption);
                         },
@@ -244,11 +252,11 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
                           settingDescription:
                               "Enables notifcations for approaching project deadlines",
                           settingsValue:
-                              settings['Project Deadline Notifications'],
+                              widget.settings['Project Deadline Notifications'],
                           onChanged: (value) {
                             setState(() {
-                              settings['Project Deadline Notifications'] =
-                                  value;
+                              widget.settings[
+                                  'Project Deadline Notifications'] = value;
                             });
                           }),
                       const SettingDivider(),
@@ -257,10 +265,11 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
                           settingDescription:
                               "Enables notifcations for approaching task deadlines",
                           settingsValue:
-                              settings['Task Deadline Notifications'],
+                              widget.settings['Task Deadline Notifications'],
                           onChanged: (value) {
                             setState(() {
-                              settings['Task Deadline Notifications'] = value;
+                              widget.settings['Task Deadline Notifications'] =
+                                  value;
                             });
                           }),
                       const SettingDivider(),
@@ -268,10 +277,11 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
                           settingName: "Ticket Notifications",
                           settingDescription:
                               "Enables notifcations for changes to tickets",
-                          settingsValue: settings['Ticket Notifications'],
+                          settingsValue:
+                              widget.settings['Ticket Notifications'],
                           onChanged: (value) {
                             setState(() {
-                              settings['Ticket Notifications'] = value;
+                              widget.settings['Ticket Notifications'] = value;
                             });
                           }),
                     ]))
@@ -283,7 +293,8 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
             Theme.of(context).colorScheme.inversePrimary,
           )),
           onPressed: () {
-            saveSettingsToFireBase(widget.email, settings); //email is incorrect
+            saveSettingsToFireBase(
+                widget.email, widget.settings); //email is incorrect
           },
           child: const Text('Save Changes'),
         ),

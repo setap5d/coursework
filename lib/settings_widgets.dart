@@ -75,29 +75,40 @@ class SettingDivider extends StatelessWidget {
 class RadioSetting extends StatefulWidget {
   final String settingName;
   final List<String> optionsList;
+  final String defaultOption;
   final Function(String) onChanged;
 
   const RadioSetting(
       {super.key,
       required this.settingName,
       required this.optionsList,
+      required this.defaultOption,
       required this.onChanged});
 
   @override
   State<RadioSetting> createState() => _RadioSettingState(
-      settingName, optionsList); //FLUTTER DOESN'T LIKE THIS LINE
+      settingName, optionsList, defaultOption); //FLUTTER DOESN'T LIKE THIS LINE
 }
 
 class _RadioSettingState extends State<RadioSetting> {
   final String settingName;
   final List<String> optionsList;
+  final String defaultOption;
   String selectedOption = "";
 
-  _RadioSettingState(this.settingName, this.optionsList);
+  _RadioSettingState(this.settingName, this.optionsList, this.defaultOption);
   @override
   void initState() {
     super.initState();
-    selectedOption = optionsList[0];
+    if (defaultOption == "Light Mode") {
+      selectedOption = optionsList[0];
+    } else if (defaultOption == "Dark Mode") {
+      selectedOption = optionsList[1];
+    } else if (defaultOption == "High Contrast Mode") {
+      selectedOption = optionsList[2];
+    } else if (defaultOption == "Colour Blind Mode") {
+      selectedOption = optionsList[3];
+    }
   }
 
   Widget build(BuildContext context) {
