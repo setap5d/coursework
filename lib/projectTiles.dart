@@ -67,6 +67,8 @@ class _ProjectTileState extends State<ProjectTile> {
                   showDeleteConfirmationDialog(context, widget.onDelete);
                 } else if (value == 'edit') {
                   _showEditDialog(context);
+                } else if (value == 'add_assignees') {
+                  _showAddAssigneesDialog(context);
                 }
               },
               itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -91,11 +93,56 @@ class _ProjectTileState extends State<ProjectTile> {
                     title: Text('Remove'),
                   ),
                 ),
+                const PopupMenuItem<String>(
+                  value: 'add_assignees',
+                  child: ListTile(
+                    leading: Icon(Icons.person_add),
+                    title: Text('Add Assignees'),
+                  ),
+                ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _showAddAssigneesDialog(BuildContext context) async {
+    TextEditingController emailController = TextEditingController();
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add Assignees'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                TextField(
+                  controller: emailController,
+                  decoration: InputDecoration(labelText: 'Email'),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Add'),
+              onPressed: () {
+                // where adding the email to the specified project functionality would go
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

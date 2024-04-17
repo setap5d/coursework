@@ -323,7 +323,8 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController usernameController = TextEditingController();
+    final TextEditingController firstNameController = TextEditingController();
+    final TextEditingController lastNameController = TextEditingController();
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
     final List<String> placeholder = [];
@@ -348,12 +349,28 @@ class RegisterScreen extends StatelessWidget {
                 const SizedBox(
                   height: 25,
                 ),
-                TextFormField(
-                  controller: usernameController,
-                  decoration: InputDecoration(
-                    labelText: 'Username',
-                    prefixIcon: Icon(Icons.person),
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: firstNameController,
+                        decoration: InputDecoration(
+                          labelText: 'First Name',
+                          prefixIcon: Icon(Icons.person),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: TextFormField(
+                        controller: lastNameController,
+                        decoration: InputDecoration(
+                          labelText: 'Last Name',
+                          prefixIcon: Icon(Icons.person),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 15,
@@ -395,26 +412,23 @@ class RegisterScreen extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () async {
                       try {
-                        /* final usernameSnapshot = await FirebaseFirestore
-                            .instance
-                            .collection('users')
-                            .where('username',
-                                isEqualTo: usernameController.text)
-                            .get(); */
-                        final usernameSnapshot = await FirebaseFirestore
+                        final fullName =
+                            '${firstNameController.text} ${lastNameController.text}';
+
+                        final fullNameSnapshot = await FirebaseFirestore
                             .instance
                             .collection('Profiles')
-                            .where('Username',
-                                isEqualTo: usernameController.text)
+                            .where('Full Name', isEqualTo: fullName)
                             .get();
 
-                        if (usernameSnapshot.docs.isNotEmpty) {
+                        if (fullNameSnapshot.docs.isNotEmpty) {
                           showDialog(
                             context: context,
                             builder: (context) {
                               return AlertDialog(
                                 title: Text('Error'),
-                                content: Text('Username is already in use.'),
+                                content:
+                                    Text('This name is already registered.'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
@@ -429,17 +443,12 @@ class RegisterScreen extends StatelessWidget {
                           return;
                         }
 
-                        /* final emailSnapshot = await FirebaseFirestore.instance
-                            .collection('users')
-                            .where('email', isEqualTo: emailController.text)
-                            .get(); */
                         final emailSnapshot = await FirebaseFirestore.instance
                             .collection('Profiles')
                             .doc(emailController.text)
                             .get();
 
                         if (emailSnapshot.exists) {
-                          //emailSnapshot.docs.isNotEmpty
                           showDialog(
                             context: context,
                             builder: (context) {
@@ -460,32 +469,21 @@ class RegisterScreen extends StatelessWidget {
                           return;
                         }
 
-                        //UserCredential userCredential =
                         await FirebaseAuth.instance
                             .createUserWithEmailAndPassword(
                           email: emailController.text,
                           password: passwordController.text,
                         );
 
-                        /* String userId = userCredential.user!.uid;
-
-                         await FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(userId)
-                            .set({
-                          'username': usernameController.text,
-                          'email': emailController.text,
-                          'password': passwordController.text, */
                         await FirebaseFirestore.instance
                             .collection('Profiles')
                             .doc(emailController.text)
                             .set({
-                          'First Name': usernameController
-                              .text, //Change to first name last name when fields updated
-                          'Last Name': '',
+                          'First Name': firstNameController.text,
+                          'Last Name': lastNameController.text,
                           'Password': passwordController.text,
-                          'Phone Number': '',
-                          'Skills': '',
+                          'Phone Number': null,
+                          'Skills': null,
                           'Project IDs': placeholder
                         });
                         await FirebaseFirestore.instance
