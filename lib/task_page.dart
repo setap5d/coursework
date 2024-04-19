@@ -190,13 +190,13 @@ class _MyProjectPageState extends State<MyProjectPage> {
                   ListTile(
                     title: const Text('Item 1'),
                     onTap: () {
-                      Navigator.pop(context);
+                      //Navigator.pop(context);
                     },
                   ),
                   ListTile(
                     title: const Text('Item 2'),
                     onTap: () {
-                      Navigator.pop(context);
+                      //Navigator.pop(context);
                     },
                   ),
                 ],
