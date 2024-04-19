@@ -344,6 +344,7 @@ class _MyProjectPageState extends State<MyProjectPage> {
                                   widget.taskDescriptions
                                       .add(taskDescriptionController.text);
                                 }
+                                Navigator.of(context).pop();
                                 _incrementCounter();
 
                                 FirebaseFirestore db =
