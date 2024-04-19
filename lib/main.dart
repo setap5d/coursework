@@ -482,8 +482,8 @@ class RegisterScreen extends StatelessWidget {
                           'First Name': firstNameController.text,
                           'Last Name': lastNameController.text,
                           'Password': passwordController.text,
-                          'Phone Number': null,
-                          'Skills': null,
+                          'Phone Number': '',
+                          'Skills': '',
                           'Project IDs': placeholder
                         });
                         await FirebaseFirestore.instance
