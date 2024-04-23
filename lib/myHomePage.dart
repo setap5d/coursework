@@ -132,6 +132,9 @@ class _projectsPageState extends State<projectsPage> {
                             widget.projects.remove(project);
                           });
                         },
+                        projectIDs: widget.projectIDs,
+                        projectIndex: index,
+                        email: widget.email,
                       ),
                     );
                   }), //.toList()
@@ -226,6 +229,12 @@ class _projectsPageState extends State<projectsPage> {
                 projID
                     .collection('Tasks')
                     .doc("Placeholder Doc")
+                    .set({"Title": "Placeholder"});
+                projID
+                    .collection('Tasks')
+                    .doc("Placeholder Doc")
+                    .collection('Tickets')
+                    .doc('Placeholder Doc')
                     .set({"Title": "Placeholder"});
                 Navigator.of(context).pop();
               },

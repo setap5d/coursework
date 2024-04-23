@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Elements used in both myHomePage and ProjectTiles (ensures no duplication)
 
@@ -34,7 +35,11 @@ String getMonthName(int month) {
 }
 
 Future<void> showDeleteConfirmationDialog(
-    BuildContext context, VoidCallback onDelete) async {
+    BuildContext context,
+    VoidCallback onDelete,
+    List<dynamic> projectIDs,
+    int projectIndex,
+    String email) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: false, // user must tap button!
@@ -51,8 +56,17 @@ Future<void> showDeleteConfirmationDialog(
         actions: <Widget>[
           TextButton(
             child: Text('Yes'),
-            onPressed: () {
+            onPressed: () async {
               onDelete();
+              final projID = FirebaseFirestore.instance
+                  .collection('Projects')
+                  .doc(projectIDs[projectIndex]);
+              await projID.delete();
+              projectIDs.removeAt(projectIndex);
+              final userID = FirebaseFirestore.instance
+                  .collection('Profiles')
+                  .doc(email)
+                  .update({"Project IDs": projectIDs});
               Navigator.of(context).pop();
             },
           ),

@@ -3,15 +3,22 @@
 import 'package:flutter/material.dart';
 import 'projectFormat.dart';
 import 'shared.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProjectTile extends StatefulWidget {
   final Project project;
   final VoidCallback onDelete;
+  final List<dynamic> projectIDs;
+  final int projectIndex;
+  final String email;
 
   const ProjectTile({
     Key? key,
     required this.project,
     required this.onDelete,
+    required this.projectIDs,
+    required this.projectIndex,
+    required this.email,
   }) : super(key: key);
 
   @override
@@ -64,7 +71,8 @@ class _ProjectTileState extends State<ProjectTile> {
               icon: Icon(Icons.more_vert),
               onSelected: (String value) {
                 if (value == 'remove') {
-                  showDeleteConfirmationDialog(context, widget.onDelete);
+                  showDeleteConfirmationDialog(context, widget.onDelete,
+                      widget.projectIDs, widget.projectIndex, widget.email);
                 } else if (value == 'edit') {
                   _showEditDialog(context);
                 } else if (value == 'add_assignees') {
@@ -129,9 +137,67 @@ class _ProjectTileState extends State<ProjectTile> {
           actions: <Widget>[
             TextButton(
               child: Text('Add'),
-              onPressed: () {
-                // where adding the email to the specified project functionality would go
-                Navigator.of(context).pop();
+              onPressed: () async {
+                List<dynamic> emailProjectIDs;
+                bool alreadyAssignee = false;
+                final otherUserRef = await FirebaseFirestore.instance
+                    .collection('Profiles')
+                    .doc(emailController.text)
+                    .get();
+                if (otherUserRef.exists == false) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('Error'),
+                        content: Text("Email doesn't exist"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  emailProjectIDs = otherUserRef.get('Project IDs');
+                  for (int i = 0; i < emailProjectIDs.length; i++) {
+                    if (emailProjectIDs[i] ==
+                        widget.projectIDs[widget.projectIndex]) {
+                      alreadyAssignee = true;
+                    }
+                  }
+                  if (alreadyAssignee != true) {
+                    emailProjectIDs.add(widget.projectIDs[widget.projectIndex]);
+                    await FirebaseFirestore.instance
+                        .collection('Profiles')
+                        .doc(emailController.text)
+                        .update({"Project IDs": emailProjectIDs});
+                    Navigator.of(context).pop();
+                    // where adding the email to the specified project functionality would go
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('Error'),
+                          content: Text("User is already assignee"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                }
               },
             ),
             TextButton(
@@ -211,6 +277,14 @@ class _ProjectTileState extends State<ProjectTile> {
             TextButton(
               child: Text('Save'),
               onPressed: () {
+                final projID = FirebaseFirestore.instance
+                    .collection('Projects')
+                    .doc(widget.projectIDs[widget.projectIndex]);
+                projID.update({
+                  "Title": widget.project.projectName,
+                  "Deadline": widget.project.deadline,
+                  "Project Leader": widget.project.leader
+                });
                 setState(() {});
                 Navigator.of(context).pop();
               },
