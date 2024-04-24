@@ -138,13 +138,18 @@ class _ProjectTileState extends State<ProjectTile> {
             TextButton(
               child: Text('Add'),
               onPressed: () async {
-                List<dynamic> emailProjectIDs;
+                String enteredEmail = emailController.text.trim();
+                if (enteredEmail.isEmpty) {
+                  _showErrorDialog('Please enter an email.');
+                  return;
+                }
+
                 bool alreadyAssignee = false;
                 final otherUserRef = await FirebaseFirestore.instance
                     .collection('Profiles')
-                    .doc(emailController.text)
+                    .doc(enteredEmail)
                     .get();
-                if (otherUserRef.exists == false) {
+                if (!otherUserRef.exists) {
                   showDialog(
                     context: context,
                     builder: (context) {
@@ -163,28 +168,33 @@ class _ProjectTileState extends State<ProjectTile> {
                     },
                   );
                 } else {
-                  emailProjectIDs = otherUserRef.get('Project IDs');
+                  // Email exists, proceed with adding assignee
+                  List<dynamic> emailProjectIDs =
+                      otherUserRef.get('Project IDs');
                   for (int i = 0; i < emailProjectIDs.length; i++) {
                     if (emailProjectIDs[i] ==
                         widget.projectIDs[widget.projectIndex]) {
                       alreadyAssignee = true;
+                      break;
                     }
                   }
-                  if (alreadyAssignee != true) {
+                  if (!alreadyAssignee) {
+                    // Add the project ID to the other user's profile
                     emailProjectIDs.add(widget.projectIDs[widget.projectIndex]);
                     await FirebaseFirestore.instance
                         .collection('Profiles')
-                        .doc(emailController.text)
+                        .doc(enteredEmail)
                         .update({"Project IDs": emailProjectIDs});
                     Navigator.of(context).pop();
                     // where adding the email to the specified project functionality would go
                   } else {
+                    // User is already an assignee
                     showDialog(
                       context: context,
                       builder: (context) {
                         return AlertDialog(
                           title: Text('Error'),
-                          content: Text("User is already assignee"),
+                          content: Text("User is already an assignee"),
                           actions: [
                             TextButton(
                               onPressed: () {
