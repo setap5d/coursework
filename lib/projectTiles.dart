@@ -212,6 +212,26 @@ class _ProjectTileState extends State<ProjectTile> {
     );
   }
 
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _showEditDialog(BuildContext context) async {
     DateTime selectedDate = DateTime.now();
 
@@ -276,7 +296,28 @@ class _ProjectTileState extends State<ProjectTile> {
           actions: <Widget>[
             TextButton(
               child: Text('Save'),
-              onPressed: () {
+              onPressed: () async {
+                // Check if the edited project name is empty or already exists
+                if (widget.project.projectName.trim().isEmpty ||
+                    widget.project.projectName.trim() == 'Project Name') {
+                  _showErrorDialog('Please enter a valid project name.');
+                  return;
+                }
+
+                // Check if the edited project name already exists in Firebase
+                final docSnapshot = await FirebaseFirestore.instance
+                    .collection('Projects')
+                    .where('Title', isEqualTo: widget.project.projectName)
+                    .get();
+
+                if (docSnapshot.docs.isNotEmpty &&
+                    docSnapshot.docs.first.id !=
+                        widget.projectIDs[widget.projectIndex]) {
+                  _showErrorDialog(
+                      'There is already a project with that name in the database.');
+                  return;
+                }
+
                 final projID = FirebaseFirestore.instance
                     .collection('Projects')
                     .doc(widget.projectIDs[widget.projectIndex]);
