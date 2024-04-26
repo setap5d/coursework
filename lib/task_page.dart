@@ -299,6 +299,12 @@ class _MyProjectPageState extends State<MyProjectPage> {
                               labelText: 'Task Name',
                               border: OutlineInputBorder(),
                             ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a task name';
+                              }
+                              return null;
+                            },
                           ),
                         ),
                         Padding(
@@ -309,6 +315,12 @@ class _MyProjectPageState extends State<MyProjectPage> {
                               labelText: 'Task Assignees',
                               border: OutlineInputBorder(),
                             ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter task assignees';
+                              }
+                              return null;
+                            },
                           ),
                         ),
                         Padding(
@@ -319,6 +331,12 @@ class _MyProjectPageState extends State<MyProjectPage> {
                               labelText: 'Task Description',
                               border: OutlineInputBorder(),
                             ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a task description';
+                              }
+                              return null;
+                            },
                           ),
                         ),
                         Padding(
@@ -361,7 +379,6 @@ class _MyProjectPageState extends State<MyProjectPage> {
                                   "Deadline": widget.deadlines[_counter - 1]
                                 });
                                 //_incrementCounter();
-
                                 taskNameController.clear();
                                 taskAssigneesController.clear();
                                 taskDescriptionController.clear();
