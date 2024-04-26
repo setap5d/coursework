@@ -67,6 +67,7 @@ class _MyProjectPageState extends State<MyProjectPage> {
   //List<DateTime?> deadlines = [];
   List<List<String>> ticketNamesList = [];
   List<List<String>> ticketDescriptionsList = [];
+  List<bool> ticketChecked = [];
 
   void _addTicket(BuildContext context, int index) async {
     TextEditingController ticketNameController = TextEditingController();
@@ -119,6 +120,18 @@ class _MyProjectPageState extends State<MyProjectPage> {
                             ticketDescriptionsList[index]
                                 .add(ticketDescriptionController.text);
                           });
+                          FirebaseFirestore db = FirebaseFirestore.instance;
+                          DocumentReference ticketRef = db
+                              .collection('Projects')
+                              .doc(widget.projectID)
+                              .collection('Tasks')
+                              .doc(widget.taskNames[index])
+                              .collection('Tickets')
+                              .doc(ticketNameController.text);
+                          ticketRef.set({
+                            "Ticket Description":
+                                ticketDescriptionController.text,
+                          });
                           Navigator.of(context).pop();
                         }
                       },
@@ -142,6 +155,7 @@ class _MyProjectPageState extends State<MyProjectPage> {
     //taskDescriptions = List.generate(100, (index) => '');
     ticketNamesList = List.generate(100, (index) => []);
     ticketDescriptionsList = List.generate(100, (index) => []);
+    ticketChecked = List.generate(100, (index) => false);
   }
 
   Future<void> _selectDate(BuildContext context, int index) async {
@@ -225,7 +239,28 @@ class _MyProjectPageState extends State<MyProjectPage> {
                       return Container(
                         constraints: BoxConstraints(maxHeight: cardHeight),
                         child: InkWell(
-                          onTap: () {
+                          onTap: () async {
+                            if (ticketChecked[index] == false) {
+                              FirebaseFirestore db = FirebaseFirestore.instance;
+                              final QuerySnapshot<Map<String, dynamic>>
+                                  tasksQuery = await db
+                                      .collection('Projects')
+                                      .doc(widget.projectID)
+                                      .collection('Tasks')
+                                      .doc(widget.taskNames[index])
+                                      .collection('Tickets')
+                                      .get();
+                              tasksQuery.docs.forEach((ticket) {
+                                if (ticket.id != "Placeholder Doc") {
+                                  ticketNamesList[index].add(ticket.id);
+                                  ticketDescriptionsList[index]
+                                      .add(ticket.get('Ticket Description'));
+                                }
+                              });
+                              ticketChecked[index] = true;
+                              await Future.delayed(
+                                  const Duration(milliseconds: 100));
+                            }
                             setState(() {
                               widget.isCardExpanded[index] =
                                   !widget.isCardExpanded[index];
@@ -299,6 +334,12 @@ class _MyProjectPageState extends State<MyProjectPage> {
                               labelText: 'Task Name',
                               border: OutlineInputBorder(),
                             ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a task name';
+                              }
+                              return null;
+                            },
                           ),
                         ),
                         Padding(
@@ -309,6 +350,12 @@ class _MyProjectPageState extends State<MyProjectPage> {
                               labelText: 'Task Assignees',
                               border: OutlineInputBorder(),
                             ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter task assignees';
+                              }
+                              return null;
+                            },
                           ),
                         ),
                         Padding(
@@ -319,6 +366,12 @@ class _MyProjectPageState extends State<MyProjectPage> {
                               labelText: 'Task Description',
                               border: OutlineInputBorder(),
                             ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a task description';
+                              }
+                              return null;
+                            },
                           ),
                         ),
                         Padding(
@@ -344,6 +397,7 @@ class _MyProjectPageState extends State<MyProjectPage> {
                                   widget.taskDescriptions
                                       .add(taskDescriptionController.text);
                                 }
+                                Navigator.of(context).pop();
                                 _incrementCounter();
 
                                 FirebaseFirestore db =
@@ -361,7 +415,6 @@ class _MyProjectPageState extends State<MyProjectPage> {
                                   "Deadline": widget.deadlines[_counter - 1]
                                 });
                                 //_incrementCounter();
-
                                 taskNameController.clear();
                                 taskAssigneesController.clear();
                                 taskDescriptionController.clear();

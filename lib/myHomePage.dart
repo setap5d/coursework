@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'projectFormat.dart';
 import 'projectTiles.dart';
 import 'shared.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'task_page.dart';
 
@@ -46,16 +43,6 @@ class _projectsPageState extends State<projectsPage> {
       ),
       body: Row(
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width * 0.05,
-            color: Theme.of(context).colorScheme.inversePrimary,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Add sidebar thing here
-              ],
-            ),
-          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -66,16 +53,9 @@ class _projectsPageState extends State<projectsPage> {
                     mainAxisSpacing: 16.0,
                     childAspectRatio: 2,
                   ),
-                  itemCount: widget.projects.length, //item count
-                  itemBuilder: (conext, index) {
+                  itemCount: widget.projects.length,
+                  itemBuilder: (context, index) {
                     var project = widget.projects[index];
-                    /* GridView.count(
-                crossAxisCount: 3,
-                crossAxisSpacing: 16.0,
-                mainAxisSpacing: 16.0,
-                childAspectRatio: 2,
-                children: [
-                  ...widget.projects.map((project) { */
                     return GestureDetector(
                       onTap: () async {
                         List<dynamic> taskNames = [];
@@ -132,11 +112,12 @@ class _projectsPageState extends State<projectsPage> {
                             widget.projects.remove(project);
                           });
                         },
+                        projectIDs: widget.projectIDs,
+                        projectIndex: index,
+                        email: widget.email,
                       ),
                     );
-                  }), //.toList()
-              //],
-              //),
+                  }),
             ),
           ),
         ],
@@ -206,32 +187,95 @@ class _projectsPageState extends State<projectsPage> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Save'),
-              onPressed: () async {
-                setState(() {
-                  widget.projects.add(newProject);
-                });
-                final projID =
-                    FirebaseFirestore.instance.collection('Projects').doc();
-                projID.set({
-                  "Title": newProject.projectName,
-                  "Deadline": newProject.deadline,
-                  "Project Leader": newProject.leader
-                });
-                widget.projectIDs.add(projID.id);
-                await FirebaseFirestore.instance
-                    .collection('Profiles')
-                    .doc(widget.email)
-                    .update({"Project IDs": widget.projectIDs});
-                projID
-                    .collection('Tasks')
-                    .doc("Placeholder Doc")
-                    .set({"Title": "Placeholder"});
+                child: Text('Save'),
+                onPressed: () async {
+                  if (await _validateProjectDetails(newProject)) {
+                    try {
+                      setState(() {
+                        widget.projects.add(newProject);
+                      });
+                      final projID = FirebaseFirestore.instance
+                          .collection('Projects')
+                          .doc();
+                      await projID.set({
+                        "Title": newProject.projectName,
+                        "Deadline": newProject.deadline,
+                        "Project Leader": newProject.leader,
+                      });
+                      widget.projectIDs.add(projID.id);
+                      await FirebaseFirestore.instance
+                          .collection('Profiles')
+                          .doc(widget.email)
+                          .update({"Project IDs": widget.projectIDs});
+                      await projID
+                          .collection('Tasks')
+                          .doc("Placeholder Doc")
+                          .set({"Title": "Placeholder"});
+                      await projID
+                          .collection('Tasks')
+                          .doc("Placeholder Doc")
+                          .collection('Tickets')
+                          .doc('Placeholder Doc')
+                          .set({"Title": "Placeholder"});
+                      Navigator.of(context).pop();
+                    } catch (e) {
+                      _showErrorDialog(
+                          'Failed to save project data. Please try again later.');
+                    }
+                  }
+                }),
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<bool> _validateProjectDetails(Project newProject) async {
+    // Checks if the project name is empty or just has the default "Project Name"
+    if (newProject.projectName.trim().isEmpty ||
+        newProject.projectName.trim() == 'Project Name') {
+      _showErrorDialog('Please enter a valid project name.');
+      return false;
+    }
+
+    // Checks if the project leader field is empty or just has the default "Leader: "
+    if (newProject.leader.trim().isEmpty ||
+        newProject.leader.trim() == 'Leader:') {
+      _showErrorDialog('Please enter a valid project leader.');
+      return false;
+    }
+
+    // Checks if the project name already exists in Firebase
+    final docSnapshot = await FirebaseFirestore.instance
+        .collection('Projects')
+        .where('Title', isEqualTo: newProject.projectName)
+        .get();
+
+    if (docSnapshot.docs.isNotEmpty) {
+      _showErrorDialog(
+          'There is already a project with that name in the database.');
+      return false;
+    }
+
+    return true;
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
