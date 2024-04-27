@@ -262,6 +262,7 @@ class LoginForm extends StatelessWidget {
                         projects: projects,
                         profDetails: profDetails,
                         settings: settings,
+                        selectedIndex: 1,
                       ),
                     ),
                   );

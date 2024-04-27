@@ -12,6 +12,7 @@ class TaskCard extends StatelessWidget {
   final bool isCardExpanded;
   final Function(BuildContext context, int index) addTicket;
   final int index;
+  final ColorScheme activeColorScheme;
 
   const TaskCard({
     Key? key,
@@ -25,6 +26,7 @@ class TaskCard extends StatelessWidget {
     required this.isCardExpanded,
     required this.addTicket,
     required this.index,
+    required this.activeColorScheme,
   }) : super(key: key);
 
   void _handleMenuSelection(String value) {
@@ -40,7 +42,9 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Theme(
+      data: ThemeData.from(colorScheme: activeColorScheme),
+      child: Expanded(
       child: Stack(
         children: [
           Positioned.fill(
@@ -121,7 +125,7 @@ class TaskCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 213, 213, 213),
+                        color: Theme.of(context).colorScheme.inversePrimary,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: SizedBox(
@@ -129,10 +133,10 @@ class TaskCard extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
+                             Text(
                             'Deadline',
                             style: TextStyle(
-                              color: Color.fromARGB(255, 0, 0, 0),
+                                color: activeColorScheme.onBackground,
                               fontWeight: FontWeight.bold,
                               fontSize: 15,
                             ),
@@ -140,8 +144,8 @@ class TaskCard extends StatelessWidget {
                           const SizedBox(height: 4.0),
                           Text(
                             deadline,
-                            style: const TextStyle(
-                              color: Colors.white,
+                              style:  TextStyle(
+                                color: activeColorScheme.onBackground,
                               fontSize: 15,
                             ),
                           ),
@@ -172,6 +176,7 @@ class TaskCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }
