@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'projectFormat.dart';
 import 'projectTiles.dart';
 import 'shared.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'task_page.dart';
+import 'settings.dart';
 
 class projectsPage extends StatefulWidget {
   const projectsPage(
@@ -11,24 +15,51 @@ class projectsPage extends StatefulWidget {
       required this.title,
       required this.email,
       required this.projectIDs,
-      required this.projects})
+      required this.projects,
+      required this.settings,
+      required this.profDetails,
+      required this.activeColorScheme})
       : super(key: key);
 
   final String title;
   final String email;
   final List<dynamic> projectIDs;
   final List<Project> projects;
+  final Map<String, dynamic> settings;
+  final List<dynamic> profDetails;
+  final ColorScheme activeColorScheme;
 
   @override
-  State<projectsPage> createState() => _projectsPageState();
+  State<projectsPage> createState() => _projectsPageState(
+      title: title, user: email, projectIDs: projectIDs, projects: projects, settings: settings, profDetails: profDetails, activeColorScheme: activeColorScheme);
 }
+
 
 class _projectsPageState extends State<projectsPage> {
   //List<Project> projects = [];
 
+    _projectsPageState({Key? key,
+      required this.user,
+      required this.projectIDs,
+      required this.projects, 
+      required this.settings, 
+      required this.profDetails,
+      required this.title,
+      required this.activeColorScheme});
+
+  final String user;
+  final List<dynamic> projectIDs;
+  final List<Project> projects;
+  final Map<String, dynamic> settings;
+  final List<dynamic> profDetails;
+  final String title;
+  final ColorScheme activeColorScheme;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Theme(
+      data: ThemeData.from(colorScheme: activeColorScheme),
+      child: Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Padding(
@@ -36,13 +67,24 @@ class _projectsPageState extends State<projectsPage> {
           child: Text(
             widget.title,
             textAlign: TextAlign.center,
-          ),
+              style: TextStyle(fontSize: 34)
+            ),
         ),
         automaticallyImplyLeading: false,
         centerTitle: true,
       ),
       body: Row(
         children: [
+            // Container(
+            //   width: MediaQuery.of(context).size.width * 0.05,
+            //   color: Theme.of(context).colorScheme.inversePrimary,
+            //   child: Column(
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: [
+            //       // Add sidebar thing here
+            //     ],
+            //   ),
+            // ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -53,9 +95,16 @@ class _projectsPageState extends State<projectsPage> {
                     mainAxisSpacing: 16.0,
                     childAspectRatio: 2,
                   ),
-                  itemCount: widget.projects.length,
-                  itemBuilder: (context, index) {
+                    itemCount: widget.projects.length, //item count
+                    itemBuilder: (context, index) {
                     var project = widget.projects[index];
+                      /* GridView.count(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 16.0,
+                  mainAxisSpacing: 16.0,
+                  childAspectRatio: 2,
+                  children: [
+                    ...widget.projects.map((project) { */
                     return GestureDetector(
                       onTap: () async {
                         List<dynamic> taskNames = [];
@@ -102,6 +151,11 @@ class _projectsPageState extends State<projectsPage> {
                                     counter: _counter,
                                     isCardExpanded: isCardExpanded,
                                     projectID: widget.projectIDs[index],
+                                      projects: projects, 
+                                      profDetails: profDetails, 
+                                      projectIDs: projectIDs, 
+                                      settings: settings,
+                                      activeColorScheme: activeColorScheme,
                                   )),
                         );
                       },
@@ -124,10 +178,11 @@ class _projectsPageState extends State<projectsPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddProjectDialog,
-        backgroundColor: Colors.white,
-        child: Icon(Icons.add),
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          child: Icon(Icons.add, color: activeColorScheme.secondary,),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      ),
     );
   }
 
@@ -172,7 +227,7 @@ class _projectsPageState extends State<projectsPage> {
                   },
                   child: Text(
                     'Select Deadline',
-                    style: TextStyle(color: Theme.of(context).primaryColor),
+                    // style: TextStyle(color: Theme.of(context).primaryColor),
                   ),
                 ),
                 SizedBox(height: 16.0),

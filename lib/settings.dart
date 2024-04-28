@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:setaplogin/main.dart';
 import 'settings_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'myHomePage.dart';
@@ -6,6 +7,30 @@ import 'profile.dart';
 import 'notifications.dart';
 import 'projectTiles.dart';
 import 'projectFormat.dart';
+
+class AppColorSchemes {
+  static final lightMode = ColorScheme.fromSeed(seedColor: Colors.blue,
+  brightness: Brightness.light
+  );
+
+  static final darkMode = ColorScheme.fromSeed(seedColor: Colors.blue, 
+  brightness: Brightness.dark
+  );
+
+// Taken from offical Flutter website
+  static final highContrastMode = ColorScheme.fromSeed(
+  seedColor: const Color(0xffefb7ff),
+  brightness: Brightness.dark,
+  ).copyWith(
+  primaryContainer: const Color(0xffefb7ff),
+  onPrimaryContainer: Colors.black,
+  secondaryContainer: const Color(0xff66fff9),
+  onSecondaryContainer: Colors.black,
+  error: const Color(0xff9b374d),
+  onError: Colors.white,
+  );
+
+}
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage(
@@ -15,7 +40,8 @@ class SettingsPage extends StatefulWidget {
       required this.projectIDs,
       required this.projects,
       required this.profDetails,
-      required this.settings})
+      required this.settings,
+      required this.selectedIndex})
       : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -33,27 +59,66 @@ class SettingsPage extends StatefulWidget {
   final List<Project> projects;
   final List<dynamic> profDetails;
   final Map<String, dynamic> settings;
+  final int selectedIndex;
 
   @override
   State<SettingsPage> createState() => _SettingsPageState(
-      title: title, user: email, projectIDs: projectIDs, projects: projects);
+      title: title,
+      user: email,
+      projectIDs: projectIDs,
+      projects: projects,
+      settings: settings,
+      profDetails: profDetails,
+      selectedIndex: selectedIndex);
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  late ColorScheme activeColorScheme;
+
+  @override
+  void initState() {
+    super.initState();
+    updateColorScheme();
+  }
+
+  void updateColorScheme() {
+    setState(() {
+      // Check the settings and set the active color scheme accordingly
+      final displayMode = widget.settings["Display Mode"];
+      switch (displayMode) {
+      case "Dark Mode":
+        activeColorScheme = AppColorSchemes.darkMode;
+        break;
+      case "Light Mode":
+        activeColorScheme = AppColorSchemes.lightMode;
+        break;
+      case "High Contrast Mode":
+        activeColorScheme = AppColorSchemes.highContrastMode; // Pass your seed color here
+        break;
+      default:
+        // Handle default case, if any
+        break;
+    }
+    });
+  }
+
   _SettingsPageState(
       {Key? key,
       required this.title,
       required this.user,
       required this.projectIDs,
-      required this.projects});
+      required this.projects,
+      required this.settings,
+      required this.profDetails,
+      required this.selectedIndex});
 
   final String title;
   final String user;
   final List<dynamic> projectIDs;
   final List<Project> projects;
-
-  int popUpSemaphore = 0;
-  int _selectedIndex = 1;
+  final List<dynamic> profDetails;
+  final Map<String, dynamic> settings;
+  int selectedIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +130,14 @@ class _SettingsPageState extends State<SettingsPage> {
         email: user,
         projectIDs: projectIDs,
         projects: projects,
+        settings: settings,
+        profDetails: profDetails,
+        activeColorScheme: activeColorScheme,
+
       ),
-      NotificationsDetailsTool(),
-      SettingsInterface(email: widget.email, settings: widget.settings),
-      SettingsInterface(email: widget.email, settings: widget.settings),
+      // NotificationsDetailsTool(),
+      SettingsInterface(email: widget.email, settings: widget.settings, activeColorScheme: activeColorScheme,),
+      SettingsInterface(email: widget.email, settings: widget.settings, activeColorScheme: activeColorScheme,),
     ];
 
     bool isExtended() {
@@ -86,28 +155,30 @@ class _SettingsPageState extends State<SettingsPage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      body: Row(
+      body: Theme(
+        data: ThemeData.from(colorScheme: activeColorScheme),
+        child: Row(
         children: [
           SafeArea(
             child: NavigationRail(
-              selectedIndex: _selectedIndex,
+                selectedIndex: selectedIndex,
               onDestinationSelected: (int index) {
                 setState(() {
                   if (index == _screens.length - 1) {
                     Navigator.of(context).pop();
                   } else {
-                    _selectedIndex = index;
+                      selectedIndex = index;
                   }
                 });
               },
-              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
               extended: isExtended(),
               groupAlignment: -1.0,
               // leading: FloatingActionButton(
               //   onPressed: () {
               //     ProfilePage();
               //   setState(() {
-              //     _selectedIndex = 2;
+                //     selectedIndex = 2;
               //   });
 
               //   },
@@ -122,10 +193,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   icon: Icon(Icons.home),
                   label: Text('Home'),
                 ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.notifications),
-                  label: Text('Notifications'),
-                ),
+                  // NavigationRailDestination(
+                  //   icon: Icon(Icons.notifications),
+                  //   label: Text('Notifications'),
+                  // ),
                 NavigationRailDestination(
                   icon: Icon(Icons.settings),
                   label: Text('Settings'),
@@ -137,8 +208,9 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
             ),
           ),
-          Expanded(child: _screens[_selectedIndex]),
+            Expanded(child: _screens[selectedIndex]),
         ],
+      ),
       ),
     );
   }
@@ -146,50 +218,27 @@ class _SettingsPageState extends State<SettingsPage> {
 
 class SettingsInterface extends StatefulWidget {
   const SettingsInterface(
-      {required this.email, required this.settings, super.key});
+      {required this.email, required this.settings, required this.activeColorScheme, super.key});
 
   final String email;
   final Map<String, dynamic> settings;
+  final ColorScheme activeColorScheme;
 
   @override
-  State<SettingsInterface> createState() => _SettingsInterfaceState();
+  State<SettingsInterface> createState() => _SettingsInterfaceState(email: email, settings: settings, activeColorScheme: activeColorScheme);
 }
 
 class _SettingsInterfaceState extends State<SettingsInterface> {
-  // FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE
+  // late ColorScheme activeColorScheme;
 
-  // Settings map should be initalised from database NOT hardwired initialistion, Widgets are currently configured to work with Map datatype and therefore
-  // will require reworking if datatype must change for firebase integration
-  // The saveSettingsToFireBase() will be called when the 'Save Changes' elevated button is pressed. The function must be confiured to communicate with Firebase
-
-/*   Map<String, dynamic> settings = {
-    'Display Mode': 'Light Mode',
-    'Project Deadline Notifications': true,
-    'Task Deadline Notifications': true,
-    'Ticket Notifications': true
-  }; */
-
-  //Function for getting settings from database, needs to be initialised on build/before screen move
-/*   Future<void> getSettingsFromFireBase(email) async {
-    FirebaseFirestore db = FirebaseFirestore.instance;
-    db
-        .collection('Profiles')
-        .doc('$email')
-        .collection('User')
-        .doc('Settings')
-        .snapshots()
-        .listen((snapshot) async {
-      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-      settings = {
-        'Display Mode': data['Display Mode'],
-        'Project Deadline Notifications':
-            data['Project Deadline Notifications'],
-        'Task Deadline Notifications': data['Task Deadline Notifications'],
-        'Ticket Notifications': data['Ticket Notifications']
-      };
-    });
-    print(settings);
-  } */
+  @override
+      _SettingsInterfaceState({Key? key,
+      required this.email,
+      required this.settings, 
+      required this.activeColorScheme});
+        final String email;
+  final Map<String, dynamic> settings;
+  final ColorScheme activeColorScheme;
 
   Future<void> saveSettingsToFireBase(email, settings) async {
     // FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE FIREBASE NOTE
@@ -206,32 +255,49 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
   @override
   Widget build(BuildContext context) {
     print(widget.settings);
-    return Column(
+    return Theme(
+      data: ThemeData.from(colorScheme: activeColorScheme),
+        child: Container(
+          color: activeColorScheme.background,
+          child: Column(
       children: [
         Expanded(
           child: SingleChildScrollView(
+                    child: Container(
+                      color: activeColorScheme.background,
               child: Column(children: <Widget>[
-            const Text(
+                        Row(children: <Widget>[
+                          Expanded(
+                            child: Container(
+                              color: activeColorScheme.inversePrimary,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
               "Settings",
-              style: TextStyle(fontSize: 36),
+                                                  style: TextStyle(fontSize: 36,
+                                                  color: activeColorScheme.onBackground,
+                                                  backgroundColor: activeColorScheme.inversePrimary)
+                                          ),
             ),
+                            ) )
+                       ]),
+
             Container(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      const Text(
+                               Text(
                         "Display",
                         style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 26),
+                                    fontWeight: FontWeight.w600, fontSize: 26, color: activeColorScheme.onBackground),
                       ),
                       RadioSetting(
                         settingName: "Display Mode",
                         optionsList: const [
                           "Light Mode",
                           "Dark Mode",
-                          "High Contrast Mode",
-                          "Colour Blind Mode"
+                                  "High Contrast Mode", //Color blind removed
                         ],
                         defaultOption: widget.settings['Display Mode'],
                         onChanged: (selectedOption) {
@@ -240,52 +306,11 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
                           });
                           print(selectedOption);
                         },
-                      ),
-                      const SettingDivider(),
-                      const Text(
-                        "Notifications",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 26),
-                      ),
-                      SwitchSetting(
-                          settingName: "Project Deadline Notifications",
-                          settingDescription:
-                              "Enables notifcations for approaching project deadlines",
-                          settingsValue:
-                              widget.settings['Project Deadline Notifications'],
-                          onChanged: (value) {
-                            setState(() {
-                              widget.settings[
-                                  'Project Deadline Notifications'] = value;
-                            });
-                          }),
-                      const SettingDivider(),
-                      SwitchSetting(
-                          settingName: "Task Deadline Notifications",
-                          settingDescription:
-                              "Enables notifcations for approaching task deadlines",
-                          settingsValue:
-                              widget.settings['Task Deadline Notifications'],
-                          onChanged: (value) {
-                            setState(() {
-                              widget.settings['Task Deadline Notifications'] =
-                                  value;
-                            });
-                          }),
-                      const SettingDivider(),
-                      SwitchSetting(
-                          settingName: "Ticket Notifications",
-                          settingDescription:
-                              "Enables notifcations for changes to tickets",
-                          settingsValue:
-                              widget.settings['Ticket Notifications'],
-                          onChanged: (value) {
-                            setState(() {
-                              widget.settings['Ticket Notifications'] = value;
-                            });
-                          }),
-                    ]))
-          ])),
+                                colorScheme: activeColorScheme
+                              ),
+                            ]))
+                                    ]),
+                    )),
         ),
         ElevatedButton(
           style: ButtonStyle(
@@ -295,10 +320,31 @@ class _SettingsInterfaceState extends State<SettingsInterface> {
           onPressed: () {
             saveSettingsToFireBase(
                 widget.email, widget.settings); //email is incorrect
-          },
-          child: const Text('Save Changes'),
-        ),
+                  showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Changed Saved'),
+                  content: const Text('Please restart application to apply changes'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Close'),
+                    ),
+                  ],
+                );
+              },
+            );
+                      
+                },
+                child: Text('Save Changes',
+                style: TextStyle(color: activeColorScheme.onBackground),),
+              ),
       ],
+          ),
+        ),
     );
   }
 }

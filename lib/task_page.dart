@@ -1,28 +1,34 @@
 import 'package:flutter/material.dart';
 import 'task_cards.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'myHomePage.dart';
+import 'profile.dart';
+import 'notifications.dart';
+import 'projectTiles.dart';
+import 'projectFormat.dart';
+import 'settings.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+// void main() {
+//   runApp(const MyApp());
+// }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+// class MyApp extends StatelessWidget {
+//   const MyApp({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      //home: const MyProjectPage(
-      //title: 'Flutter Demo Task Page'),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Flutter Demo',
+//       debugShowCheckedModeBanner: false,
+//       theme: ThemeData(
+//         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+//         useMaterial3: true,
+//       ),
+//       //home: const MyProjectPage(
+//       //title: 'Flutter Demo Task Page'),
+//     );
+//   }
+// }
 
 class MyProjectPage extends StatefulWidget {
   const MyProjectPage(
@@ -35,7 +41,12 @@ class MyProjectPage extends StatefulWidget {
       required this.deadlines,
       required this.counter,
       required this.isCardExpanded,
-      required this.projectID})
+      required this.projects,
+      required this.profDetails,
+      required this.projectID, 
+      required this.projectIDs,
+      required this.settings,
+      required this.activeColorScheme})
       : super(key: key);
 
   final String title;
@@ -47,15 +58,35 @@ class MyProjectPage extends StatefulWidget {
   final int counter;
   final List<bool> isCardExpanded;
   final String projectID;
+  final List<dynamic> projectIDs;
+  final List<Project> projects;
+  final List<dynamic> profDetails;
+  final Map<String, dynamic> settings;
+  final ColorScheme activeColorScheme;
 
   @override
-  State<MyProjectPage> createState() => _MyProjectPageState(projectName: title);
+  State<MyProjectPage> createState() => _MyProjectPageState(projectName: title, user: email, 
+  projectIDs: projectIDs, projects: projects, settings: settings, profDetails: profDetails, 
+  activeColorScheme: activeColorScheme);
 }
 
 class _MyProjectPageState extends State<MyProjectPage> {
-  _MyProjectPageState({Key? key, required this.projectName});
+
+  _MyProjectPageState({Key? key, required this.projectName,
+      required this.user,
+      required this.projectIDs,
+      required this.projects,
+      required this.settings,
+      required this.profDetails,
+      required this.activeColorScheme});
   int _counter = 0;
   final String projectName;
+  final String user;
+  final List<dynamic> projectIDs;
+  final List<Project> projects;
+  final Map<String, dynamic> settings;
+  final List<dynamic> profDetails;
+  final ColorScheme activeColorScheme;
   final _formKey = GlobalKey<FormState>();
   //List<dynamic> taskNames = [];
   //List<dynamic> taskAssignees = [];
@@ -183,51 +214,196 @@ class _MyProjectPageState extends State<MyProjectPage> {
     });
   }
 
+  int _selectedIndex = 1;
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final containerWidth = screenWidth * 0.7;
 
-    return Scaffold(
+  final List<Widget> _screens = [
+      ProfilePage(
+          user: user, profDetails: widget.profDetails), //Passes the user email
+      projectsPage(
+        title: 'My Projects',
+        email: user,
+        projectIDs: projectIDs,
+        projects: projects,
+        settings: settings,
+        profDetails: profDetails,
+        activeColorScheme: activeColorScheme,
+      ),
+      NotificationsDetailsTool(),
+      SettingsInterface(email: widget.email, settings: widget.settings, activeColorScheme: activeColorScheme,),
+      SettingsInterface(email: widget.email, settings: widget.settings, activeColorScheme: activeColorScheme,),
+    ];
+
+    bool isExtended() {
+      if (MediaQuery.of(context).size.width >= 800) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    return Theme(
+      data: ThemeData.from(colorScheme: activeColorScheme),
+      child: Scaffold(
       appBar: AppBar(
         title: Text(projectName),
         // automaticallyImplyLeading: false,
       ),
       body: Row(
         children: [
-          SizedBox(
-            width: 200,
-            child: Drawer(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: <Widget>[
-                  ListTile(
-                    title: const Text('Item 1'),
-                    onTap: () {
-                      //Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Item 2'),
-                    onTap: () {
-                      //Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
+            // SafeArea(
+            //   child: NavigationRail(
+            //     selectedIndex: _selectedIndex,
+            //     onDestinationSelected: (int index) {
+            //       setState(() {
+            //         // SettingsPage(
+            //         //       title: 'My Projects',
+            //         //       email: user,
+            //         //       projectIDs: projectIDs,
+            //         //       projects: projects,
+            //         //       profDetails: profDetails,
+            //         //       settings: settings,
+            //         //     );
+            //         if (index == _screens.length - 1) {
+            //           Navigator.of(context).pop();
+            //         } else {
+            //           _selectedIndex = index;
+            //         }
+            //       });
+            //      // Check if the selected index corresponds to the SettingsPage
+            // if (index == 1) {
+            //   // Push the SettingsPage onto the navigation stack
+            //   Navigator.of(context).push(
+            //     MaterialPageRoute(
+            //       builder: (context) => SettingsPage(
+            //         title: 'My Projects',
+            //         email: user,
+            //         projectIDs: projectIDs,
+            //         projects: projects,
+            //         profDetails: profDetails,
+            //         settings: settings,
+            //         selectedIndex: 1,
+            //       ),
+            //     ),
+            //   );
+            // }
+            // if (index == 2) {
+            //   // Push the SettingsPage onto the navigation stack
+            //   Navigator.of(context).push(
+            //     MaterialPageRoute(
+            //       builder: (context) => SettingsPage(
+            //         title: 'My Projects',
+            //         email: user,
+            //         projectIDs: projectIDs,
+            //         projects: projects,
+            //         profDetails: profDetails,
+            //         settings: settings,
+            //         selectedIndex: 2,
+            //       ),
+            //     ),
+            //   );
+            // }
+      
+            // if (index == 3) {
+            //   // Push the SettingsPage onto the navigation stack
+            //   Navigator.of(context).push(
+            //     MaterialPageRoute(
+            //       builder: (context) => SettingsPage(
+            //         title: 'My Projects',
+            //         email: user,
+            //         projectIDs: projectIDs,
+            //         projects: projects,
+            //         profDetails: profDetails,
+            //         settings: settings,
+            //         selectedIndex: 3,
+            //       ),
+            //     ),
+            //   );
+            // }
+            // if (index == 4) {
+            //   // Push the SettingsPage onto the navigation stack
+            //   Navigator.of(context).push(
+            //     MaterialPageRoute(
+            //       builder: (context) => SettingsPage(
+            //         title: 'My Projects',
+            //         email: user,
+            //         projectIDs: projectIDs,
+            //         projects: projects,
+            //         profDetails: profDetails,
+            //         settings: settings,
+            //         selectedIndex: 4,
+            //       ),
+            //     ),
+            //   );
+            // }
+            // if (index == 0) {
+            //   // Push the SettingsPage onto the navigation stack
+            //   Navigator.of(context).push(
+            //     MaterialPageRoute(
+            //       builder: (context) => SettingsPage(
+            //         title: 'My Projects',
+            //         email: user,
+            //         projectIDs: projectIDs,
+            //         projects: projects,
+            //         profDetails: profDetails,
+            //         settings: settings,
+            //         selectedIndex: 0,
+            //       ),
+            //     ),
+            //   );
+            // }
+            //     },
+            //     backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            //     extended: isExtended(),
+            //     groupAlignment: -1.0,
+            //     // leading: FloatingActionButton(
+            //     //   onPressed: () {
+            //     //     ProfilePage();
+            //     //   setState(() {
+            //     //     _selectedIndex = 2;
+            //     //   });
+      
+            //     //   },
+            //     //   child: const Icon(Icons.account_circle),
+            //     // ),
+            //     destinations: const [
+            //       NavigationRailDestination(
+            //         icon: Icon(Icons.account_circle),
+            //         label: Text('Profile'),
+            //       ),
+            //       NavigationRailDestination(
+            //         icon: Icon(Icons.home),
+            //         label: Text('Home'),
+            //       ),
+            //       NavigationRailDestination(
+            //         icon: Icon(Icons.notifications),
+            //         label: Text('Notifications'),
+            //       ),
+            //       NavigationRailDestination(
+            //         icon: Icon(Icons.settings),
+            //         label: Text('Settings'),
+            //       ),
+            //       NavigationRailDestination(
+            //         icon: Icon(Icons.logout),
+            //         label: Text('Logout'),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Expanded(
                 child: Container(
                   height: 700,
-                  width: containerWidth,
+                    width: screenWidth,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.0),
                     border: Border.all(
-                      color: const Color.fromARGB(255, 170, 170, 170),
+                        color: Theme.of(context).colorScheme.inversePrimary,
                       width: 0.5,
                     ),
                   ),
@@ -286,6 +462,7 @@ class _MyProjectPageState extends State<MyProjectPage> {
                                   isCardExpanded: widget.isCardExpanded[index],
                                   addTicket: _addTicket,
                                   index: index,
+                                    activeColorScheme: activeColorScheme,
                                 ),
                               ],
                             ),
@@ -301,10 +478,12 @@ class _MyProjectPageState extends State<MyProjectPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+          backgroundColor: activeColorScheme.inversePrimary,
         onPressed: () async {
           await showDialog<void>(
             context: context,
             builder: (context) => AlertDialog(
+                backgroundColor: activeColorScheme.background,
               content: Stack(
                 clipBehavior: Clip.none,
                 children: <Widget>[
@@ -315,13 +494,15 @@ class _MyProjectPageState extends State<MyProjectPage> {
                       onTap: () {
                         Navigator.of(context).pop();
                       },
-                      child: const CircleAvatar(
-                        backgroundColor: Colors.red,
+                          child:  CircleAvatar(
+                            backgroundColor: activeColorScheme.primary,
                         child: Icon(Icons.close),
                       ),
                     ),
                   ),
-                  Form(
+                      Container(
+                        color: activeColorScheme.background,
+                        child: Form(
                     key: _formKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -329,8 +510,10 @@ class _MyProjectPageState extends State<MyProjectPage> {
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: TextFormField(
+                                    style: TextStyle(color: activeColorScheme.onBackground),
                             controller: taskNameController,
-                            decoration: const InputDecoration(
+                                    decoration:  InputDecoration(
+                                      labelStyle: TextStyle(color: activeColorScheme.onBackground),
                               labelText: 'Task Name',
                               border: OutlineInputBorder(),
                             ),
@@ -345,8 +528,10 @@ class _MyProjectPageState extends State<MyProjectPage> {
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: TextFormField(
+                                    style: TextStyle(color: activeColorScheme.onBackground),
                             controller: taskAssigneesController,
-                            decoration: const InputDecoration(
+                                    decoration:  InputDecoration(
+                                      labelStyle: TextStyle(color: activeColorScheme.onBackground),
                               labelText: 'Task Assignees',
                               border: OutlineInputBorder(),
                             ),
@@ -361,8 +546,10 @@ class _MyProjectPageState extends State<MyProjectPage> {
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: TextFormField(
+                                    style: TextStyle(color: activeColorScheme.onBackground),
                             controller: taskDescriptionController,
-                            decoration: const InputDecoration(
+                                    decoration:  InputDecoration(
+                                      labelStyle: TextStyle(color: activeColorScheme.onBackground),
                               labelText: 'Task Description',
                               border: OutlineInputBorder(),
                             ),
@@ -377,7 +564,12 @@ class _MyProjectPageState extends State<MyProjectPage> {
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: ElevatedButton(
-                            child: const Text('Set Deadline'),
+                                    style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                  activeColorScheme.inversePrimary,
+                )),
+                                    child:  Text('Set Deadline',
+                                    style: TextStyle(color: activeColorScheme.onBackground)),
                             onPressed: () {
                               _selectDate(context, _counter);
                             },
@@ -386,7 +578,12 @@ class _MyProjectPageState extends State<MyProjectPage> {
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: ElevatedButton(
-                            child: const Text('Submit'),
+                                    style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                  activeColorScheme.inversePrimary,
+                )),
+                                    child:  Text('Submit',
+                                    style: TextStyle(color: activeColorScheme.onBackground)),
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
@@ -415,6 +612,7 @@ class _MyProjectPageState extends State<MyProjectPage> {
                                   "Deadline": widget.deadlines[_counter - 1]
                                 });
                                 //_incrementCounter();
+                            
                                 taskNameController.clear();
                                 taskAssigneesController.clear();
                                 taskDescriptionController.clear();
@@ -424,6 +622,7 @@ class _MyProjectPageState extends State<MyProjectPage> {
                           ),
                         ),
                       ],
+                            ),
                     ),
                   ),
                 ],
@@ -432,7 +631,8 @@ class _MyProjectPageState extends State<MyProjectPage> {
           );
         },
         tooltip: 'New Task',
-        child: const Icon(Icons.add),
+          child:  Icon(Icons.add, color: activeColorScheme.secondary,),
+        ),
       ),
     );
   }

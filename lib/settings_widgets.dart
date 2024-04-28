@@ -77,17 +77,19 @@ class RadioSetting extends StatefulWidget {
   final List<String> optionsList;
   final String defaultOption;
   final Function(String) onChanged;
+  final ColorScheme colorScheme;
 
   const RadioSetting(
       {super.key,
       required this.settingName,
       required this.optionsList,
       required this.defaultOption,
-      required this.onChanged});
+      required this.onChanged,
+      required this.colorScheme});
 
   @override
   State<RadioSetting> createState() => _RadioSettingState(
-      settingName, optionsList, defaultOption); //FLUTTER DOESN'T LIKE THIS LINE
+      settingName, optionsList, defaultOption, colorScheme); //FLUTTER DOESN'T LIKE THIS LINE
 }
 
 class _RadioSettingState extends State<RadioSetting> {
@@ -95,8 +97,9 @@ class _RadioSettingState extends State<RadioSetting> {
   final List<String> optionsList;
   final String defaultOption;
   String selectedOption = "";
+  ColorScheme colorScheme;
 
-  _RadioSettingState(this.settingName, this.optionsList, this.defaultOption);
+  _RadioSettingState(this.settingName, this.optionsList, this.defaultOption, this.colorScheme);
   @override
   void initState() {
     super.initState();
@@ -112,7 +115,11 @@ class _RadioSettingState extends State<RadioSetting> {
   }
 
   Widget build(BuildContext context) {
-    return Column(
+    return Theme(
+      data: ThemeData.from(colorScheme: colorScheme),
+      child: Container(
+        color: colorScheme.background,
+        child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
@@ -137,6 +144,8 @@ class _RadioSettingState extends State<RadioSetting> {
           }).toList(),
         ),
       ],
+        ),
+      ),
     );
   }
 }
