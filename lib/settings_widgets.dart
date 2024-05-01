@@ -1,77 +1,10 @@
+// ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 
-class SwitchSetting extends StatefulWidget {
-  final String settingName;
-  final String settingDescription;
-  bool settingsValue;
-  final ValueChanged<bool>? onChanged;
-
-  SwitchSetting(
-      {super.key,
-      required this.settingName,
-      this.settingDescription = "",
-      required this.settingsValue,
-      this.onChanged});
-  @override
-  _SwitchSettingState createState() => _SwitchSettingState();
-}
-
-class _SwitchSettingState extends State<SwitchSetting> {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              widget.settingName,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-            ),
-            Text(widget.settingDescription,
-                style: const TextStyle(fontSize: 18)),
-          ],
-        ),
-        Expanded(child: Container()),
-        Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Switch(
-            // This bool value toggles the switch.
-            value: widget.settingsValue,
-            activeColor: Colors.green,
-            onChanged: (bool value) {
-              // This is called when the user toggles the switch.
-              setState(() {
-                widget.settingsValue = value;
-                widget.onChanged!(value);
-              });
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class SettingDivider extends StatelessWidget {
-  const SettingDivider({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Divider(
-      height: 20,
-      thickness: 5,
-      indent: 20,
-      endIndent: 20,
-      color: Theme.of(context).colorScheme.onBackground,
-    );
-  }
-}
-
-// enum SettingOptions { lafayette, jefferson }
-
-// List<String> optionsList = ["Option 1", "Option 2", "Option 3"];
-
+/// Creates [_RadioSettingState]
+/// 
+/// Has attributes [settingName], [optionsList], [defaultOption], [onChanged], [colorScheme]
 class RadioSetting extends StatefulWidget {
   final String settingName;
   final List<String> optionsList;
@@ -88,62 +21,61 @@ class RadioSetting extends StatefulWidget {
       required this.colorScheme});
 
   @override
-  State<RadioSetting> createState() => _RadioSettingState(
-      settingName, optionsList, defaultOption, colorScheme); //FLUTTER DOESN'T LIKE THIS LINE
+  State<RadioSetting> createState() => _RadioSettingState();
 }
 
+/// Builds widget designed to allow users to switch between mutually exclusive options
+/// 
+/// Widget is built using attributes for the sake of wdiegt reuse in future
 class _RadioSettingState extends State<RadioSetting> {
-  final String settingName;
-  final List<String> optionsList;
-  final String defaultOption;
   String selectedOption = "";
-  ColorScheme colorScheme;
 
-  _RadioSettingState(this.settingName, this.optionsList, this.defaultOption, this.colorScheme);
+  _RadioSettingState();
   @override
   void initState() {
     super.initState();
-    if (defaultOption == "Light Mode") {
-      selectedOption = optionsList[0];
-    } else if (defaultOption == "Dark Mode") {
-      selectedOption = optionsList[1];
-    } else if (defaultOption == "High Contrast Mode") {
-      selectedOption = optionsList[2];
-    } else if (defaultOption == "Colour Blind Mode") {
-      selectedOption = optionsList[3];
+    if (widget.defaultOption == "Light Mode") {
+      selectedOption = widget.optionsList[0];
+    } else if (widget.defaultOption == "Dark Mode") {
+      selectedOption = widget.optionsList[1];
+    } else if (widget.defaultOption == "High Contrast Mode") {
+      selectedOption = widget.optionsList[2];
+    } else if (widget.defaultOption == "Colour Blind Mode") {
+      selectedOption = widget.optionsList[3];
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData.from(colorScheme: colorScheme),
+      data: ThemeData.from(colorScheme: widget.colorScheme),
       child: Container(
-        color: colorScheme.background,
+        color: widget.colorScheme.background,
         child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          widget.settingName,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-        ),
-        Column(
-          children: optionsList.map((option) {
-            return ListTile(
-              title: Text(option, style: const TextStyle(fontSize: 18)),
-              leading: Radio<String>(
-                value: option,
-                groupValue: selectedOption,
-                onChanged: (value) {
-                  setState(() {
-                    selectedOption = value as String;
-                    widget.onChanged(selectedOption);
-                  });
-                },
-              ),
-            );
-          }).toList(),
-        ),
-      ],
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              widget.settingName,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+            ),
+            Column(
+              children: widget.optionsList.map((option) {
+                return ListTile(
+                  title: Text(option, style: const TextStyle(fontSize: 18)),
+                  leading: Radio<String>(
+                    value: option,
+                    groupValue: selectedOption,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedOption = value as String;
+                        widget.onChanged(selectedOption);
+                      });
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
         ),
       ),
     );
