@@ -1,21 +1,26 @@
 import 'dart:io';
-import 'dart:math';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
+/// Creates [_ProfilePageState]
+///
+/// Has attributes [email], [profDetails]
+///
 class ProfilePage extends StatefulWidget {
-  final String user;
+  const ProfilePage(
+      {required this.email, required this.profDetails, super.key});
+  final String email;
   final List<dynamic> profDetails;
-  const ProfilePage({required this.user, required this.profDetails, super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
+/// Builds widgets to allow user to edit account information stored in Firebase
+///
+/// Defines methods: [uploadImage], [selectImage], [checkInputs], [isValidName], [isValidEmail], [isValidPhoneNumber], [isValidSkills], [initState]
 class _ProfilePageState extends State<ProfilePage> {
   String fName = '';
   String lName = '';
@@ -27,17 +32,6 @@ class _ProfilePageState extends State<ProfilePage> {
   UploadTask? uploadTask;
   late String urlDownload = "";
   bool newImage = false;
-
-  /*Future getProfileInfo() async {
-    //Gets profile information for the profile page, needs to be initialised on build/before screen move
-    FirebaseFirestore db = FirebaseFirestore.instance;
-    var profRef = await db.collection('Profiles').doc(widget.user).get();
-    email = widget.user;
-    fName = profRef.get('First Name');
-    lName = profRef.get('Last Name');
-    phoneNumber = profRef.get('Phone Number');
-    skills = profRef.get('Skills');
-  }*/
 
   //Works on desktop but not web
   Future uploadImage() async {
@@ -53,7 +47,6 @@ class _ProfilePageState extends State<ProfilePage> {
     final snapshot = await uploadTask!.whenComplete(() {});
 
     urlDownload = await snapshot.ref.getDownloadURL();
-    print("upload complete $urlDownload");
 
     setState(() {
       uploadTask = null;
@@ -73,190 +66,6 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    fName = widget.profDetails[0];
-    lName = widget.profDetails[1];
-    email = widget.profDetails[2];
-    phoneNumber = widget.profDetails[3];
-    skills = widget.profDetails[4];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        automaticallyImplyLeading: false,
-        title: const Text('Profile'),
-      ),
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(width: MediaQuery.of(context).size.width * 0.1 * 0.9),
-          SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: Text(
-                    'Manage your profile settings here',
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[600]),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: Container(
-                    // 16:9 resolution
-                    width: MediaQuery.of(context).size.width * 0.075 * 0.9,
-                    height: MediaQuery.of(context).size.height * 0.075 * 1.6,
-                    child: Expanded(
-                      child: Container(
-                        color: Colors.blue[50],
-                        child: Center(
-                          child: selectedImage != null
-                              ? Image.file(File(selectedImage!.path!))
-                              : Icon(Icons.person, size: 48),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0, right: 8.0),
-                      child: ElevatedButton(
-                        child: const Text('Select Image'),
-                        onPressed: selectImage,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: ElevatedButton(
-                        child: const Text('Upload Image'),
-                        onPressed: uploadImage,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Container(
-                      height: 48,
-                      width: MediaQuery.of(context).size.width * 0.30,
-                      padding: EdgeInsets.only(right: 16),
-                      child: TextFormField(
-                        initialValue: fName,
-                        decoration: const InputDecoration(
-                          labelText: 'First Name',
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            fName = value;
-                          });
-                        },
-                      ),
-                    ),
-                    Container(
-                      height: 48,
-                      width: MediaQuery.of(context).size.width * 0.30,
-                      child: TextFormField(
-                        initialValue: lName,
-                        decoration: const InputDecoration(
-                          labelText: 'Last Name',
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            lName = value;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16),
-                Container(
-                  height: 48,
-                  width: MediaQuery.of(context).size.width * 0.60,
-                  child: TextFormField(
-                    initialValue: email,
-                    decoration: const InputDecoration(
-                      labelText: 'E-Mail Address',
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        email = value;
-                      });
-                    },
-                  ),
-                ),
-                SizedBox(height: 16),
-                Container(
-                  height: 48,
-                  width: MediaQuery.of(context).size.width * 0.60,
-                  child: TextFormField(
-                    initialValue: phoneNumber,
-                    decoration: const InputDecoration(
-                      labelText: 'Phone Number (Optional)',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      setState(() {
-                        phoneNumber = value;
-                      });
-                    },
-                  ),
-                ),
-                SizedBox(height: 16),
-                Container(
-                  height: 96,
-                  width: MediaQuery.of(context).size.width * 0.60,
-                  child: TextFormField(
-                    initialValue: skills,
-                    minLines: 1,
-                    maxLines: 6,
-                    decoration: const InputDecoration(
-                      labelText: 'Skills',
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        skills = value;
-                      });
-                    },
-                  ),
-                ),
-                Text(
-                  errMessage,
-                  style: TextStyle(color: Colors.red, fontSize: 16),
-                ),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  child: Text('Save Changes'),
-                  onPressed: () {
-                    checkInputs(fName, lName, email, phoneNumber, skills);
-                  },
-                ),
-                SizedBox(height: 8),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void checkInputs(String fName, String lName, String email, String phoneNumber,
       String skills) {
     FirebaseFirestore db = FirebaseFirestore.instance;
@@ -266,7 +75,6 @@ class _ProfilePageState extends State<ProfilePage> {
           isValidEmail(email) == true &&
           isValidPhoneNumber(phoneNumber) == true &&
           isValidSkills(skills) == true) {
-        print('All checks passed');
         DocumentReference profileRef =
             db.collection('Profiles').doc(email.toLowerCase());
         profileRef.update({
@@ -284,10 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
               .doc('ProfilePic');
           pfpRef.update({"Download URL": urlDownload});
         }
-      } else {
-        print(errMessage);
-        // Remove later, done in check functions
-      }
+      } else {}
     });
   }
 
@@ -362,13 +167,188 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     return true;
   }
+
+  @override
+  void initState() {
+    super.initState();
+    fName = widget.profDetails[0];
+    lName = widget.profDetails[1];
+    email = widget.profDetails[2];
+    phoneNumber = widget.profDetails[3];
+    skills = widget.profDetails[4];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        automaticallyImplyLeading: false,
+        title: const Text('Profile'),
+      ),
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(width: MediaQuery.of(context).size.width * 0.1 * 0.9),
+          SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: Text(
+                    'Manage your profile settings here',
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[600]),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: SizedBox(
+                    // 16:9 resolution
+                    width: MediaQuery.of(context).size.width * 0.075 * 0.9,
+                    height: MediaQuery.of(context).size.height * 0.075 * 1.6,
+                    child: Expanded(
+                      child: Container(
+                        color: Colors.blue[50],
+                        child: Center(
+                          child: selectedImage != null
+                              ? Image.file(File(selectedImage!.path!))
+                              : const Icon(Icons.person, size: 48),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0, right: 8.0),
+                      child: ElevatedButton(
+                        onPressed: selectImage,
+                        child: const Text('Select Image'),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: ElevatedButton(
+                        onPressed: uploadImage,
+                        child: const Text('Upload Image'),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Container(
+                      height: 48,
+                      width: MediaQuery.of(context).size.width * 0.30,
+                      padding: const EdgeInsets.only(right: 16),
+                      child: TextFormField(
+                        initialValue: fName,
+                        decoration: const InputDecoration(
+                          labelText: 'First Name',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            fName = value;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 48,
+                      width: MediaQuery.of(context).size.width * 0.30,
+                      child: TextFormField(
+                        initialValue: lName,
+                        decoration: const InputDecoration(
+                          labelText: 'Last Name',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            lName = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 48,
+                  width: MediaQuery.of(context).size.width * 0.60,
+                  child: TextFormField(
+                    initialValue: email,
+                    decoration: const InputDecoration(
+                      labelText: 'E-Mail Address',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        email = value;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 48,
+                  width: MediaQuery.of(context).size.width * 0.60,
+                  child: TextFormField(
+                    initialValue: phoneNumber,
+                    decoration: const InputDecoration(
+                      labelText: 'Phone Number (Optional)',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      setState(() {
+                        phoneNumber = value;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 96,
+                  width: MediaQuery.of(context).size.width * 0.60,
+                  child: TextFormField(
+                    initialValue: skills,
+                    minLines: 1,
+                    maxLines: 6,
+                    decoration: const InputDecoration(
+                      labelText: 'Skills',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        skills = value;
+                      });
+                    },
+                  ),
+                ),
+                Text(
+                  errMessage,
+                  style: const TextStyle(color: Colors.red, fontSize: 16),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  child: const Text('Save Changes'),
+                  onPressed: () {
+                    checkInputs(fName, lName, email, phoneNumber, skills);
+                  },
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
-
-/*
-
-NAME VALIDATION: https://stackoverflow.com/questions/2385701/regular-expression-for-first-and-last-name
-
-EMAIL VALIDATION: https://stackoverflow.com/questions/16800540/how-should-i-check-if-the-input-is-an-email-address-in-flutter
-
-
-*/

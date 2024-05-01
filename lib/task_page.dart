@@ -1,37 +1,12 @@
+// ignore_for_file: no_logic_in_create_state
+
 import 'package:flutter/material.dart';
 import 'task_cards.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'myHomePage.dart';
-import 'profile.dart';
-import 'notifications.dart';
-import 'projectTiles.dart';
-import 'projectFormat.dart';
-import 'settings.dart';
+import 'project_format.dart';
 
-// void main() {
-//   runApp(const MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Demo',
-//       debugShowCheckedModeBanner: false,
-//       theme: ThemeData(
-//         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-//         useMaterial3: true,
-//       ),
-//       //home: const MyProjectPage(
-//       //title: 'Flutter Demo Task Page'),
-//     );
-//   }
-// }
-
-class MyProjectPage extends StatefulWidget {
-  const MyProjectPage(
+class MyTasksPage extends StatefulWidget {
+  const MyTasksPage(
       {Key? key,
       required this.title,
       required this.email,
@@ -43,7 +18,7 @@ class MyProjectPage extends StatefulWidget {
       required this.isCardExpanded,
       required this.projects,
       required this.profDetails,
-      required this.projectID, 
+      required this.projectID,
       required this.projectIDs,
       required this.settings,
       required this.activeColorScheme})
@@ -65,14 +40,19 @@ class MyProjectPage extends StatefulWidget {
   final ColorScheme activeColorScheme;
 
   @override
-  State<MyProjectPage> createState() => _MyProjectPageState(projectName: title, user: email, 
-  projectIDs: projectIDs, projects: projects, settings: settings, profDetails: profDetails, 
-  activeColorScheme: activeColorScheme);
+  State<MyTasksPage> createState() => _MyTasksPageState(
+      projectName: title,
+      user: email,
+      projectIDs: projectIDs,
+      projects: projects,
+      settings: settings,
+      profDetails: profDetails,
+      activeColorScheme: activeColorScheme);
 }
 
-class _MyProjectPageState extends State<MyProjectPage> {
-
-  _MyProjectPageState({Key? key, required this.projectName,
+class _MyTasksPageState extends State<MyTasksPage> {
+  _MyTasksPageState(
+      {required this.projectName,
       required this.user,
       required this.projectIDs,
       required this.projects,
@@ -214,424 +194,274 @@ class _MyProjectPageState extends State<MyProjectPage> {
     });
   }
 
-  int _selectedIndex = 1;
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final containerWidth = screenWidth * 0.7;
-
-  final List<Widget> _screens = [
-      ProfilePage(
-          user: user, profDetails: widget.profDetails), //Passes the user email
-      projectsPage(
-        title: 'My Projects',
-        email: user,
-        projectIDs: projectIDs,
-        projects: projects,
-        settings: settings,
-        profDetails: profDetails,
-        activeColorScheme: activeColorScheme,
-      ),
-      NotificationsDetailsTool(),
-      SettingsInterface(email: widget.email, settings: widget.settings, activeColorScheme: activeColorScheme,),
-      SettingsInterface(email: widget.email, settings: widget.settings, activeColorScheme: activeColorScheme,),
-    ];
-
-    bool isExtended() {
-      if (MediaQuery.of(context).size.width >= 800) {
-        return true;
-      } else {
-        return false;
-      }
-    }
 
     return Theme(
       data: ThemeData.from(colorScheme: activeColorScheme),
       child: Scaffold(
-      appBar: AppBar(
-        title: Text(projectName),
-        // automaticallyImplyLeading: false,
-      ),
-      body: Row(
-        children: [
-            // SafeArea(
-            //   child: NavigationRail(
-            //     selectedIndex: _selectedIndex,
-            //     onDestinationSelected: (int index) {
-            //       setState(() {
-            //         // SettingsPage(
-            //         //       title: 'My Projects',
-            //         //       email: user,
-            //         //       projectIDs: projectIDs,
-            //         //       projects: projects,
-            //         //       profDetails: profDetails,
-            //         //       settings: settings,
-            //         //     );
-            //         if (index == _screens.length - 1) {
-            //           Navigator.of(context).pop();
-            //         } else {
-            //           _selectedIndex = index;
-            //         }
-            //       });
-            //      // Check if the selected index corresponds to the SettingsPage
-            // if (index == 1) {
-            //   // Push the SettingsPage onto the navigation stack
-            //   Navigator.of(context).push(
-            //     MaterialPageRoute(
-            //       builder: (context) => SettingsPage(
-            //         title: 'My Projects',
-            //         email: user,
-            //         projectIDs: projectIDs,
-            //         projects: projects,
-            //         profDetails: profDetails,
-            //         settings: settings,
-            //         selectedIndex: 1,
-            //       ),
-            //     ),
-            //   );
-            // }
-            // if (index == 2) {
-            //   // Push the SettingsPage onto the navigation stack
-            //   Navigator.of(context).push(
-            //     MaterialPageRoute(
-            //       builder: (context) => SettingsPage(
-            //         title: 'My Projects',
-            //         email: user,
-            //         projectIDs: projectIDs,
-            //         projects: projects,
-            //         profDetails: profDetails,
-            //         settings: settings,
-            //         selectedIndex: 2,
-            //       ),
-            //     ),
-            //   );
-            // }
-      
-            // if (index == 3) {
-            //   // Push the SettingsPage onto the navigation stack
-            //   Navigator.of(context).push(
-            //     MaterialPageRoute(
-            //       builder: (context) => SettingsPage(
-            //         title: 'My Projects',
-            //         email: user,
-            //         projectIDs: projectIDs,
-            //         projects: projects,
-            //         profDetails: profDetails,
-            //         settings: settings,
-            //         selectedIndex: 3,
-            //       ),
-            //     ),
-            //   );
-            // }
-            // if (index == 4) {
-            //   // Push the SettingsPage onto the navigation stack
-            //   Navigator.of(context).push(
-            //     MaterialPageRoute(
-            //       builder: (context) => SettingsPage(
-            //         title: 'My Projects',
-            //         email: user,
-            //         projectIDs: projectIDs,
-            //         projects: projects,
-            //         profDetails: profDetails,
-            //         settings: settings,
-            //         selectedIndex: 4,
-            //       ),
-            //     ),
-            //   );
-            // }
-            // if (index == 0) {
-            //   // Push the SettingsPage onto the navigation stack
-            //   Navigator.of(context).push(
-            //     MaterialPageRoute(
-            //       builder: (context) => SettingsPage(
-            //         title: 'My Projects',
-            //         email: user,
-            //         projectIDs: projectIDs,
-            //         projects: projects,
-            //         profDetails: profDetails,
-            //         settings: settings,
-            //         selectedIndex: 0,
-            //       ),
-            //     ),
-            //   );
-            // }
-            //     },
-            //     backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            //     extended: isExtended(),
-            //     groupAlignment: -1.0,
-            //     // leading: FloatingActionButton(
-            //     //   onPressed: () {
-            //     //     ProfilePage();
-            //     //   setState(() {
-            //     //     _selectedIndex = 2;
-            //     //   });
-      
-            //     //   },
-            //     //   child: const Icon(Icons.account_circle),
-            //     // ),
-            //     destinations: const [
-            //       NavigationRailDestination(
-            //         icon: Icon(Icons.account_circle),
-            //         label: Text('Profile'),
-            //       ),
-            //       NavigationRailDestination(
-            //         icon: Icon(Icons.home),
-            //         label: Text('Home'),
-            //       ),
-            //       NavigationRailDestination(
-            //         icon: Icon(Icons.notifications),
-            //         label: Text('Notifications'),
-            //       ),
-            //       NavigationRailDestination(
-            //         icon: Icon(Icons.settings),
-            //         label: Text('Settings'),
-            //       ),
-            //       NavigationRailDestination(
-            //         icon: Icon(Icons.logout),
-            //         label: Text('Logout'),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Container(
-                  height: 700,
+        appBar: AppBar(
+          title: Text(projectName),
+          // automaticallyImplyLeading: false,
+        ),
+        body: Row(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 700,
                     width: screenWidth,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    border: Border.all(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      border: Border.all(
                         color: Theme.of(context).colorScheme.inversePrimary,
-                      width: 0.5,
-                    ),
-                  ),
-                  child: ListView.builder(
-                    itemCount: _counter,
-                    itemBuilder: (context, index) {
-                      double cardHeight =
-                          widget.isCardExpanded[index] ? 300.0 : 70.0;
-                      return Container(
-                        constraints: BoxConstraints(maxHeight: cardHeight),
-                        child: InkWell(
-                          onTap: () async {
-                            if (ticketChecked[index] == false) {
-                              FirebaseFirestore db = FirebaseFirestore.instance;
-                              final QuerySnapshot<Map<String, dynamic>>
-                                  tasksQuery = await db
-                                      .collection('Projects')
-                                      .doc(widget.projectID)
-                                      .collection('Tasks')
-                                      .doc(widget.taskNames[index])
-                                      .collection('Tickets')
-                                      .get();
-                              tasksQuery.docs.forEach((ticket) {
-                                if (ticket.id != "Placeholder Doc") {
-                                  ticketNamesList[index].add(ticket.id);
-                                  ticketDescriptionsList[index]
-                                      .add(ticket.get('Ticket Description'));
-                                }
-                              });
-                              ticketChecked[index] = true;
-                              await Future.delayed(
-                                  const Duration(milliseconds: 100));
-                            }
-                            setState(() {
-                              widget.isCardExpanded[index] =
-                                  !widget.isCardExpanded[index];
-                            });
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 0),
-                            height: cardHeight,
-                            child: Column(
-                              children: [
-                                TaskCard(
-                                  height: cardHeight,
-                                  taskName: '${widget.taskNames[index]}',
-                                  deadline: widget.deadlines[index] != null
-                                      ? '${widget.deadlines[index]!.day}/${widget.deadlines[index]!.month}/${widget.deadlines[index]!.year}'
-                                      : 'No Deadline Set',
-                                  taskAssignees:
-                                      '${widget.taskAssignees[index]}',
-                                  taskDescription:
-                                      '${widget.taskDescriptions[index]}',
-                                  ticketNames: ticketNamesList[index],
-                                  width: 300,
-                                  isCardExpanded: widget.isCardExpanded[index],
-                                  addTicket: _addTicket,
-                                  index: index,
-                                    activeColorScheme: activeColorScheme,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-          backgroundColor: activeColorScheme.inversePrimary,
-        onPressed: () async {
-          await showDialog<void>(
-            context: context,
-            builder: (context) => AlertDialog(
-                backgroundColor: activeColorScheme.background,
-              content: Stack(
-                clipBehavior: Clip.none,
-                children: <Widget>[
-                  Positioned(
-                    right: -40,
-                    top: -40,
-                    child: InkResponse(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                          child:  CircleAvatar(
-                            backgroundColor: activeColorScheme.primary,
-                        child: Icon(Icons.close),
+                        width: 0.5,
                       ),
                     ),
-                  ),
-                      Container(
-                        color: activeColorScheme.background,
-                        child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: TextFormField(
-                                    style: TextStyle(color: activeColorScheme.onBackground),
-                            controller: taskNameController,
-                                    decoration:  InputDecoration(
-                                      labelStyle: TextStyle(color: activeColorScheme.onBackground),
-                              labelText: 'Task Name',
-                              border: OutlineInputBorder(),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a task name';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: TextFormField(
-                                    style: TextStyle(color: activeColorScheme.onBackground),
-                            controller: taskAssigneesController,
-                                    decoration:  InputDecoration(
-                                      labelStyle: TextStyle(color: activeColorScheme.onBackground),
-                              labelText: 'Task Assignees',
-                              border: OutlineInputBorder(),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter task assignees';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: TextFormField(
-                                    style: TextStyle(color: activeColorScheme.onBackground),
-                            controller: taskDescriptionController,
-                                    decoration:  InputDecoration(
-                                      labelStyle: TextStyle(color: activeColorScheme.onBackground),
-                              labelText: 'Task Description',
-                              border: OutlineInputBorder(),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a task description';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: ElevatedButton(
-                                    style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                  activeColorScheme.inversePrimary,
-                )),
-                                    child:  Text('Set Deadline',
-                                    style: TextStyle(color: activeColorScheme.onBackground)),
-                            onPressed: () {
-                              _selectDate(context, _counter);
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: ElevatedButton(
-                                    style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                  activeColorScheme.inversePrimary,
-                )),
-                                    child:  Text('Submit',
-                                    style: TextStyle(color: activeColorScheme.onBackground)),
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                _formKey.currentState!.save();
-                                if (_counter < widget.taskDescriptions.length) {
-                                  widget.taskDescriptions[_counter] =
-                                      taskDescriptionController.text;
-                                } else {
-                                  widget.taskDescriptions
-                                      .add(taskDescriptionController.text);
-                                }
-                                Navigator.of(context).pop();
-                                _incrementCounter();
-
+                    child: ListView.builder(
+                      itemCount: _counter,
+                      itemBuilder: (context, index) {
+                        double cardHeight =
+                            widget.isCardExpanded[index] ? 300.0 : 70.0;
+                        return Container(
+                          constraints: BoxConstraints(maxHeight: cardHeight),
+                          child: InkWell(
+                            onTap: () async {
+                              if (ticketChecked[index] == false) {
                                 FirebaseFirestore db =
                                     FirebaseFirestore.instance;
-                                DocumentReference taskRef = db
-                                    .collection('Projects')
-                                    .doc(widget.projectID)
-                                    .collection("Tasks")
-                                    .doc(taskNameController.text);
-                                taskRef.set({
-                                  "Task Assignees":
-                                      taskAssigneesController.text,
-                                  "Task Description":
-                                      taskDescriptionController.text,
-                                  "Deadline": widget.deadlines[_counter - 1]
+                                final QuerySnapshot<Map<String, dynamic>>
+                                    tasksQuery = await db
+                                        .collection('Projects')
+                                        .doc(widget.projectID)
+                                        .collection('Tasks')
+                                        .doc(widget.taskNames[index])
+                                        .collection('Tickets')
+                                        .get();
+                                tasksQuery.docs.forEach((ticket) {
+                                  if (ticket.id != "Placeholder Doc") {
+                                    ticketNamesList[index].add(ticket.id);
+                                    ticketDescriptionsList[index]
+                                        .add(ticket.get('Ticket Description'));
+                                  }
                                 });
-                                //_incrementCounter();
-                            
-                                taskNameController.clear();
-                                taskAssigneesController.clear();
-                                taskDescriptionController.clear();
-                                Navigator.of(context).pop();
+                                ticketChecked[index] = true;
+                                await Future.delayed(
+                                    const Duration(milliseconds: 100));
                               }
+                              setState(() {
+                                widget.isCardExpanded[index] =
+                                    !widget.isCardExpanded[index];
+                              });
                             },
-                          ),
-                        ),
-                      ],
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 0),
+                              height: cardHeight,
+                              child: Column(
+                                children: [
+                                  TaskCard(
+                                    height: cardHeight,
+                                    taskName: '${widget.taskNames[index]}',
+                                    deadline: widget.deadlines[index] != null
+                                        ? '${widget.deadlines[index]!.day}/${widget.deadlines[index]!.month}/${widget.deadlines[index]!.year}'
+                                        : 'No Deadline Set',
+                                    taskAssignees:
+                                        '${widget.taskAssignees[index]}',
+                                    taskDescription:
+                                        '${widget.taskDescriptions[index]}',
+                                    ticketNames: ticketNamesList[index],
+                                    width: 300,
+                                    isCardExpanded:
+                                        widget.isCardExpanded[index],
+                                    addTicket: _addTicket,
+                                    index: index,
+                                    activeColorScheme: activeColorScheme,
+                                  ),
+                                ],
+                              ),
                             ),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          );
-        },
-        tooltip: 'New Task',
-          child:  Icon(Icons.add, color: activeColorScheme.secondary,),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: activeColorScheme.inversePrimary,
+          onPressed: () async {
+            await showDialog<void>(
+              context: context,
+              builder: (context) => AlertDialog(
+                backgroundColor: activeColorScheme.background,
+                content: Stack(
+                  clipBehavior: Clip.none,
+                  children: <Widget>[
+                    Positioned(
+                      right: -40,
+                      top: -40,
+                      child: InkResponse(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: activeColorScheme.primary,
+                          child: const Icon(Icons.close),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      color: activeColorScheme.background,
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: TextFormField(
+                                style: TextStyle(
+                                    color: activeColorScheme.onBackground),
+                                controller: taskNameController,
+                                decoration: InputDecoration(
+                                  labelStyle: TextStyle(
+                                      color: activeColorScheme.onBackground),
+                                  labelText: 'Task Name',
+                                  border: const OutlineInputBorder(),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a task name';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: TextFormField(
+                                style: TextStyle(
+                                    color: activeColorScheme.onBackground),
+                                controller: taskAssigneesController,
+                                decoration: InputDecoration(
+                                  labelStyle: TextStyle(
+                                      color: activeColorScheme.onBackground),
+                                  labelText: 'Task Assignees',
+                                  border: const OutlineInputBorder(),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter task assignees';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: TextFormField(
+                                style: TextStyle(
+                                    color: activeColorScheme.onBackground),
+                                controller: taskDescriptionController,
+                                decoration: InputDecoration(
+                                  labelStyle: TextStyle(
+                                      color: activeColorScheme.onBackground),
+                                  labelText: 'Task Description',
+                                  border: const OutlineInputBorder(),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a task description';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                  activeColorScheme.inversePrimary,
+                                )),
+                                child: Text('Set Deadline',
+                                    style: TextStyle(
+                                        color: activeColorScheme.onBackground)),
+                                onPressed: () {
+                                  _selectDate(context, _counter);
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                  activeColorScheme.inversePrimary,
+                                )),
+                                child: Text('Submit',
+                                    style: TextStyle(
+                                        color: activeColorScheme.onBackground)),
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    _formKey.currentState!.save();
+                                    if (_counter <
+                                        widget.taskDescriptions.length) {
+                                      widget.taskDescriptions[_counter] =
+                                          taskDescriptionController.text;
+                                    } else {
+                                      widget.taskDescriptions
+                                          .add(taskDescriptionController.text);
+                                    }
+                                    Navigator.of(context).pop();
+                                    _incrementCounter();
+
+                                    FirebaseFirestore db =
+                                        FirebaseFirestore.instance;
+                                    DocumentReference taskRef = db
+                                        .collection('Projects')
+                                        .doc(widget.projectID)
+                                        .collection("Tasks")
+                                        .doc(taskNameController.text);
+                                    taskRef.set({
+                                      "Task Assignees":
+                                          taskAssigneesController.text,
+                                      "Task Description":
+                                          taskDescriptionController.text,
+                                      "Deadline": widget.deadlines[_counter - 1]
+                                    });
+                                    //_incrementCounter();
+
+                                    taskNameController.clear();
+                                    taskAssigneesController.clear();
+                                    taskDescriptionController.clear();
+                                    Navigator.of(context).pop();
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+          tooltip: 'New Task',
+          child: Icon(
+            Icons.add,
+            color: activeColorScheme.secondary,
+          ),
         ),
       ),
     );

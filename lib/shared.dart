@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -45,8 +47,8 @@ Future<void> showDeleteConfirmationDialog(
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Confirm'),
-        content: SingleChildScrollView(
+        title: const Text('Confirm'),
+        content: const SingleChildScrollView(
           child: ListBody(
             children: <Widget>[
               Text('Are you sure you want to delete this?'),
@@ -55,7 +57,7 @@ Future<void> showDeleteConfirmationDialog(
         ),
         actions: <Widget>[
           TextButton(
-            child: Text('Yes'),
+            child: const Text('Yes'),
             onPressed: () async {
               onDelete();
               final projID = FirebaseFirestore.instance
@@ -63,15 +65,11 @@ Future<void> showDeleteConfirmationDialog(
                   .doc(projectIDs[projectIndex]);
               await projID.delete();
               projectIDs.removeAt(projectIndex);
-              final userID = FirebaseFirestore.instance
-                  .collection('Profiles')
-                  .doc(email)
-                  .update({"Project IDs": projectIDs});
               Navigator.of(context).pop();
             },
           ),
           TextButton(
-            child: Text('No'),
+            child: const Text('No'),
             onPressed: () {
               Navigator.of(context).pop();
             },
