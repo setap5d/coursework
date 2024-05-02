@@ -5,10 +5,13 @@ import 'task_cards.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'project_format.dart';
 
+/// Creates [_MyTasksPageState]
+/// 
+/// Has attributes [projectName], [email]. [taskNames], [taskAssignees], [taskDescriptions], [deadlines], [counter], [isCardExpanded], [projects], [profDetails], [projectID], [projectIDs], [settings], [activeColorScheme]
 class MyTasksPage extends StatefulWidget {
   const MyTasksPage(
       {Key? key,
-      required this.title,
+      required this.projectName,
       required this.email,
       required this.taskNames,
       required this.taskAssignees,
@@ -24,7 +27,7 @@ class MyTasksPage extends StatefulWidget {
       required this.activeColorScheme})
       : super(key: key);
 
-  final String title;
+  final String projectName;
   final String email;
   final List<dynamic> taskNames;
   final List<dynamic> taskAssignees;
@@ -40,47 +43,24 @@ class MyTasksPage extends StatefulWidget {
   final ColorScheme activeColorScheme;
 
   @override
-  State<MyTasksPage> createState() => _MyTasksPageState(
-      projectName: title,
-      user: email,
-      projectIDs: projectIDs,
-      projects: projects,
-      settings: settings,
-      profDetails: profDetails,
-      activeColorScheme: activeColorScheme);
+  State<MyTasksPage> createState() => _MyTasksPageState();
 }
 
+///Builds/calls widgets to display task and ticket information attached to access project
+///
+///Defines methods: [addTicket], [showDialog], [addNewTask], [initState], [selectDate], [incrementCounter]
 class _MyTasksPageState extends State<MyTasksPage> {
-  _MyTasksPageState(
-      {required this.projectName,
-      required this.user,
-      required this.projectIDs,
-      required this.projects,
-      required this.settings,
-      required this.profDetails,
-      required this.activeColorScheme});
+  _MyTasksPageState();
   int _counter = 0;
-  final String projectName;
-  final String user;
-  final List<dynamic> projectIDs;
-  final List<Project> projects;
-  final Map<String, dynamic> settings;
-  final List<dynamic> profDetails;
-  final ColorScheme activeColorScheme;
   final _formKey = GlobalKey<FormState>();
-  //List<dynamic> taskNames = [];
-  //List<dynamic> taskAssignees = [];
-  //List<dynamic> taskDescriptions = [];
   TextEditingController taskNameController = TextEditingController();
   TextEditingController taskAssigneesController = TextEditingController();
   TextEditingController taskDescriptionController = TextEditingController();
-  //List<bool> isCardExpanded = [];
-  //List<DateTime?> deadlines = [];
   List<List<String>> ticketNamesList = [];
   List<List<String>> ticketDescriptionsList = [];
   List<bool> ticketChecked = [];
 
-  void _addTicket(BuildContext context, int index) async {
+  void addTicket(BuildContext context, int index) async {
     TextEditingController ticketNameController = TextEditingController();
     TextEditingController ticketDescriptionController = TextEditingController();
 
@@ -157,19 +137,52 @@ class _MyTasksPageState extends State<MyTasksPage> {
     );
   }
 
+    void addNewTask(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      if (_counter <
+          widget.taskDescriptions.length) {
+        widget.taskDescriptions[_counter] =
+            taskDescriptionController.text;
+      } else {
+        widget.taskDescriptions
+            .add(taskDescriptionController.text);
+      }
+      Navigator.of(context).pop();
+      incrementCounter();
+    
+      FirebaseFirestore db =
+          FirebaseFirestore.instance;
+      DocumentReference taskRef = db
+          .collection('Projects')
+          .doc(widget.projectID)
+          .collection("Tasks")
+          .doc(taskNameController.text);
+      taskRef.set({
+        "Task Assignees":
+            taskAssigneesController.text,
+        "Task Description":
+            taskDescriptionController.text,
+        "Deadline": widget.deadlines[_counter - 1]
+      });
+    
+      taskNameController.clear();
+      taskAssigneesController.clear();
+      taskDescriptionController.clear();
+      // Navigator.of(context).pop();
+    }
+  }
+
   @override
   void initState() {
     _counter = widget.counter;
     super.initState();
-    //isCardExpanded = [];
-    //deadlines = List.generate(100, (index) => null);
-    //taskDescriptions = List.generate(100, (index) => '');
     ticketNamesList = List.generate(100, (index) => []);
     ticketDescriptionsList = List.generate(100, (index) => []);
     ticketChecked = List.generate(100, (index) => false);
   }
 
-  Future<void> _selectDate(BuildContext context, int index) async {
+  Future<void> selectDate(BuildContext context, int index) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -183,7 +196,7 @@ class _MyTasksPageState extends State<MyTasksPage> {
     }
   }
 
-  void _incrementCounter() {
+  void incrementCounter() {
     setState(() {
       _counter++;
       widget.isCardExpanded.add(false);
@@ -199,11 +212,10 @@ class _MyTasksPageState extends State<MyTasksPage> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Theme(
-      data: ThemeData.from(colorScheme: activeColorScheme),
+      data: ThemeData.from(colorScheme: widget.activeColorScheme),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(projectName),
-          // automaticallyImplyLeading: false,
+          title: Text(widget.projectName),
         ),
         body: Row(
           children: [
@@ -241,13 +253,13 @@ class _MyTasksPageState extends State<MyTasksPage> {
                                         .doc(widget.taskNames[index])
                                         .collection('Tickets')
                                         .get();
-                                tasksQuery.docs.forEach((ticket) {
+                                for (var ticket in tasksQuery.docs) {
                                   if (ticket.id != "Placeholder Doc") {
                                     ticketNamesList[index].add(ticket.id);
                                     ticketDescriptionsList[index]
                                         .add(ticket.get('Ticket Description'));
                                   }
-                                });
+                                }
                                 ticketChecked[index] = true;
                                 await Future.delayed(
                                     const Duration(milliseconds: 100));
@@ -276,9 +288,9 @@ class _MyTasksPageState extends State<MyTasksPage> {
                                     width: 300,
                                     isCardExpanded:
                                         widget.isCardExpanded[index],
-                                    addTicket: _addTicket,
+                                    addTicket: addTicket,
                                     index: index,
-                                    activeColorScheme: activeColorScheme,
+                                    activeColorScheme: widget.activeColorScheme,
                                   ),
                                 ],
                               ),
@@ -294,12 +306,12 @@ class _MyTasksPageState extends State<MyTasksPage> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          backgroundColor: activeColorScheme.inversePrimary,
+          backgroundColor: widget.activeColorScheme.inversePrimary,
           onPressed: () async {
             await showDialog<void>(
               context: context,
               builder: (context) => AlertDialog(
-                backgroundColor: activeColorScheme.background,
+                backgroundColor: widget.activeColorScheme.background,
                 content: Stack(
                   clipBehavior: Clip.none,
                   children: <Widget>[
@@ -311,143 +323,23 @@ class _MyTasksPageState extends State<MyTasksPage> {
                           Navigator.of(context).pop();
                         },
                         child: CircleAvatar(
-                          backgroundColor: activeColorScheme.primary,
+                          backgroundColor: widget.activeColorScheme.primary,
                           child: const Icon(Icons.close),
                         ),
                       ),
                     ),
                     Container(
-                      color: activeColorScheme.background,
+                      color: widget.activeColorScheme.background,
                       child: Form(
                         key: _formKey,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: TextFormField(
-                                style: TextStyle(
-                                    color: activeColorScheme.onBackground),
-                                controller: taskNameController,
-                                decoration: InputDecoration(
-                                  labelStyle: TextStyle(
-                                      color: activeColorScheme.onBackground),
-                                  labelText: 'Task Name',
-                                  border: const OutlineInputBorder(),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a task name';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: TextFormField(
-                                style: TextStyle(
-                                    color: activeColorScheme.onBackground),
-                                controller: taskAssigneesController,
-                                decoration: InputDecoration(
-                                  labelStyle: TextStyle(
-                                      color: activeColorScheme.onBackground),
-                                  labelText: 'Task Assignees',
-                                  border: const OutlineInputBorder(),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter task assignees';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: TextFormField(
-                                style: TextStyle(
-                                    color: activeColorScheme.onBackground),
-                                controller: taskDescriptionController,
-                                decoration: InputDecoration(
-                                  labelStyle: TextStyle(
-                                      color: activeColorScheme.onBackground),
-                                  labelText: 'Task Description',
-                                  border: const OutlineInputBorder(),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a task description';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                  activeColorScheme.inversePrimary,
-                                )),
-                                child: Text('Set Deadline',
-                                    style: TextStyle(
-                                        color: activeColorScheme.onBackground)),
-                                onPressed: () {
-                                  _selectDate(context, _counter);
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                  activeColorScheme.inversePrimary,
-                                )),
-                                child: Text('Submit',
-                                    style: TextStyle(
-                                        color: activeColorScheme.onBackground)),
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    _formKey.currentState!.save();
-                                    if (_counter <
-                                        widget.taskDescriptions.length) {
-                                      widget.taskDescriptions[_counter] =
-                                          taskDescriptionController.text;
-                                    } else {
-                                      widget.taskDescriptions
-                                          .add(taskDescriptionController.text);
-                                    }
-                                    Navigator.of(context).pop();
-                                    _incrementCounter();
-
-                                    FirebaseFirestore db =
-                                        FirebaseFirestore.instance;
-                                    DocumentReference taskRef = db
-                                        .collection('Projects')
-                                        .doc(widget.projectID)
-                                        .collection("Tasks")
-                                        .doc(taskNameController.text);
-                                    taskRef.set({
-                                      "Task Assignees":
-                                          taskAssigneesController.text,
-                                      "Task Description":
-                                          taskDescriptionController.text,
-                                      "Deadline": widget.deadlines[_counter - 1]
-                                    });
-                                    //_incrementCounter();
-
-                                    taskNameController.clear();
-                                    taskAssigneesController.clear();
-                                    taskDescriptionController.clear();
-                                    Navigator.of(context).pop();
-                                  }
-                                },
-                              ),
-                            ),
+                            TaskTextField(widget: widget, taskNameController: taskNameController, fieldName: "Task Name", errorMessage: "Please enter task name",),
+                            TaskTextField(widget: widget, taskNameController: taskAssigneesController, fieldName: "Task Assignees", errorMessage: "Please enter task assignees",),
+                            TaskTextField(widget: widget, taskNameController: taskDescriptionController, fieldName: "Task Description", errorMessage: "Please enter task description",),
+                            TaskButtonField(widget: widget, text: "Set Deadline", onPressed: () => selectDate(context, _counter),),
+                            TaskButtonField(widget: widget, text: "Submit", onPressed: () => addNewTask(context),),
                           ],
                         ),
                       ),
@@ -460,9 +352,79 @@ class _MyTasksPageState extends State<MyTasksPage> {
           tooltip: 'New Task',
           child: Icon(
             Icons.add,
-            color: activeColorScheme.secondary,
+            color: widget.activeColorScheme.secondary,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class TaskButtonField extends StatelessWidget {
+  const TaskButtonField({
+    super.key,
+    required this.widget,
+    required this.text,
+    required this.onPressed  
+    });
+
+  final MyTasksPage widget;
+  final String text;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: ElevatedButton(
+        style: ButtonStyle(
+            backgroundColor:
+                MaterialStateProperty.all<Color>(
+          widget.activeColorScheme.inversePrimary,
+        )),
+        onPressed: onPressed,
+        child: Text(text,
+            style: TextStyle(
+                color: widget.activeColorScheme.onBackground)),
+      ),
+    );
+  }
+}
+
+class TaskTextField extends StatelessWidget {
+  const TaskTextField({
+    super.key,
+    required this.widget,
+    required this.taskNameController,
+    required this.fieldName,
+    required this.errorMessage
+  });
+
+  final MyTasksPage widget;
+  final TextEditingController taskNameController;
+  final String fieldName;
+  final String errorMessage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: TextFormField(
+        style: TextStyle(
+            color: widget.activeColorScheme.onBackground),
+        controller: taskNameController,
+        decoration: InputDecoration(
+          labelStyle: TextStyle(
+              color: widget.activeColorScheme.onBackground),
+          labelText: fieldName,
+          border: const OutlineInputBorder(),
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return errorMessage;
+          }
+          return null;
+        },
       ),
     );
   }

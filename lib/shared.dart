@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// Elements used in both myHomePage and ProjectTiles (ensures no duplication)
+/// This file contains functions used in both myHomePage and ProjectTiles (ensures no duplication)
 
 String getMonthName(int month) {
   switch (month) {

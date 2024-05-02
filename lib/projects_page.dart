@@ -10,7 +10,6 @@ import 'task_page.dart';
 /// Creates [_ProjectsPageState]
 ///
 /// Has attributes [title], [email], [projectIDs], [projects], [settings], [profDetails], [activeColorScheme]
-/// Attributes are taken purely to pass them to [_ProjectsPageState]
 class ProjectsPage extends StatefulWidget {
   const ProjectsPage(
       {Key? key,
@@ -32,39 +31,15 @@ class ProjectsPage extends StatefulWidget {
   final ColorScheme activeColorScheme;
 
   @override
-  State<ProjectsPage> createState() => _ProjectsPageState(
-      title: title,
-      email: email,
-      projectIDs: projectIDs,
-      projects: projects,
-      settings: settings,
-      profDetails: profDetails,
-      activeColorScheme: activeColorScheme);
+  State<ProjectsPage> createState() => _ProjectsPageState();
 }
 
 /// Builds and calls widgets that allow user to view and access projects attached to their account
 /// 
 /// Widgets display projects in a grid with each project represented by a [ProjectTile]
-/// Has attributes [title], [email], [projectIDs], [projects], [settings], [profDetails], [activeColorScheme]
 /// Defines methods: [accessProject], [deleteProject], [showAddProjectDialog], [showErrorDialog], [validateProjectDetails]
 class _ProjectsPageState extends State<ProjectsPage> {
-  _ProjectsPageState(
-      {Key? key,
-      required this.title,
-      required this.email,
-      required this.projectIDs,
-      required this.projects,
-      required this.settings,
-      required this.profDetails,
-      required this.activeColorScheme});
-    
-  final String title;
-  final String email;
-  final List<dynamic> projectIDs;
-  final List<Project> projects;
-  final Map<String, dynamic> settings;
-  final List<dynamic> profDetails;
-  final ColorScheme activeColorScheme;
+  _ProjectsPageState();
 
   Future accessProject(index, project) async {
     List<dynamic> taskNames = [];
@@ -97,7 +72,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
       context,
       MaterialPageRoute(
           builder: (context) => MyTasksPage(
-                title: project.projectName,
+                projectName: project.projectName,
                 email: widget.email,
                 taskNames: taskNames,
                 taskAssignees: taskAssignees,
@@ -106,11 +81,11 @@ class _ProjectsPageState extends State<ProjectsPage> {
                 counter: counter,
                 isCardExpanded: isCardExpanded,
                 projectID: widget.projectIDs[index],
-                projects: projects,
-                profDetails: profDetails,
-                projectIDs: projectIDs,
-                settings: settings,
-                activeColorScheme: activeColorScheme,
+                projects: widget.projects,
+                profDetails: widget.profDetails,
+                projectIDs: widget.projectIDs,
+                settings: widget.settings,
+                activeColorScheme: widget.activeColorScheme,
               )),
     );
   }
@@ -278,7 +253,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData.from(colorScheme: activeColorScheme),
+      data: ThemeData.from(colorScheme: widget.activeColorScheme),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -327,7 +302,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           child: Icon(
             Icons.add,
-            color: activeColorScheme.secondary,
+            color: widget.activeColorScheme.secondary,
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,

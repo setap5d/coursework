@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// Creates widget used to display task/tickets to user in more organised format
+/// 
+/// Defines method: [handleMenuSelection]
 class TaskCard extends StatelessWidget {
   final String taskName;
   final String deadline;
@@ -28,13 +31,11 @@ class TaskCard extends StatelessWidget {
     required this.activeColorScheme,
   }) : super(key: key);
 
-  void _handleMenuSelection(String value) {
+  void handleMenuSelection(String value) {
     switch (value) {
       case 'Edit':
-        // Handle edit action
         break;
       case 'Delete':
-        // Handle delete action
         break;
     }
   }
@@ -160,7 +161,7 @@ class TaskCard extends StatelessWidget {
               top: 5,
               right: 5,
               child: PopupMenuButton<String>(
-                onSelected: _handleMenuSelection,
+                onSelected: handleMenuSelection,
                 itemBuilder: (BuildContext context) => [
                   const PopupMenuItem<String>(
                     value: 'Edit',

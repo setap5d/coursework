@@ -31,7 +31,6 @@ class AppColorSchemes {
 /// Creates [_NavigationPageState]
 ///
 /// Has attributes [email], [projectIDs], [projects], [profDetails], [settings], [selectedIndex]
-/// Attributes are taken purely to pass them to [_NavigationPageState]
 class NavigationPage extends StatefulWidget {
   const NavigationPage(
       {Key? key,
@@ -52,11 +51,6 @@ class NavigationPage extends StatefulWidget {
 
   @override
   State<NavigationPage> createState() => _NavigationPageState(
-      email: email,
-      projectIDs: projectIDs,
-      projects: projects,
-      settings: settings,
-      profDetails: profDetails,
       selectedIndex: selectedIndex);
 }
 
@@ -65,24 +59,14 @@ class NavigationPage extends StatefulWidget {
 /// Builds a [NavigationRail] and [Expanded] widget
 /// The [NavigationRail] determines which page is displayed in the [Expanded] widget
 /// Defines [activeColorScheme] applying the correct [ColorScheme] from [AppColorSchemes]
-/// Has attributes [email], [projectIDs], [projects], [settings], [profDetails], [selectedIndex]
+/// Has attributes [selectedIndex]
 /// Defines methods: [initState], [updateColorScheme], [isExtended], [changePage]
 class _NavigationPageState extends State<NavigationPage> {
   late ColorScheme activeColorScheme;
 
   _NavigationPageState(
-      {required this.email,
-      required this.projectIDs,
-      required this.projects,
-      required this.settings,
-      required this.profDetails,
-      required this.selectedIndex});
+      {required this.selectedIndex});
 
-  final String email;
-  final List<dynamic> projectIDs;
-  final List<Project> projects;
-  final List<dynamic> profDetails;
-  final Map<String, dynamic> settings;
   int selectedIndex;
 
   @override
@@ -121,14 +105,14 @@ class _NavigationPageState extends State<NavigationPage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
-      ProfilePage(email: email, profDetails: widget.profDetails),
+      ProfilePage(email: widget.email, profDetails: widget.profDetails),
       ProjectsPage(
         title: 'My Projects',
-        email: email,
-        projectIDs: projectIDs,
-        projects: projects,
-        settings: settings,
-        profDetails: profDetails,
+        email: widget.email,
+        projectIDs: widget.projectIDs,
+        projects: widget.projects,
+        settings: widget.settings,
+        profDetails: widget.profDetails,
         activeColorScheme: activeColorScheme,
       ),
       SettingsPage(
