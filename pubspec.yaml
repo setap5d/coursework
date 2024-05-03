@@ -16,12 +16,19 @@ dependencies:
   cloud_firestore: ^4.15.7
   cloud_firestore_web: ^3.8.4
   cupertino_icons: ^1.0.2
+  mockito: ^5.0.17
   provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  mockito: ^5.0.17
   flutter_lints: ^2.0.0
+  build_runner: ^2.3.0  
+  build_test: ^2.0.0
+  integration_test:
+    sdk: flutter
+  
 
 flutter:
   uses-material-design: true

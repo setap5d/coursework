@@ -339,7 +339,7 @@ class _MyTasksPageState extends State<MyTasksPage> {
                             TaskTextField(widget: widget, taskNameController: taskAssigneesController, fieldName: "Task Assignees", errorMessage: "Please enter task assignees",),
                             TaskTextField(widget: widget, taskNameController: taskDescriptionController, fieldName: "Task Description", errorMessage: "Please enter task description",),
                             TaskButtonField(widget: widget, text: "Set Deadline", onPressed: () => selectDate(context, _counter),),
-                            TaskButtonField(widget: widget, text: "Submit", onPressed: () => addNewTask(context),),
+                            TaskButtonField(widget: widget, text: "Submit", onPressed: () => addNewTask(context),key: const ValueKey('submitTask'),)
                           ],
                         ),
                       ),
