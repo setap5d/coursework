@@ -17,6 +17,7 @@ dependencies:
   cloud_firestore_web: ^3.8.4
   cupertino_icons: ^1.0.2
   provider: ^6.1.2
+  mockito: ^5.4.4
 
 dev_dependencies:
   flutter_test:
