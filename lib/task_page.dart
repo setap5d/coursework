@@ -1,12 +1,14 @@
 // ignore_for_file: no_logic_in_create_state
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'task_cards.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'project_format.dart';
 
 /// Creates [_MyTasksPageState]
-/// 
+///
 /// Has attributes [projectName], [email]. [taskNames], [taskAssignees], [taskDescriptions], [deadlines], [counter], [isCardExpanded], [projects], [profDetails], [projectID], [projectIDs], [settings], [activeColorScheme]
 class MyTasksPage extends StatefulWidget {
   const MyTasksPage(
@@ -137,35 +139,29 @@ class _MyTasksPageState extends State<MyTasksPage> {
     );
   }
 
-    void addNewTask(BuildContext context) {
+  void addNewTask(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      if (_counter <
-          widget.taskDescriptions.length) {
-        widget.taskDescriptions[_counter] =
-            taskDescriptionController.text;
+      if (_counter < widget.taskDescriptions.length) {
+        widget.taskDescriptions[_counter] = taskDescriptionController.text;
       } else {
-        widget.taskDescriptions
-            .add(taskDescriptionController.text);
+        widget.taskDescriptions.add(taskDescriptionController.text);
       }
       Navigator.of(context).pop();
       incrementCounter();
-    
-      FirebaseFirestore db =
-          FirebaseFirestore.instance;
+
+      FirebaseFirestore db = FirebaseFirestore.instance;
       DocumentReference taskRef = db
           .collection('Projects')
           .doc(widget.projectID)
           .collection("Tasks")
           .doc(taskNameController.text);
       taskRef.set({
-        "Task Assignees":
-            taskAssigneesController.text,
-        "Task Description":
-            taskDescriptionController.text,
+        "Task Assignees": taskAssigneesController.text,
+        "Task Description": taskDescriptionController.text,
         "Deadline": widget.deadlines[_counter - 1]
       });
-    
+
       taskNameController.clear();
       taskAssigneesController.clear();
       taskDescriptionController.clear();
@@ -207,9 +203,25 @@ class _MyTasksPageState extends State<MyTasksPage> {
     });
   }
 
+  void triggerRebuild() {
+    //triggers rebuild
+    setState(() {});
+  }
+
+  void decrementIndex(int index) {
+    //decrements the counter when a task is deleted
+    _counter--;
+    triggerRebuild();
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      //remove this if not fixed
+      triggerRebuild.call();
+    });
 
     return Theme(
       data: ThemeData.from(colorScheme: widget.activeColorScheme),
@@ -234,6 +246,7 @@ class _MyTasksPageState extends State<MyTasksPage> {
                       ),
                     ),
                     child: ListView.builder(
+                      //call this to rebuild after deleting or updating a project
                       itemCount: _counter,
                       itemBuilder: (context, index) {
                         double cardHeight =
@@ -286,11 +299,18 @@ class _MyTasksPageState extends State<MyTasksPage> {
                                         '${widget.taskDescriptions[index]}',
                                     ticketNames: ticketNamesList[index],
                                     width: 300,
-                                    isCardExpanded:
-                                        widget.isCardExpanded[index],
+                                    isCardExpanded: widget.isCardExpanded,
                                     addTicket: addTicket,
                                     index: index,
                                     activeColorScheme: widget.activeColorScheme,
+                                    formKey: _formKey,
+                                    deadlines: widget.deadlines,
+                                    projectID: widget.projectID,
+                                    counter: _counter,
+                                    taskNames: widget.taskNames,
+                                    taskDescriptions: widget.taskDescriptions,
+                                    allTaskAssignees: widget.taskAssignees,
+                                    decrementIndex: decrementIndex,
                                   ),
                                 ],
                               ),
@@ -335,11 +355,34 @@ class _MyTasksPageState extends State<MyTasksPage> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            TaskTextField(widget: widget, taskNameController: taskNameController, fieldName: "Task Name", errorMessage: "Please enter task name",),
-                            TaskTextField(widget: widget, taskNameController: taskAssigneesController, fieldName: "Task Assignees", errorMessage: "Please enter task assignees",),
-                            TaskTextField(widget: widget, taskNameController: taskDescriptionController, fieldName: "Task Description", errorMessage: "Please enter task description",),
-                            TaskButtonField(widget: widget, text: "Set Deadline", onPressed: () => selectDate(context, _counter),),
-                            TaskButtonField(widget: widget, text: "Submit", onPressed: () => addNewTask(context),),
+                            TaskTextField(
+                              widget: widget,
+                              taskNameController: taskNameController,
+                              fieldName: "Task Name",
+                              errorMessage: "Please enter task name",
+                            ),
+                            TaskTextField(
+                              widget: widget,
+                              taskNameController: taskAssigneesController,
+                              fieldName: "Task Assignees",
+                              errorMessage: "Please enter task assignees",
+                            ),
+                            TaskTextField(
+                              widget: widget,
+                              taskNameController: taskDescriptionController,
+                              fieldName: "Task Description",
+                              errorMessage: "Please enter task description",
+                            ),
+                            TaskButtonField(
+                              widget: widget,
+                              text: "Set Deadline",
+                              onPressed: () => selectDate(context, _counter),
+                            ),
+                            TaskButtonField(
+                              widget: widget,
+                              text: "Submit",
+                              onPressed: () => addNewTask(context),
+                            ),
                           ],
                         ),
                       ),
@@ -361,12 +404,11 @@ class _MyTasksPageState extends State<MyTasksPage> {
 }
 
 class TaskButtonField extends StatelessWidget {
-  const TaskButtonField({
-    super.key,
-    required this.widget,
-    required this.text,
-    required this.onPressed  
-    });
+  const TaskButtonField(
+      {super.key,
+      required this.widget,
+      required this.text,
+      required this.onPressed});
 
   final MyTasksPage widget;
   final String text;
@@ -378,27 +420,24 @@ class TaskButtonField extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: ElevatedButton(
         style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(
+            backgroundColor: MaterialStateProperty.all<Color>(
           widget.activeColorScheme.inversePrimary,
         )),
         onPressed: onPressed,
         child: Text(text,
-            style: TextStyle(
-                color: widget.activeColorScheme.onBackground)),
+            style: TextStyle(color: widget.activeColorScheme.onBackground)),
       ),
     );
   }
 }
 
 class TaskTextField extends StatelessWidget {
-  const TaskTextField({
-    super.key,
-    required this.widget,
-    required this.taskNameController,
-    required this.fieldName,
-    required this.errorMessage
-  });
+  const TaskTextField(
+      {super.key,
+      required this.widget,
+      required this.taskNameController,
+      required this.fieldName,
+      required this.errorMessage});
 
   final MyTasksPage widget;
   final TextEditingController taskNameController;
@@ -410,12 +449,10 @@ class TaskTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: TextFormField(
-        style: TextStyle(
-            color: widget.activeColorScheme.onBackground),
+        style: TextStyle(color: widget.activeColorScheme.onBackground),
         controller: taskNameController,
         decoration: InputDecoration(
-          labelStyle: TextStyle(
-              color: widget.activeColorScheme.onBackground),
+          labelStyle: TextStyle(color: widget.activeColorScheme.onBackground),
           labelText: fieldName,
           border: const OutlineInputBorder(),
         ),
