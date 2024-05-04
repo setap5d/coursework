@@ -332,7 +332,7 @@ class LoginForm extends StatelessWidget {
 /// Builds widgets that allow user to create new account
 ///
 /// Builds the register screen allowing users to enter First name, Last name,
-///  email, password and password (confirmation)
+/// email, password and password (confirmation)
 /// defines methods: [registerNewAccount], [switchToLoginScreen]
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({Key? key}) : super(key: key);

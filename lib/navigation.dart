@@ -62,37 +62,26 @@ class NavigationPage extends StatefulWidget {
 /// Has attributes [selectedIndex]
 /// Defines methods: [initState], [updateColorScheme], [isExtended], [changePage]
 class _NavigationPageState extends State<NavigationPage> {
-  late ColorScheme activeColorScheme;
+  late ColorScheme activeColorScheme = updateColorScheme();
 
   _NavigationPageState(
       {required this.selectedIndex});
 
   int selectedIndex;
-
-  @override
-  void initState() {
-    super.initState();
-    updateColorScheme();
+  
+ColorScheme updateColorScheme() {
+  final displayMode = widget.settings["Display Mode"];
+  switch (displayMode) {
+    case "Dark Mode":
+      return AppColorSchemes.darkMode;
+    case "Light Mode":
+      return AppColorSchemes.lightMode;
+    case "High Contrast Mode":
+      return AppColorSchemes.highContrastMode;
+    default:
+      return AppColorSchemes.lightMode; // or any default color scheme
   }
-
-  void updateColorScheme() {
-    setState(() {
-      final displayMode = widget.settings["Display Mode"];
-      switch (displayMode) {
-        case "Dark Mode":
-          activeColorScheme = AppColorSchemes.darkMode;
-          break;
-        case "Light Mode":
-          activeColorScheme = AppColorSchemes.lightMode;
-          break;
-        case "High Contrast Mode":
-          activeColorScheme = AppColorSchemes.highContrastMode;
-          break;
-        default:
-          break;
-      }
-    });
-  }
+}
 
   bool isExtended() {
     if (MediaQuery.of(context).size.width >= 800) {

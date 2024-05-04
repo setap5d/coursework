@@ -41,12 +41,15 @@ class _SettingsPageState extends State<SettingsPage> {
     switch (displayMode) {
       case "Dark Mode":
         saveSettingsToFireBase(email, settings);
+        confirmationDialog("Changes Saved", "Please restart application to apply changes");
         break;
       case "Light Mode":
         saveSettingsToFireBase(email, settings);
+        confirmationDialog("Changes Saved", "Please restart application to apply changes");
         break;
       case "High Contrast Mode":
         saveSettingsToFireBase(email, settings);
+        confirmationDialog("Changes Saved", "Please restart application to apply changes");
         break;
       default:
         confirmationDialog("Error", "Invalid display mode");
@@ -138,9 +141,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 Theme.of(context).colorScheme.inversePrimary,
               )),
               onPressed: () {
-                saveSettingsToFireBase(widget.email, widget.settings);
-                confirmationDialog("Changes Saved",
-                    "Please restart application to apply changes");
+                checkDisplayMode(widget.email, widget.settings);
               },
               child: Text(
                 'Save Changes',
