@@ -81,7 +81,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
                 counter: counter,
                 isCardExpanded: isCardExpanded,
                 projectID: widget.projectIDs[index],
-                projects: widget.projects,
                 profDetails: widget.profDetails,
                 projectIDs: widget.projectIDs,
                 settings: widget.settings,

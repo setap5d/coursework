@@ -3,11 +3,10 @@
 import 'package:flutter/material.dart';
 import 'task_cards.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'project_format.dart';
 
 /// Creates [_MyTasksPageState]
 /// 
-/// Has attributes [projectName], [email]. [taskNames], [taskAssignees], [taskDescriptions], [deadlines], [counter], [isCardExpanded], [projects], [profDetails], [projectID], [projectIDs], [settings], [activeColorScheme]
+/// Has attributes [projectName], [email]. [taskNames], [taskAssignees], [taskDescriptions], [deadlines], [counter], [isCardExpanded], [profDetails], [projectID], [projectIDs], [settings], [activeColorScheme]
 class MyTasksPage extends StatefulWidget {
   const MyTasksPage(
       {Key? key,
@@ -19,7 +18,6 @@ class MyTasksPage extends StatefulWidget {
       required this.deadlines,
       required this.counter,
       required this.isCardExpanded,
-      required this.projects,
       required this.profDetails,
       required this.projectID,
       required this.projectIDs,
@@ -37,7 +35,6 @@ class MyTasksPage extends StatefulWidget {
   final List<bool> isCardExpanded;
   final String projectID;
   final List<dynamic> projectIDs;
-  final List<Project> projects;
   final List<dynamic> profDetails;
   final Map<String, dynamic> settings;
   final ColorScheme activeColorScheme;
