@@ -1,15 +1,12 @@
-# setup_application
+# Setap5D
 
-A new Flutter project.
+A team management application.
 
 ## Getting Started
 
 This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- [Documentation](https://rtd-5d.readthedocs.io/en/latest/index.html)
 
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
