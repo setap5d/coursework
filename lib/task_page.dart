@@ -59,9 +59,9 @@ class _MyTasksPageState extends State<MyTasksPage> {
   List<List<String>> ticketDescriptionsList = [];
   List<bool> ticketChecked = [];
 
-  void addTicket(BuildContext context, int index) async {
-    TextEditingController ticketNameController = TextEditingController();
-    TextEditingController ticketDescriptionController = TextEditingController();
+void addTicket(BuildContext context, int index) async {
+    final TextEditingController ticketNameController = TextEditingController();
+    final TextEditingController ticketDescriptionController = TextEditingController();
 
     await showDialog<void>(
       context: context,
@@ -76,7 +76,7 @@ class _MyTasksPageState extends State<MyTasksPage> {
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: const CircleAvatar(
+                child: CircleAvatar(
                   backgroundColor: Colors.red,
                   child: Icon(Icons.close),
                 ),
@@ -95,21 +95,40 @@ class _MyTasksPageState extends State<MyTasksPage> {
                         labelText: 'Ticket Name',
                         border: OutlineInputBorder(),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a ticket name';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: TextFormField(
+                      controller: ticketDescriptionController,
+                      decoration: const InputDecoration(
+                        labelText: 'Ticket Description',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a ticket description';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8),
                     child: ElevatedButton(
-                      child: const Text('Submit'),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
-                          setState(() {
-                            ticketNamesList[index]
-                                .add(ticketNameController.text);
-                            ticketDescriptionsList[index]
-                                .add(ticketDescriptionController.text);
-                          });
+
+                          ticketNamesList[index].add(ticketNameController.text);
+                          ticketDescriptionsList[index].add(ticketDescriptionController.text);
+
                           FirebaseFirestore db = FirebaseFirestore.instance;
                           DocumentReference ticketRef = db
                               .collection('Projects')
@@ -118,13 +137,15 @@ class _MyTasksPageState extends State<MyTasksPage> {
                               .doc(widget.taskNames[index])
                               .collection('Tickets')
                               .doc(ticketNameController.text);
+
                           ticketRef.set({
-                            "Ticket Description":
-                                ticketDescriptionController.text,
+                            "Ticket Description": ticketDescriptionController.text,
                           });
+
                           Navigator.of(context).pop();
                         }
                       },
+                      child: const Text('Submit'),
                     ),
                   ),
                 ],
