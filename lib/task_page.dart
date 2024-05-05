@@ -237,7 +237,6 @@ void addTicket(BuildContext context, int index) async {
     final screenWidth = MediaQuery.of(context).size.width;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      //remove this if not fixed
       triggerRebuild.call();
     });
 
