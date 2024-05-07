@@ -105,7 +105,6 @@ class _ProjectTileState extends State<ProjectTile> {
                         .doc(enteredEmail)
                         .update({"Project IDs": emailProjectIDs});
                     Navigator.of(context).pop();
-                    // where adding the email to the specified project functionality would go
                   } else {
                     // User is already an assignee
                     showDialog(

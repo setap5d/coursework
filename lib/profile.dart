@@ -33,12 +33,10 @@ class _ProfilePageState extends State<ProfilePage> {
   late String urlDownload = "";
   bool newImage = false;
 
-  //Works on desktop but not web
   Future uploadImage() async {
-    final path = 'files/${selectedImage!.name}'; // Change this to firebase path
+    final path = 'files/${selectedImage!.name}';
     final file = File(selectedImage!.path!);
 
-    // Add firebase upload here
     final ref = FirebaseStorage.instance.ref().child(path);
     setState(() {
       uploadTask = ref.putFile(file);
@@ -87,7 +85,7 @@ class _ProfilePageState extends State<ProfilePage> {
           DocumentReference pfpRef = db
               .collection('Profiles')
               .doc(
-                  email) // This is looking in the db for the input email that the user has entered, need to change to user id inherited from login
+                  email) 
               .collection('User')
               .doc('ProfilePic');
           pfpRef.update({"Download URL": urlDownload});

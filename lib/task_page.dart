@@ -76,7 +76,7 @@ void addTicket(BuildContext context, int index) async {
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: CircleAvatar(
+                child: const CircleAvatar(
                   backgroundColor: Colors.red,
                   child: Icon(Icons.close),
                 ),
@@ -183,7 +183,6 @@ void addTicket(BuildContext context, int index) async {
       taskNameController.clear();
       taskAssigneesController.clear();
       taskDescriptionController.clear();
-      // Navigator.of(context).pop();
     }
   }
 

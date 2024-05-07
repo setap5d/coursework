@@ -54,6 +54,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         .doc(widget.projectIDs[index])
         .collection('Tasks')
         .get();
+    // ignore: avoid_function_literals_in_foreach_calls
     tasksQuery.docs.forEach((task) {
       if (task.id != "Placeholder Doc") {
         taskNames.add(task.id);

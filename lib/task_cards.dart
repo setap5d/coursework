@@ -159,7 +159,6 @@ class _MyTasksPageState extends State<TaskCard> {
 
   void incrementCounter() {
     setState(() {
-      //widget.isCardExpanded[widget.index] = false;
       widget.taskNames[widget.index] = (taskNameController.text);
       widget.taskDescriptions[widget.index] = (taskDescriptionController.text);
       widget.deadlines.add(null);
@@ -218,7 +217,7 @@ class _MyTasksPageState extends State<TaskCard> {
   Future<void> showTaskDeleteDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirm'),
@@ -246,6 +245,7 @@ class _MyTasksPageState extends State<TaskCard> {
                 widget.deadlines.removeAt(widget.index);
                 widget.decrementIndex(widget.index);
                 //add post frame callback here
+                // ignore: use_build_context_synchronously
                 Navigator.of(context).pop();
               },
             ),
@@ -382,7 +382,6 @@ class _MyTasksPageState extends State<TaskCard> {
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  // Display ticket names here
                                   if (widget.ticketNames.isNotEmpty)
                                     ...widget.ticketNames
                                         .map((ticketName) => Text(

@@ -587,7 +587,7 @@ class PasswordResetPage extends StatelessWidget {
     String titleMessage = '';
 
     void resetPassword() async {
-      // password reset functionality goes here
+      // password reset functionality
       final emailSnapshot = await FirebaseFirestore.instance
           .collection('Profiles')
           .doc(emailController.text)
